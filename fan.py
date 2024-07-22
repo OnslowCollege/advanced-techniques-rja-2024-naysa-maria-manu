@@ -7,6 +7,7 @@ Date: DATE
 
 import pygame
 import sys
+import math
 
 # Initialize Pygame
 pygame.init()
@@ -16,10 +17,23 @@ SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 545
 COLOR_RED = (176, 39, 47)
 FONT_PATH = "Text_features/Font_mont.ttf"
-BACKGROUND_IMAGE = "images/UNO_Home.jpg"
+HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
+GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
+CARD_IMAGE = "images/UNO_card.jpg"
+NUM_CARDS = 7  # Number of cards per player
+CARD_SCALE = 0.5  # Scale down the cards to 50% of their original size
 
-# Load background image and font
-background_image = pygame.image.load(BACKGROUND_IMAGE)
+# Load images and font
+home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
+game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
+original_card_image = pygame.image.load(CARD_IMAGE)
+scaled_card_image = pygame.transform.scale(
+    original_card_image,
+    (
+        int(original_card_image.get_width() * CARD_SCALE),
+        int(original_card_image.get_height() * CARD_SCALE),
+    ),
+)
 font = pygame.font.Font(FONT_PATH, 40)
 
 # Create the screen
@@ -48,7 +62,7 @@ class Button:
 
     def __init__(self, text, pos, size, color, font):
         """
-        Construct all the necessary attributes for the button object.
+        Constructs all the necessary attributes for the button object.
 
         Parameters
         ----------
@@ -62,7 +76,6 @@ class Button:
             The color of the button rectangle.
         font : pygame.font.Font
             The font used for the button text.
-
         """
         self.text = text
         self.pos = pos
@@ -83,14 +96,13 @@ class Button:
         ----------
         surface : pygame.Surface
             The surface to draw the button on.
-
         """
         pygame.draw.rect(surface, self.color, self.rect)
         surface.blit(self.rendered_text, self.text_rect)
 
     def is_clicked(self, event):
         """
-        Check if the button was clicked.
+        Checks if the button was clicked.
 
         Parameters
         ----------
@@ -101,7 +113,6 @@ class Button:
         -------
         bool
             True if the button was clicked, False otherwise.
-
         """
         if (
             event.type == pygame.MOUSEBUTTONDOWN
@@ -117,21 +128,53 @@ start_button = Button("Start", (400, 350), (200, 80), COLOR_RED, font)
 shuffle_play_button = Button(
     "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, font
 )
+exit_button = Button("Exit", (750, 350), (200, 80), COLOR_RED, font)
 
 # Game state
 state = "home"
 
 
 def home_screen():
-    """Display the home screen with the start button."""
-    screen.blit(background_image, (0, 0))
+    """Displays the home screen with the start button."""
+    screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
 
 
 def game_screen():
-    """Display the game screen with the shuffle and play button."""
-    screen.blit(background_image, (0, 0))
+    """Displays the game screen with the shuffle and play button."""
+    screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
+    exit_button.draw(screen)
+
+def draw_cards_fan(screen, cards, center_x, center_y, angle_offset):
+    """Draws cards in a fan-like arrangement."""
+    num_cards = len(cards)
+    total_angle = angle_offset * (num_cards - 1)
+    start_angle = -total_angle / 2
+
+    for i, card in enumerate(cards):
+        angle = math.radians(start_angle + angle_offset * i)
+        card_x = center_x + 150 * math.cos(angle)
+        card_y = center_y + 50 * math.sin(angle)
+        card_rect = card.get_rect(center=(card_x, card_y))
+        screen.blit(card, card_rect)
+
+def play_game():
+    """Displays the game screen with cards laid out for player and computer."""
+    screen.blit(game_background_image, (0, 0))
+
+    # Display computer's cards
+    card_width, card_height = scaled_card_image.get_size()
+    for i in range(NUM_CARDS):
+        x = (i + 1) * (SCREEN_WIDTH // (NUM_CARDS + 1)) - (card_width // 2)
+        y = 20  # Top of the screen
+        screen.blit(scaled_card_image, (x, y))
+
+    # Display player's cards in a fan arrangement
+    center_x, center_y = SCREEN_WIDTH // 2, SCREEN_HEIGHT - 100
+    draw_cards_fan(
+        screen, [scaled_card_image] * NUM_CARDS, center_x, center_y, 15
+    )
 
 # Main loop
 running = True
@@ -148,15 +191,22 @@ while running:
                 pass
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
-                print("Shuffle and Play button clicked")
+                state = "play"
+            elif exit_button.is_clicked(event):
+                running = False
             else:
                 # Handle other events on the game screen if needed
                 pass
+        elif state == "play":
+            # Handle events in the play state if needed
+            pass
 
     if state == "home":
         home_screen()
     elif state == "game":
         game_screen()
+    elif state == "play":
+        play_game()
 
     pygame.display.flip()
 
