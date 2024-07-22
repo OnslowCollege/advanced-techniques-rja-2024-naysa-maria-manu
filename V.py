@@ -62,7 +62,7 @@ class Button:
 
     def __init__(self, text, pos, size, color, font):
         """
-        Constructs all the necessary attributes for the button object.
+        Construct all the necessary attributes for the button object.
 
         Parameters
         ----------
@@ -76,6 +76,7 @@ class Button:
             The color of the button rectangle.
         font : pygame.font.Font
             The font used for the button text.
+
         """
         self.text = text
         self.pos = pos
@@ -96,13 +97,14 @@ class Button:
         ----------
         surface : pygame.Surface
             The surface to draw the button on.
+
         """
         pygame.draw.rect(surface, self.color, self.rect)
         surface.blit(self.rendered_text, self.text_rect)
 
     def is_clicked(self, event):
         """
-        Checks if the button was clicked.
+        Check if the button was clicked.
 
         Parameters
         ----------
@@ -113,6 +115,7 @@ class Button:
         -------
         bool
             True if the button was clicked, False otherwise.
+
         """
         if (
             event.type == pygame.MOUSEBUTTONDOWN
@@ -135,13 +138,13 @@ state = "home"
 
 
 def home_screen():
-    """Displays the home screen with the start button."""
+    """Display the home screen with the start button."""
     screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
 
 
 def game_screen():
-    """Displays the game screen with the shuffle and play button."""
+    """Display the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
     exit_button.draw(screen)
@@ -154,13 +157,13 @@ def draw_cards_fan(screen, cards, center_x, center_y, angle_offset):
 
     for i, card in enumerate(cards):
         angle = math.radians(start_angle + angle_offset * i)
-        card_x = center_x + 150 * math.cos(angle)
-        card_y = center_y + 50 * math.sin(angle)
+        card_x = center_x + 500 * math.sin(angle)
+        card_y = center_y + 1 * math.cos(angle)
         card_rect = card.get_rect(center=(card_x, card_y))
         screen.blit(card, card_rect)
 
 def play_game():
-    """Displays the game screen with cards laid out for player and computer."""
+    """Display the game screen with cards laid out for player and computer."""
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards
