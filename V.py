@@ -153,7 +153,7 @@ def draw_cards_fan(screen, cards, center_x, center_y, angle_offset):
     """Draws cards in a fan-like arrangement."""
     num_cards = len(cards)
     total_angle = angle_offset * (num_cards - 1)
-    start_angle = total_angle / 2
+    start_angle = -total_angle / 2
 
     for i, card in enumerate(cards):
         angle = math.radians(start_angle + angle_offset * i)
