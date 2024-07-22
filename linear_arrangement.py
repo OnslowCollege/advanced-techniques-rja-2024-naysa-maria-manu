@@ -151,7 +151,7 @@ def play_game():
     # Display computer's cards
     card_width, card_height = scaled_card_image.get_size()
     for i in range(NUM_CARDS):
-        x = (i + 1) * (SCREEN_WIDTH // (NUM_CARDS + 1)) - (card_width // 2)
+        x = (i + 1) * (SCREEN_WIDTH // (NUM_CARDS + 1)) - (card_width // 4)
         y = 20  # Top of the screen
         screen.blit(scaled_card_image, (x, y))
 
