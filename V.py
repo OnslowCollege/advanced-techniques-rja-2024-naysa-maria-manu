@@ -19,10 +19,8 @@ FONT_PATH = "Text_features/Font_mont.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_IMAGE = "images/UNO_card.jpg"
-# Number of cards per player
-NUM_CARDS = 7
-# Scale down the cards to 50% of their original size
-CARD_SCALE = 0.5
+NUM_CARDS = 7  # Number of cards per player
+CARD_SCALE = 0.5  # Scale down the cards to 50% of their original size
 
 # Load images and font
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -63,7 +61,7 @@ class Button:
 
     def __init__(self, text, pos, size, color, font):
         """
-        Construct all the necessary attributes for the button object.
+        Constructs all the necessary attributes for the button object.
 
         Parameters
         ----------
@@ -77,7 +75,6 @@ class Button:
             The color of the button rectangle.
         font : pygame.font.Font
             The font used for the button text.
-
         """
         self.text = text
         self.pos = pos
@@ -85,26 +82,26 @@ class Button:
         self.color = color
         self.font = font
         self.rect = pygame.Rect(pos, size)
-        # White text
-        self.rendered_text = self.font.render(text, True, (255, 255, 255))
+        self.rendered_text = self.font.render(
+            text, True, (255, 255, 255)
+        )  # White text
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
         """
-        Draws the button on the surface.
+        Draws the button on the given surface.
 
         Parameters
         ----------
         surface : pygame.Surface
             The surface to draw the button on.
-
         """
         pygame.draw.rect(surface, self.color, self.rect)
         surface.blit(self.rendered_text, self.text_rect)
 
     def is_clicked(self, event):
         """
-        Check if the button was clicked.
+        Checks if the button was clicked.
 
         Parameters
         ----------
@@ -115,7 +112,6 @@ class Button:
         -------
         bool
             True if the button was clicked, False otherwise.
-
         """
         if (
             event.type == pygame.MOUSEBUTTONDOWN
@@ -144,35 +140,35 @@ def home_screen():
 
 
 def game_screen():
-    """Display the game screen with the shuffle and play button."""
+    """Displays the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
     exit_button.draw(screen)
 
-def draw_cards_v(screen, cards, center_x, center_y):
-    """Draws cards in a V shape arrangement."""
+def draw_cards_reversed_v(screen, cards, center_x, center_y):
+    """Draws cards in a reversed V shape arrangement."""
     num_cards = len(cards)
     half_num_cards = num_cards // 2
     card_width, card_height = cards[0].get_size()
     offset = card_width // 2
 
-    # Draw left side of the V
+    # Draw right side of the reversed V
     for i in range(half_num_cards):
-        x = center_x - (half_num_cards - i) * offset
+        x = center_x + (half_num_cards - i) * offset
         y = center_y - i * (card_height // 2)
         screen.blit(cards[i], (x, y))
 
     # Draw middle card
     screen.blit(cards[half_num_cards], (center_x - offset // 2, center_y))
 
-    # Draw right side of the V
+    # Draw left side of the reversed V
     for i in range(half_num_cards + 1, num_cards):
-        x = center_x + (i - half_num_cards) * offset
+        x = center_x - (i - half_num_cards) * offset
         y = center_y - (i - half_num_cards) * (card_height // 2)
         screen.blit(cards[i], (x, y))
 
 def play_game():
-    """Display the game screen with cards laid out for player and computer."""
+    """Displays the game screen with cards laid out for player and computer."""
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards
@@ -182,9 +178,11 @@ def play_game():
         y = 20  # Top of the screen
         screen.blit(scaled_card_image, (x, y))
 
-    # Display player's cards in a V arrangement
+    # Display player's cards in a reversed V arrangement
     center_x, center_y = SCREEN_WIDTH // 2, SCREEN_HEIGHT - 100
-    draw_cards_v(screen, [scaled_card_image] * NUM_CARDS, center_x, center_y)
+    draw_cards_reversed_v(
+        screen, [scaled_card_image] * NUM_CARDS, center_x, center_y
+    )
 
 # Main loop
 running = True
