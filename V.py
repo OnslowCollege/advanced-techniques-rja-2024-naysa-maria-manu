@@ -19,8 +19,10 @@ FONT_PATH = "Text_features/Font_mont.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_IMAGE = "images/UNO_card.jpg"
-NUM_CARDS = 7  # Number of cards per player
-CARD_SCALE = 0.5  # Scale down the cards to 50% of their original size
+# Number of cards per player
+NUM_CARDS = 7
+# Scale down the cards to 50% of their original size
+CARD_SCALE = 0.5
 
 # Load images and font
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -61,7 +63,7 @@ class Button:
 
     def __init__(self, text, pos, size, color, font):
         """
-        Constructs all the necessary attributes for the button object.
+        Construct all the necessary attributes for the button object.
 
         Parameters
         ----------
@@ -75,6 +77,7 @@ class Button:
             The color of the button rectangle.
         font : pygame.font.Font
             The font used for the button text.
+
         """
         self.text = text
         self.pos = pos
@@ -82,9 +85,8 @@ class Button:
         self.color = color
         self.font = font
         self.rect = pygame.Rect(pos, size)
-        self.rendered_text = self.font.render(
-            text, True, (255, 255, 255)
-        )  # White text
+        # White text
+        self.rendered_text = self.font.render(text, True, (255, 255, 255))
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
@@ -95,13 +97,14 @@ class Button:
         ----------
         surface : pygame.Surface
             The surface to draw the button on.
+
         """
         pygame.draw.rect(surface, self.color, self.rect)
         surface.blit(self.rendered_text, self.text_rect)
 
     def is_clicked(self, event):
         """
-        Checks if the button was clicked.
+        Check if the button was clicked.
 
         Parameters
         ----------
@@ -112,6 +115,7 @@ class Button:
         -------
         bool
             True if the button was clicked, False otherwise.
+
         """
         if (
             event.type == pygame.MOUSEBUTTONDOWN
@@ -134,13 +138,13 @@ state = "home"
 
 
 def home_screen():
-    """Displays the home screen with the start button."""
+    """Display the home screen with the start button."""
     screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
 
 
 def game_screen():
-    """Displays the game screen with the shuffle and play button."""
+    """Display the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
     exit_button.draw(screen)
@@ -168,7 +172,7 @@ def draw_cards_reversed_v(screen, cards, center_x, center_y):
         screen.blit(cards[i], (x, y))
 
 def play_game():
-    """Displays the game screen with cards laid out for player and computer."""
+    """Display the game screen with cards laid out for player and computer."""
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards
