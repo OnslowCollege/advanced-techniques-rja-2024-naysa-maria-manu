@@ -62,7 +62,7 @@ class Button:
 
     def __init__(self, text, pos, size, color, font):
         """
-        Construct all the necessary attributes for the button object.
+        Constructs all the necessary attributes for the button object.
 
         Parameters
         ----------
@@ -76,7 +76,6 @@ class Button:
             The color of the button rectangle.
         font : pygame.font.Font
             The font used for the button text.
-
         """
         self.text = text
         self.pos = pos
@@ -97,14 +96,13 @@ class Button:
         ----------
         surface : pygame.Surface
             The surface to draw the button on.
-
         """
         pygame.draw.rect(surface, self.color, self.rect)
         surface.blit(self.rendered_text, self.text_rect)
 
     def is_clicked(self, event):
         """
-        Check if the button was clicked.
+        Checks if the button was clicked.
 
         Parameters
         ----------
@@ -115,7 +113,6 @@ class Button:
         -------
         bool
             True if the button was clicked, False otherwise.
-
         """
         if (
             event.type == pygame.MOUSEBUTTONDOWN
@@ -138,32 +135,37 @@ state = "home"
 
 
 def home_screen():
-    """Display the home screen with the start button."""
+    """Displays the home screen with the start button."""
     screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
 
 
 def game_screen():
-    """Display the game screen with the shuffle and play button."""
+    """Displays the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
     exit_button.draw(screen)
 
-def draw_cards_fan(screen, cards, center_x, center_y, angle_offset):
-    """Draws cards in a fan-like arrangement."""
+def draw_cards_v(screen, cards, center_x, center_y, angle_offset):
+    """Draws cards in a V shape arrangement."""
     num_cards = len(cards)
-    total_angle = angle_offset * (num_cards - 1)
-    start_angle = -total_angle / 2
+    half_num_cards = num_cards // 2
+    total_angle = angle_offset * (half_num_cards - 1)
 
-    for i, card in enumerate(cards):
-        angle = math.radians(start_angle + angle_offset * i)
-        card_x = center_x + 500 * math.sin(angle)
-        card_y = center_y + 1 * math.cos(angle)
-        card_rect = card.get_rect(center=(card_x, card_y))
-        screen.blit(card, card_rect)
+    for i in range(num_cards):
+        if i < half_num_cards:
+            angle = math.radians(-total_angle + angle_offset * i)
+        else:
+            angle = math.radians(
+                total_angle - angle_offset * (i - half_num_cards)
+            )
+        card_x = center_x + 100 * math.cos(angle)
+        card_y = center_y + 100 * math.sin(angle)
+        card_rect = cards[i].get_rect(center=(card_x, card_y))
+        screen.blit(cards[i], card_rect)
 
 def play_game():
-    """Display the game screen with cards laid out for player and computer."""
+    """Displays the game screen with cards laid out for player and computer."""
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards
@@ -173,9 +175,9 @@ def play_game():
         y = 20  # Top of the screen
         screen.blit(scaled_card_image, (x, y))
 
-    # Display player's cards in a fan arrangement
+    # Display player's cards in a V arrangement
     center_x, center_y = SCREEN_WIDTH // 2, SCREEN_HEIGHT - 100
-    draw_cards_fan(
+    draw_cards_v(
         screen, [scaled_card_image] * NUM_CARDS, center_x, center_y, 15
     )
 
