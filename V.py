@@ -19,8 +19,10 @@ FONT_PATH = "Text_features/Font_mont.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_IMAGE = "images/UNO_card.jpg"
-NUM_CARDS = 7  # Number of cards per player
-CARD_SCALE = 0.5  # Scale down the cards to 50% of their original size
+# Number of cards per player
+NUM_CARDS = 7
+# Scale down the cards to 50% of their original size
+CARD_SCALE = 0.5
 
 # Load images and font
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -47,7 +49,7 @@ class Button:
     Attributes
     ----------
     text : str
-        The text to display on the button.
+        The text to print on the button.
     pos : tuple
         The position of the top-left corner of the button.
     size : tuple
@@ -83,14 +85,13 @@ class Button:
         self.color = color
         self.font = font
         self.rect = pygame.Rect(pos, size)
-        self.rendered_text = self.font.render(
-            text, True, (255, 255, 255)
-        )  # White text
+        # White text
+        self.rendered_text = self.font.render(text, True, (255, 255, 255))
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
         """
-        Draws the button on the given surface.
+        Draws the button on the surface.
 
         Parameters
         ----------
@@ -126,7 +127,7 @@ class Button:
 
 
 # Create buttons
-start_button = Button("Start", (400, 350), (200, 80), COLOR_RED, font)
+start_button = Button("Start", (380, 250), (200, 80), COLOR_RED, font)
 shuffle_play_button = Button(
     "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, font
 )
@@ -162,7 +163,7 @@ def draw_cards_v(screen, cards, center_x, center_y):
         screen.blit(cards[i], (x, y))
 
     # Draw middle card
-    screen.blit((center_x - offset // 2, cards[half_num_cards], center_y))
+    screen.blit(cards[half_num_cards], (center_x - offset // 2, center_y))
 
     # Draw right side of the V
     for i in range(half_num_cards + 1, num_cards):
