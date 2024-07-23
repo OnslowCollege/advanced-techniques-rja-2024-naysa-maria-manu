@@ -157,18 +157,18 @@ def draw_cards_v(screen, cards, center_x, center_y):
     offset = card_width // 2
 
     # Draw left side of the V
-    for i in range(half_num_cards):
-        x = center_x - (half_num_cards - i) * offset
-        y = center_y - i * (card_height // 2)
+    for i in range(half_num_cards + 1, num_cards):
+        x = center_x + (i - half_num_cards) * offset
+        y = center_y - (i - half_num_cards) * (card_height // 2)
         screen.blit(cards[i], (x, y))
 
     # Draw middle card
     screen.blit(cards[half_num_cards], (center_x - offset // 2, center_y))
 
     # Draw right side of the V
-    for i in range(half_num_cards + 1, num_cards):
-        x = center_x + (i - half_num_cards) * offset
-        y = center_y - (i - half_num_cards) * (card_height // 2)
+    for i in range(half_num_cards):
+        x = center_x - (half_num_cards - i) * offset
+        y = center_y - i * (card_height // 2)
         screen.blit(cards[i], (x, y))
 
 def play_game():
