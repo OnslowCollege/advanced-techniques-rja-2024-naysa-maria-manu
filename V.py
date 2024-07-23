@@ -7,7 +7,6 @@ Date: DATE
 
 import pygame
 import sys
-import math
 
 # Initialize Pygame
 pygame.init()
@@ -146,23 +145,27 @@ def game_screen():
     shuffle_play_button.draw(screen)
     exit_button.draw(screen)
 
-def draw_cards_v(screen, cards, center_x, center_y, angle_offset):
+def draw_cards_v(screen, cards, center_x, center_y):
     """Draws cards in a V shape arrangement."""
     num_cards = len(cards)
     half_num_cards = num_cards // 2
-    total_angle = angle_offset * (half_num_cards - 1)
+    card_width, card_height = cards[0].get_size()
+    offset = card_width // 2
 
-    for i in range(num_cards):
-        if i < half_num_cards:
-            angle = math.radians(-total_angle + angle_offset * i)
-        else:
-            angle = math.radians(
-                total_angle - angle_offset * (i - half_num_cards)
-            )
-        card_x = center_x + 100 * math.cos(angle)
-        card_y = center_y + 100 * math.sin(angle)
-        card_rect = cards[i].get_rect(center=(card_x, card_y))
-        screen.blit(cards[i], card_rect)
+    # Draw left side of the V
+    for i in range(half_num_cards):
+        x = center_x - (half_num_cards - i) * offset
+        y = center_y - i * (card_height // 2)
+        screen.blit(cards[i], (x, y))
+
+    # Draw middle card
+    screen.blit(cards[half_num_cards], (center_x - offset // 2, center_y))
+
+    # Draw right side of the V
+    for i in range(half_num_cards + 1, num_cards):
+        x = center_x + (i - half_num_cards) * offset
+        y = center_y - (i - half_num_cards) * (card_height // 2)
+        screen.blit(cards[i], (x, y))
 
 def play_game():
     """Displays the game screen with cards laid out for player and computer."""
@@ -177,9 +180,7 @@ def play_game():
 
     # Display player's cards in a V arrangement
     center_x, center_y = SCREEN_WIDTH // 2, SCREEN_HEIGHT - 100
-    draw_cards_v(
-        screen, [scaled_card_image] * NUM_CARDS, center_x, center_y, 15
-    )
+    draw_cards_v(screen, [scaled_card_image] * NUM_CARDS, center_x, center_y)
 
 # Main loop
 running = True
