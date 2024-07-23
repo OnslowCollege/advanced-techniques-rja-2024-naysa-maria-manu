@@ -157,8 +157,8 @@ def draw_cards_v(screen, cards, center_x, center_y):
 
     # Draw left side of the V
     for i in range(half_num_cards):
-        x = center_x - (half_num_cards - i) * offset
-        y = center_y - i * (card_height // 2)
+        x = center_y - i * (card_height // 2)
+        y = center_x - (half_num_cards - i) * offset
         screen.blit(cards[i], (x, y))
 
     # Draw middle card
