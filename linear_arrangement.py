@@ -21,6 +21,7 @@ GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_IMAGE = "images/UNO_card.jpg"
 NUM_CARDS = 7  # Number of cards per player
 CARD_SCALE = 0.5  # Scale down the cards to 50% of their original size
+CARD_SPACING = 10  # Space between cards
 
 # Load images and font
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -154,13 +155,19 @@ def play_game():
     # Display computer's cards
     card_width, card_height = scaled_card_image.get_size()
     for i in range(NUM_CARDS):
-        x = (i + 1) * (SCREEN_WIDTH // (NUM_CARDS + 1)) - (card_width // 4)
+        x = (
+            i * (card_width + CARD_SPACING)
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+        )
         y = 20  # Top of the screen
         screen.blit(scaled_card_image, (x, y))
 
     # Display player's cards
     for i in range(NUM_CARDS):
-        x = (i + 1) * (SCREEN_WIDTH // (NUM_CARDS + 1)) - (card_width // 2)
+        x = (
+            i * (card_width + CARD_SPACING)
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+        )
         y = SCREEN_HEIGHT - card_height - 20  # Bottom of the screen
         screen.blit(scaled_card_image, (x, y))
 
