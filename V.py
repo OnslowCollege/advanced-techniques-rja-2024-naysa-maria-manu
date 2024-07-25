@@ -19,10 +19,9 @@ FONT_PATH = "Text_features/Font_mont.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_IMAGE = "images/UNO_card.jpg"
-# Number of cards per player
-NUM_CARDS = 7
-# Scale down the cards to 50% of their original size
-CARD_SCALE = 0.5
+NUM_CARDS = 7  # Number of cards per player
+CARD_SCALE = 0.5  # Scale down the cards to 50% of their original size
+CARD_SPACING = 10  # Space between cards
 
 # Load images and font
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -49,7 +48,7 @@ class Button:
     Attributes
     ----------
     text : str
-        The text to print on the button.
+        The text to display on the button.
     pos : tuple
         The position of the top-left corner of the button.
     size : tuple
@@ -85,8 +84,9 @@ class Button:
         self.color = color
         self.font = font
         self.rect = pygame.Rect(pos, size)
-        # White text
-        self.rendered_text = self.font.render(text, True, (255, 255, 255))
+        self.rendered_text = self.font.render(
+            text, True, (255, 255, 255)
+        )  # White text
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
@@ -127,11 +127,10 @@ class Button:
 
 
 # Create buttons
-start_button = Button("Start", (380, 250), (200, 80), COLOR_RED, font)
+start_button = Button("Start", (400, 350), (200, 80), COLOR_RED, font)
 shuffle_play_button = Button(
     "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, font
 )
-exit_button = Button("Exit", (750, 350), (200, 80), COLOR_RED, font)
 
 # Game state
 state = "home"
@@ -147,29 +146,7 @@ def game_screen():
     """Display the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
-    exit_button.draw(screen)
 
-def draw_cards_reversed_v(screen, cards, center_x, center_y):
-    """Draws cards in a reversed V shape arrangement."""
-    num_cards = len(cards)
-    half_num_cards = num_cards // 2
-    card_width, card_height = cards[0].get_size()
-    offset = card_width // 2
-
-    # Draw right side of the reversed V
-    for i in range(half_num_cards):
-        x = center_x + (half_num_cards - i) * offset
-        y = center_y - i * (card_height // 2)
-        screen.blit(cards[i], (x, y))
-
-    # Draw middle card
-    screen.blit(cards[half_num_cards], (center_x - offset // 2, center_y))
-
-    # Draw left side of the reversed V
-    for i in range(half_num_cards + 1, num_cards):
-        x = center_x - (i - half_num_cards) * offset
-        y = center_y - (i - half_num_cards) * (card_height // 2)
-        screen.blit(cards[i], (x, y))
 
 def play_game():
     """Display the game screen with cards laid out for player and computer."""
@@ -178,15 +155,48 @@ def play_game():
     # Display computer's cards
     card_width, card_height = scaled_card_image.get_size()
     for i in range(NUM_CARDS):
-        x = (i + 1) * (SCREEN_WIDTH // (NUM_CARDS + 1)) - (card_width // 2)
+        x = (
+            i * (card_width + CARD_SPACING)
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+        )
         y = 20  # Top of the screen
         screen.blit(scaled_card_image, (x, y))
 
-    # Display player's cards in a reversed V arrangement
-    center_x, center_y = SCREEN_WIDTH // 2, SCREEN_HEIGHT - 100
-    draw_cards_reversed_v(
-        screen, [scaled_card_image] * NUM_CARDS, center_x, center_y
-    )
+    # Display player's cards in a U-shape
+    mid_x = SCREEN_WIDTH // 2
+    positions = [
+        (
+            mid_x - 3 * card_width - 3 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 100,
+        ),  # Left bottom
+        (
+            mid_x - 2 * card_width - 2 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 60,
+        ),  # Left bottom
+        (
+            mid_x - card_width - CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 20,
+        ),  # Left bottom
+        (
+            mid_x - card_width // 2,
+            SCREEN_HEIGHT - card_height - 20,
+        ),  # Middle bottom
+        (
+            mid_x + card_width + CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 20,
+        ),  # Right bottom
+        (
+            mid_x + 2 * card_width + 2 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 60,
+        ),  # Right bottom
+        (
+            mid_x + 3 * card_width + 3 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 100,
+        ),  # Right bottom
+    ]
+
+    for i in range(NUM_CARDS):
+        screen.blit(scaled_card_image, positions[i])
 
 # Main loop
 running = True
@@ -204,8 +214,6 @@ while running:
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 state = "play"
-            elif exit_button.is_clicked(event):
-                running = False
             else:
                 # Handle other events on the game screen if needed
                 pass
