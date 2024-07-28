@@ -157,7 +157,7 @@ def play_game():
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 7
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
         # Top of the screen
         y = 20
