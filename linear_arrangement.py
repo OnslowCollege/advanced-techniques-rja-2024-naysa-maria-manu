@@ -15,6 +15,7 @@ pygame.init()
 SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 545
 COLOR_RED = (176, 39, 47)
+TEXT_COLOR = (254, 245, 185)  # New text color for the button
 FONT_PATH = "Text_features/Font_mont.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
@@ -59,10 +60,14 @@ class Button:
         The color of the button rectangle.
     font : pygame.font.Font
         The font used for the button text.
+    text_color : tuple
+        The color of the button text.
 
     """
 
-    def __init__(self, text, pos, size, color, font):
+    def __init__(
+        self, text, pos, size, color, font, text_color=(255, 255, 255)
+    ):
         """
         Construct all the necessary attributes for the button object.
 
@@ -78,6 +83,8 @@ class Button:
             The color of the button rectangle.
         font : pygame.font.Font
             The font used for the button text.
+        text_color : tuple, optional
+            The color of the button text (default is white).
 
         """
         self.text = text
@@ -85,10 +92,11 @@ class Button:
         self.size = size
         self.color = color
         self.font = font
+        self.text_color = text_color
         self.rect = pygame.Rect(pos, size)
         self.rendered_text = self.font.render(
-            text, True, (255, 255, 255)
-        )  # White text
+            text, True, self.text_color
+        )  # Button text color
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
@@ -142,6 +150,7 @@ reveal_cards_button = Button(
     (BUTTON_WIDTH, BUTTON_HEIGHT),
     COLOR_RED,
     font,
+    TEXT_COLOR,
 )
 
 # Game state
@@ -213,7 +222,6 @@ def reveal_cards():
 
     # Draw the reveal cards button
     reveal_cards_button.draw(screen)
-
 
 # Main loop
 running = True
