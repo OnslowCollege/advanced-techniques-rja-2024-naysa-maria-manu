@@ -131,9 +131,13 @@ start_button = Button("Start", (400, 350), (200, 80), COLOR_RED, font)
 shuffle_play_button = Button(
     "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, font
 )
+reveal_cards_button = Button(
+    "Reveal Cards", (400, 450), (200, 80), COLOR_RED, font
+)
 
 # Game state
 state = "home"
+cards_revealed = False
 
 
 def home_screen():
@@ -159,7 +163,8 @@ def play_game():
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        y = 20  # Top of the screen
+        # Top of the screen
+        y = 20
         screen.blit(scaled_card_image, (x, y))
 
     # Display player's cards
@@ -168,7 +173,37 @@ def play_game():
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        y = SCREEN_HEIGHT - card_height - 20  # Bottom of the screen
+        # Bottom of the screen
+        y = SCREEN_HEIGHT - card_height - 20  #
+        screen.blit(scaled_card_image, (x, y))
+
+    # Draw the reveal cards button
+    reveal_cards_button.draw(screen)
+
+
+def reveal_cards():
+    """Reveal the player's cards."""
+    screen.blit(game_background_image, (0, 0))
+
+    # Display computer's cards (face down)
+    card_width, card_height = scaled_card_image.get_size()
+    for i in range(NUM_CARDS):
+        x = (
+            i * (card_width + CARD_SPACING)
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+        )
+        # Top of the screen
+        y = 20
+        screen.blit(scaled_card_image, (x, y))
+
+    # Display player's cards (face up)
+    for i in range(NUM_CARDS):
+        x = (
+            i * (card_width + CARD_SPACING)
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+        )
+        # Bottom of the screen
+        y = SCREEN_HEIGHT - card_height - 20
         screen.blit(scaled_card_image, (x, y))
 
 # Main loop
@@ -182,24 +217,27 @@ while running:
             if start_button.is_clicked(event):
                 state = "game"
             else:
-                # Handle other events on the home screen if needed
                 pass
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 state = "play"
             else:
-                # Handle other events on the game screen if needed
                 pass
         elif state == "play":
-            # Handle events in the play state if needed
-            pass
+            if reveal_cards_button.is_clicked(event):
+                cards_revealed = True
+            else:
+                pass
 
     if state == "home":
         home_screen()
     elif state == "game":
         game_screen()
     elif state == "play":
-        play_game()
+        if cards_revealed:
+            reveal_cards()
+        else:
+            play_game()
 
     pygame.display.flip()
 
