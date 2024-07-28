@@ -168,24 +168,33 @@ def play_game():
     positions = [
         # left bottom
         (
-            mid_x - 3 * card_width - 3 * CARD_SPACING,
+            mid_x - 3 * card_width - 3 * CARD_SPACING - 50,
             SCREEN_HEIGHT - card_height - 100,
         ),
         (
-            mid_x - 2 * card_width - 2 * CARD_SPACING,
+            mid_x - 2 * card_width - 2 * CARD_SPACING - 50,
             SCREEN_HEIGHT - card_height - 60,
         ),
-        (mid_x - card_width - CARD_SPACING, SCREEN_HEIGHT - card_height - 20),
+        (
+            mid_x - card_width - CARD_SPACING - 50,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
         # middle bottom
-        (mid_x - card_width // 2, SCREEN_HEIGHT - card_height - 20),
-        # right bottom
-        (mid_x + card_width + CARD_SPACING, SCREEN_HEIGHT - card_height - 20),
         (
-            mid_x + 2 * card_width + 2 * CARD_SPACING,
+            mid_x - card_width // 3 - 50,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        # right bottom
+        (
+            mid_x + card_width + CARD_SPACING - 50,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        (
+            mid_x + 2 * card_width + 2 * CARD_SPACING - 50,
             SCREEN_HEIGHT - card_height - 60,
         ),
         (
-            mid_x + 2 * card_width + 3 * CARD_SPACING,
+            mid_x + 3 * card_width + 3 * CARD_SPACING - 50,
             SCREEN_HEIGHT - card_height - 100,
         ),
     ]
