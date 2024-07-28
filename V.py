@@ -159,7 +159,7 @@ def play_game():
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        y = 20  # Top of the screen
+        y = 15  # Top of the screen
         screen.blit(scaled_card_image, (x, y))
 
     # Display player's cards in a U-shape
