@@ -165,34 +165,28 @@ def play_game():
     # Display player's cards in a U-shape
     mid_x = SCREEN_WIDTH // 2
     positions = [
+        # left bottom
         (
             mid_x - 3 * card_width - 3 * CARD_SPACING,
             SCREEN_HEIGHT - card_height - 100,
-        ),  # Left bottom
+        ),
         (
             mid_x - 2 * card_width - 2 * CARD_SPACING,
             SCREEN_HEIGHT - card_height - 60,
-        ),  # Left bottom
-        (
-            mid_x - card_width - CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),  # Left bottom
-        (
-            mid_x - card_width // 2,
-            SCREEN_HEIGHT - card_height - 20,
-        ),  # Middle bottom
-        (
-            mid_x + card_width + CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),  # Right bottom
+        ),
+        (mid_x - card_width - CARD_SPACING, SCREEN_HEIGHT - card_height - 20),
+        # middle bottom
+        (mid_x - card_width // 2, SCREEN_HEIGHT - card_height - 20),
+        # right bottom
+        (mid_x + card_width + CARD_SPACING, SCREEN_HEIGHT - card_height - 20),
         (
             mid_x + 2 * card_width + 2 * CARD_SPACING,
             SCREEN_HEIGHT - card_height - 60,
-        ),  # Right bottom
+        ),
         (
             mid_x + 3 * card_width + 3 * CARD_SPACING,
             SCREEN_HEIGHT - card_height - 100,
-        ),  # Right bottom
+        ),
     ]
 
     for i in range(NUM_CARDS):
