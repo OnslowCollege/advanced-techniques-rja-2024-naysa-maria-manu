@@ -157,9 +157,10 @@ def play_game():
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 7
         )
-        y = 15  # Top of the screen
+        # Top of the screen
+        y = 20
         screen.blit(scaled_card_image, (x, y))
 
     # Display player's cards in a U-shape
@@ -176,7 +177,7 @@ def play_game():
         ),
         (mid_x - card_width - CARD_SPACING, SCREEN_HEIGHT - card_height - 20),
         # middle bottom
-        (mid_x - card_width // 2, SCREEN_HEIGHT - card_height - 20),
+        (mid_x - card_width // 27, SCREEN_HEIGHT - card_height - 20),
         # right bottom
         (mid_x + card_width + CARD_SPACING, SCREEN_HEIGHT - card_height - 20),
         (
