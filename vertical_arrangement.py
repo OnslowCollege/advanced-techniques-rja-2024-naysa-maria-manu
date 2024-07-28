@@ -157,20 +157,17 @@ def play_game():
     for i in range(NUM_CARDS):
         x = SCREEN_WIDTH - card_width - 20  # Right side of the screen
         y = 20 + i * (card_height + CARD_SPACING)
-        if y + card_height > SCREEN_HEIGHT:
-            y = (SCREEN_HEIGHT - card_height) - (
-                (NUM_CARDS - i) * (card_height + CARD_SPACING)
-            )
         screen.blit(scaled_card_image, (x, y))
 
-    # Display player's cards vertically aligned on the left side
-    for i in range(NUM_CARDS):
+    # Display player's cards in a 4+3 vertical arrangement on the left side
+    for i in range(4):
         x = 20  # Left side of the screen
         y = 20 + i * (card_height + CARD_SPACING)
-        if y + card_height > SCREEN_HEIGHT:
-            y = (SCREEN_HEIGHT - card_height) - (
-                (NUM_CARDS - i) * (card_height + CARD_SPACING)
-            )
+        screen.blit(scaled_card_image, (x, y))
+
+    for i in range(3):
+        x = 20 + card_width + CARD_SPACING  # Next to the first column
+        y = 20 + i * (card_height + CARD_SPACING)
         screen.blit(scaled_card_image, (x, y))
 
 # Main loop
