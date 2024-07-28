@@ -12,10 +12,14 @@ FONT_PATH = "Text_features/Font_mont.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_IMAGE = "images/UNO_card.jpg"
-NUM_CARDS = 7  # Number of cards per player
-CARD_SCALE = 0.5  # Scale down the cards to 50% of their original size
-CARD_SPACING = 10  # Space between cards
-REVEAL_BUTTON_SIZE = (200, 80)  # Size of the Reveal Cards button
+# Number of cards per player
+NUM_CARDS = 7
+# Scale down the cards to 50% of their original size
+CARD_SCALE = 0.5
+# Space between cards
+CARD_SPACING = 10
+# Size of the Reveal Cards button
+REVEAL_BUTTON_SIZE = (200, 80)
 
 # Define the new color
 REVEAL_BUTTON_COLOR = (254, 245, 185)
@@ -40,7 +44,7 @@ pygame.display.set_caption("Uno Game")
 
 class Button:
     """
-    A class to represent a button in the game.
+    A class to represent buttons in the game.
 
     Attributes
     ----------
@@ -59,7 +63,7 @@ class Button:
 
     def __init__(self, text, pos, size, color, font):
         """
-        Construct all the necessary attributes for the button object.
+        Construct necessary attributes for the button object.
 
         Parameters
         ----------
@@ -82,8 +86,11 @@ class Button:
         self.font = font
         self.rect = pygame.Rect(pos, size)
         self.rendered_text = self.font.render(
-            text, True, (255, 255, 255)
-        )  # White text
+            text,
+            True,
+            (255, 255, 255),
+            # White text
+        )
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
@@ -156,10 +163,7 @@ def game_screen():
 
 
 def play_game():
-    """Display the game screen with cards
-    laid out for player and computer, and the Reveal Cards button.
-
-    """
+    """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards
