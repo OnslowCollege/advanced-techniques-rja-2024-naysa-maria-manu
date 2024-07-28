@@ -1,10 +1,3 @@
-"""
-UNO.
-
-Created by: Naysa Maria Manu
-Date: DATE
-"""
-
 import pygame
 import sys
 
@@ -22,6 +15,10 @@ CARD_IMAGE = "images/UNO_card.jpg"
 NUM_CARDS = 7  # Number of cards per player
 CARD_SCALE = 0.5  # Scale down the cards to 50% of their original size
 CARD_SPACING = 10  # Space between cards
+REVEAL_BUTTON_SIZE = (200, 80)  # Size of the Reveal Cards button
+
+# Define the new color
+REVEAL_BUTTON_COLOR = (254, 245, 185)
 
 # Load images and font
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -131,6 +128,16 @@ start_button = Button("Start", (400, 350), (200, 80), COLOR_RED, font)
 shuffle_play_button = Button(
     "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, font
 )
+reveal_button = Button(
+    "Reveal Cards",
+    (
+        SCREEN_WIDTH // 2 - REVEAL_BUTTON_SIZE[0] // 2,
+        SCREEN_HEIGHT // 2 - REVEAL_BUTTON_SIZE[1] // 2,
+    ),
+    REVEAL_BUTTON_SIZE,
+    REVEAL_BUTTON_COLOR,
+    font,
+)
 
 # Game state
 state = "home"
@@ -149,7 +156,10 @@ def game_screen():
 
 
 def play_game():
-    """Display the game screen with cards laid out for player and computer."""
+    """Display the game screen with cards
+    laid out for player and computer, and the Reveal Cards button.
+
+    """
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards
@@ -202,6 +212,10 @@ def play_game():
     for i in range(NUM_CARDS):
         screen.blit(scaled_card_image, positions[i])
 
+    # Draw the Reveal Cards button
+    reveal_button.draw(screen)
+
+
 # Main loop
 running = True
 while running:
@@ -213,17 +227,18 @@ while running:
             if start_button.is_clicked(event):
                 state = "game"
             else:
-                # Handle other events on the home screen if needed
                 pass
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 state = "play"
             else:
-                # Handle other events on the game screen if needed
                 pass
         elif state == "play":
-            # Handle events in the play state if needed
-            pass
+            if reveal_button.is_clicked(event):
+                # Handle the reveal button
+                print("Reveal Cards button clicked!")
+            else:
+                pass
 
     if state == "home":
         home_screen()
