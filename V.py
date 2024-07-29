@@ -19,10 +19,11 @@ CARD_SCALE = 0.5
 # Space between cards
 CARD_SPACING = 10
 # Size of the Reveal Cards button
-REVEAL_BUTTON_SIZE = (200, 80)
+REVEAL_BUTTON_SIZE = (270, 60)
 
-# Define the new color
-REVEAL_BUTTON_COLOR = (254, 245, 185)
+# Define the new colors
+BUTTON_COLOR = COLOR_RED
+TEXT_COLOR = (254, 245, 185)
 
 # Load images and font
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -61,7 +62,7 @@ class Button:
 
     """
 
-    def __init__(self, text, pos, size, color, font):
+    def __init__(self, text, pos, size, color, text_color, font):
         """
         Construct necessary attributes for the button object.
 
@@ -75,6 +76,8 @@ class Button:
             The size (width, height) of the button.
         color : tuple
             The color of the button rectangle.
+        text_color : tuple
+            The color of the button text.
         font : pygame.font.Font
             The font used for the button text.
 
@@ -83,14 +86,12 @@ class Button:
         self.pos = pos
         self.size = size
         self.color = color
+        self.text_color = text_color
         self.font = font
         self.rect = pygame.Rect(pos, size)
         self.rendered_text = self.font.render(
-            text,
-            True,
-            (255, 255, 255),
-            # White text
-        )
+            text, True, self.text_color
+        )  # Text color
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
@@ -131,9 +132,11 @@ class Button:
 
 
 # Create buttons
-start_button = Button("Start", (400, 350), (200, 80), COLOR_RED, font)
+start_button = Button(
+    "Start", (400, 350), (200, 80), COLOR_RED, (255, 255, 255), font
+)
 shuffle_play_button = Button(
-    "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, font
+    "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, (255, 255, 255), font
 )
 reveal_button = Button(
     "Reveal Cards",
@@ -142,7 +145,8 @@ reveal_button = Button(
         SCREEN_HEIGHT // 2 - REVEAL_BUTTON_SIZE[1] // 2,
     ),
     REVEAL_BUTTON_SIZE,
-    REVEAL_BUTTON_COLOR,
+    BUTTON_COLOR,
+    TEXT_COLOR,
     font,
 )
 
@@ -231,17 +235,20 @@ while running:
             if start_button.is_clicked(event):
                 state = "game"
             else:
+                # Handle other events on the home screen if needed
                 pass
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 state = "play"
             else:
+                # Handle other events on the game screen if needed
                 pass
         elif state == "play":
             if reveal_button.is_clicked(event):
-                # Handle the reveal button
+                # Handle the reveal button click here
                 print("Reveal Cards button clicked!")
             else:
+                # Handle other events in the play state if needed
                 pass
 
     if state == "home":
