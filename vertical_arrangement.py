@@ -153,7 +153,7 @@ def play_game():
     screen.blit(game_background_image, (0, 0))
 
     # Redefine card size scaling
-    CARD_SCALE = 0.3  # Reduce the card size to 30% of the original
+    CARD_SCALE = 0.25  # Reduce the card size to 25% of the original
     scaled_card_image = pygame.transform.scale(
         original_card_image,
         (
@@ -167,7 +167,7 @@ def play_game():
     # Define positions for the player's and computer's cards
     player_x_start = 20
     player_y_start = 20
-    comp_x_start = SCREEN_WIDTH - card_width - 20
+    comp_x_start = SCREEN_WIDTH - 2 * (card_width + CARD_SPACING) - 20
     comp_y_start = 20
 
     # Display player's cards (4 cards in the first column, 3 cards in the second column)
