@@ -153,12 +153,12 @@ def play_game():
     screen.blit(game_background_image, (0, 0))
 
     # Redefine card size scaling
-    CARD_SCALE = 0.35  # Increase the card size to 35% of the original
+    card_scale = 0.35
     scaled_card_image = pygame.transform.scale(
         original_card_image,
         (
-            int(original_card_image.get_width() * CARD_SCALE),
-            int(original_card_image.get_height() * CARD_SCALE),
+            int(original_card_image.get_width() * card_scale),
+            int(original_card_image.get_height() * card_scale),
         ),
     )
 
