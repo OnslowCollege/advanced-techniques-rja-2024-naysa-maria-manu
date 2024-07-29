@@ -152,7 +152,7 @@ def play_game():
     """Display the game screen with cards laid out for player and computer."""
     screen.blit(game_background_image, (0, 0))
 
-    # Redefine card size scaling
+    # Redefine card size
     card_scale = 0.35
     scaled_card_image = pygame.transform.scale(
         original_card_image,
@@ -164,21 +164,15 @@ def play_game():
 
     card_width, card_height = scaled_card_image.get_size()
 
-    # Define positions for the player's and computer's cards
-    player_x_start = 20 + 20  # Move player's cards 20 pixels to the right
+    # Define positions for cards
+    player_x_start = 20 + 20
     player_y_start = 20
-    comp_x_start = (
-        SCREEN_WIDTH - 2 * (card_width + CARD_SPACING) - 20 - 20
-    )  # Move computer's cards 20 pixels to the left
-    comp_y_start = 50  # Lowered the starting position of the computer's cards
+    comp_x_start = SCREEN_WIDTH - 2 * (card_width + CARD_SPACING) - 20 - 20
+    comp_y_start = 80
 
     # Calculate vertical alignment adjustments
-    player_mid_offset = (
-        card_height + CARD_SPACING
-    ) * 1.5  # Space between 4 cards and 3 cards
-    comp_mid_offset = (
-        card_height + CARD_SPACING
-    ) * 0.5  # Space between 3 cards and 4 cards
+    player_mid_offset = (card_height + CARD_SPACING) * 1.5
+    comp_mid_offset = (card_height + CARD_SPACING) * 0.5
 
     # Adjust vertical offset to align the computer's cards perfectly
     comp_y_start_adjusted = (
