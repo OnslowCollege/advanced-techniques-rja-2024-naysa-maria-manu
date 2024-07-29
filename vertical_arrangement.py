@@ -1,9 +1,7 @@
-"""
 UNO.
 
 Created by: Naysa Maria Manu
 Date: DATE
-"""
 
 import pygame
 import sys
@@ -170,7 +168,7 @@ def play_game():
     comp_x_start = (
         SCREEN_WIDTH - 2 * (card_width + CARD_SPACING) - 20 - 20
     )  # Move computer's cards 20 pixels to the left
-    comp_y_start = 20
+    comp_y_start = 50  # Lowered the starting position of the computer's cards
 
     # Calculate vertical alignment adjustments
     player_mid_offset = (
