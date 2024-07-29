@@ -153,30 +153,37 @@ def play_game():
     screen.blit(game_background_image, (0, 0))
 
     # Redefine card size scaling
-    card_scale = 0.35
+    CARD_SCALE = 0.35  # Increase the card size to 35% of the original
     scaled_card_image = pygame.transform.scale(
         original_card_image,
         (
-            int(original_card_image.get_width() * card_scale),
-            int(original_card_image.get_height() * card_scale),
+            int(original_card_image.get_width() * CARD_SCALE),
+            int(original_card_image.get_height() * CARD_SCALE),
         ),
     )
 
     card_width, card_height = scaled_card_image.get_size()
 
     # Define positions for the player's and computer's cards
-    player_x_start = 20
+    player_x_start = 20 + 20  # Move player's cards 20 pixels to the right
     player_y_start = 20
-    comp_x_start = SCREEN_WIDTH - 2 * (card_width + CARD_SPACING) - 20
+    comp_x_start = (
+        SCREEN_WIDTH - 2 * (card_width + CARD_SPACING) - 20 - 20
+    )  # Move computer's cards 20 pixels to the left
     comp_y_start = 20
 
-    # Calculate middle alignment offsets
+    # Calculate vertical alignment adjustments
     player_mid_offset = (
         card_height + CARD_SPACING
     ) * 1.5  # Space between 4 cards and 3 cards
     comp_mid_offset = (
         card_height + CARD_SPACING
     ) * 0.5  # Space between 3 cards and 4 cards
+
+    # Adjust vertical offset to align the computer's cards perfectly
+    comp_y_start_adjusted = (
+        comp_y_start + (3 - 4) * (card_height + CARD_SPACING) / 2
+    )
 
     # Display player's cards
     # 4 cards on the left side
@@ -205,11 +212,7 @@ def play_game():
     # 4 cards centered next to the 3 cards
     for i in range(4):
         x = comp_x_start + card_width + CARD_SPACING
-        y = (
-            comp_y_start
-            + i * (card_height + CARD_SPACING)
-            - (4 - 3) * (card_height + CARD_SPACING) / 2
-        )
+        y = comp_y_start_adjusted + i * (card_height + CARD_SPACING)
         screen.blit(scaled_card_image, (x, y))
 
 
