@@ -152,23 +152,39 @@ def play_game():
     """Display the game screen with cards laid out for player and computer."""
     screen.blit(game_background_image, (0, 0))
 
-    # Display computer's cards
     card_width, card_height = scaled_card_image.get_size()
-    for i in range(NUM_CARDS):
-        x = SCREEN_WIDTH - card_width - 20  # Right side of the screen
-        y = 20 + i * (card_height + CARD_SPACING)
-        screen.blit(scaled_card_image, (x, y))
+    # Define positions for the player's and computer's cards
+    player_x_start = 20
+    player_y_start = 20
+    comp_x_start = SCREEN_WIDTH - card_width - 20
+    comp_y_start = 20
 
-    # Display player's cards in a 4+3 vertical arrangement on the left side
+    # Display computer's cards (4 cards on top, 3 cards on bottom)
     for i in range(4):
-        x = 20  # Left side of the screen
-        y = 20 + i * (card_height + CARD_SPACING)
+        x = comp_x_start
+        y = comp_y_start + i * (card_height + CARD_SPACING)
         screen.blit(scaled_card_image, (x, y))
 
     for i in range(3):
-        x = 20 + card_width + CARD_SPACING  # Next to the first column
-        y = 20 + i * (card_height + CARD_SPACING)
+        x = comp_x_start
+        y = (
+            comp_y_start
+            + (4 * (card_height + CARD_SPACING))
+            + i * (card_height + CARD_SPACING)
+        )
         screen.blit(scaled_card_image, (x, y))
+
+    # Display player's cards (3 cards on the left, 4 cards on the right)
+    for i in range(3):
+        x = player_x_start
+        y = player_y_start + i * (card_height + CARD_SPACING)
+        screen.blit(scaled_card_image, (x, y))
+
+    for i in range(4):
+        x = player_x_start + card_width + CARD_SPACING
+        y = player_y_start + i * (card_height + CARD_SPACING)
+        screen.blit(scaled_card_image, (x, y))
+
 
 # Main loop
 running = True
