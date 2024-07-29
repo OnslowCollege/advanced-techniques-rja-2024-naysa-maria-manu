@@ -170,7 +170,13 @@ def play_game():
     comp_x_start = SCREEN_WIDTH - card_width - 20
     comp_y_start = 20
 
-    # Display computer's cards (4 cards on top, 3 cards on bottom)
+    # Display player's cards (4 cards on the left side, vertically)
+    for i in range(4):
+        x = player_x_start
+        y = player_y_start + i * (card_height + CARD_SPACING)
+        screen.blit(scaled_card_image, (x, y))
+
+    # Display computer's cards (4 cards at the right side, vertically at the top and 3 cards below)
     for i in range(4):
         x = comp_x_start
         y = comp_y_start + i * (card_height + CARD_SPACING)
@@ -183,17 +189,6 @@ def play_game():
             + (4 * (card_height + CARD_SPACING))
             + i * (card_height + CARD_SPACING)
         )
-        screen.blit(scaled_card_image, (x, y))
-
-    # Display player's cards (3 cards on the left, 4 cards on the right)
-    for i in range(3):
-        x = player_x_start
-        y = player_y_start + i * (card_height + CARD_SPACING)
-        screen.blit(scaled_card_image, (x, y))
-
-    for i in range(4):
-        x = player_x_start + card_width + CARD_SPACING
-        y = player_y_start + i * (card_height + CARD_SPACING)
         screen.blit(scaled_card_image, (x, y))
 
 
