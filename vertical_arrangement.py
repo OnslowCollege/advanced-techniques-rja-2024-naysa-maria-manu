@@ -153,12 +153,12 @@ def play_game():
     screen.blit(game_background_image, (0, 0))
 
     # Redefine card size scaling
-    CARD_SCALE = 0.38
+    card_scale = 0.35
     scaled_card_image = pygame.transform.scale(
         original_card_image,
         (
-            int(original_card_image.get_width() * CARD_SCALE),
-            int(original_card_image.get_height() * CARD_SCALE),
+            int(original_card_image.get_width() * card_scale),
+            int(original_card_image.get_height() * card_scale),
         ),
     )
 
@@ -170,26 +170,46 @@ def play_game():
     comp_x_start = SCREEN_WIDTH - 2 * (card_width + CARD_SPACING) - 20
     comp_y_start = 20
 
-    # Display player's cards (4 cards in the first column, 3 cards in the second column)
+    # Calculate middle alignment offsets
+    player_mid_offset = (
+        card_height + CARD_SPACING
+    ) * 1.5  # Space between 4 cards and 3 cards
+    comp_mid_offset = (
+        card_height + CARD_SPACING
+    ) * 0.5  # Space between 3 cards and 4 cards
+
+    # Display player's cards
+    # 4 cards on the left side
     for i in range(4):
         x = player_x_start
         y = player_y_start + i * (card_height + CARD_SPACING)
         screen.blit(scaled_card_image, (x, y))
 
+    # 3 cards centered next to the 4 cards
     for i in range(3):
         x = player_x_start + card_width + CARD_SPACING
-        y = player_y_start + i * (card_height + CARD_SPACING)
+        y = (
+            player_y_start
+            + i * (card_height + CARD_SPACING)
+            + (4 - 3) * (card_height + CARD_SPACING) / 2
+        )
         screen.blit(scaled_card_image, (x, y))
 
-    # Display computer's cards (3 cards in the first column, 4 cards in the second column)
+    # Display computer's cards
+    # 3 cards on the right side
     for i in range(3):
         x = comp_x_start
         y = comp_y_start + i * (card_height + CARD_SPACING)
         screen.blit(scaled_card_image, (x, y))
 
+    # 4 cards centered next to the 3 cards
     for i in range(4):
         x = comp_x_start + card_width + CARD_SPACING
-        y = comp_y_start + i * (card_height + CARD_SPACING)
+        y = (
+            comp_y_start
+            + i * (card_height + CARD_SPACING)
+            - (4 - 3) * (card_height + CARD_SPACING) / 2
+        )
         screen.blit(scaled_card_image, (x, y))
 
 
