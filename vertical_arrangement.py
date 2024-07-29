@@ -1,7 +1,9 @@
+"""
 UNO.
 
 Created by: Naysa Maria Manu
 Date: DATE
+"""
 
 import pygame
 import sys
