@@ -15,7 +15,7 @@ CARD_IMAGE = "images/UNO_card.jpg"
 # Number of cards per player
 NUM_CARDS = 7
 # Scale down the cards to 50% of their original size
-CARD_SCALE = 0.5
+CARD_SCALE = 0.47
 # Space between cards
 CARD_SPACING = 10
 # Size of the Reveal Cards button
