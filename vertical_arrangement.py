@@ -8,24 +8,14 @@ pygame.init()
 SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 545
 COLOR_RED = (176, 39, 47)
+TEXT_COLOR = (255, 254, 177)
 FONT_PATH = "Text_features/Font_mont.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_IMAGE = "images/UNO_card2.jpg"
-# Number of cards per player
-NUM_CARDS = 7
+NUM_CARDS = 7  # Number of cards per player
 CARD_SCALE = 0.5
-# Space between cards
-CARD_SPACING = 10
-BUTTON_WIDTH = 300
-BUTTON_HEIGHT = 80
-
-# Size of the Reveal Cards button
-REVEAL_BUTTON_SIZE = (270, 60)
-
-# Define the new colors
-BUTTON_COLOR = COLOR_RED
-TEXT_COLOR = (254, 245, 185)
+CARD_SPACING = 10  # Space between cards
 
 # Load images and font
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -64,7 +54,9 @@ class Button:
 
     """
 
-    def __init__(self, text, pos, size, color, font):
+    def __init__(
+        self, text, pos, size, color, font, text_color=(255, 255, 255)
+    ):
         """
         Construct all the necessary attributes for the button object.
 
@@ -80,6 +72,8 @@ class Button:
             The color of the button rectangle.
         font : pygame.font.Font
             The font used for the button text.
+        text_color : tuple, optional
+            The color of the button text (default is white).
 
         """
         self.text = text
@@ -87,10 +81,9 @@ class Button:
         self.size = size
         self.color = color
         self.font = font
+        self.text_color = text_color
         self.rect = pygame.Rect(pos, size)
-        self.rendered_text = self.font.render(
-            text, True, (255, 255, 255)
-        )  # White text
+        self.rendered_text = self.font.render(text, True, text_color)
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
@@ -135,16 +128,8 @@ start_button = Button("Start", (400, 350), (200, 80), COLOR_RED, font)
 shuffle_play_button = Button(
     "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, font
 )
-reveal_cards_button = Button(
-    "Reveal Cards",
-    (
-        SCREEN_WIDTH // 2 - BUTTON_WIDTH // 2,
-        (SCREEN_HEIGHT // 2) - BUTTON_HEIGHT // 2,
-    ),
-    (BUTTON_WIDTH, BUTTON_HEIGHT),
-    COLOR_RED,
-    font,
-    TEXT_COLOR,
+reveal_button = Button(
+    "Reveal Cards", (350, 230), (260, 80), COLOR_RED, font, TEXT_COLOR
 )
 
 # Game state
@@ -225,7 +210,7 @@ def play_game():
         screen.blit(scaled_card_image, (x, y))
 
     # Draw the reveal button
-    reveal_cards_button.draw(screen)
+    reveal_button.draw(screen)
 
 
 # Main loop
@@ -248,7 +233,7 @@ while running:
                 # Handle other events on the game screen if needed
                 pass
         elif state == "play":
-            if reveal_cards_button.is_clicked(event):
+            if reveal_button.is_clicked(event):
                 # Add functionality to reveal cards if needed
                 print("Reveal button clicked!")
             else:
