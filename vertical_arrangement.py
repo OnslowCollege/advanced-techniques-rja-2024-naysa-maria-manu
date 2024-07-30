@@ -1,10 +1,3 @@
-"""
-UNO.
-
-Created by: Naysa Maria Manu
-Date: DATE
-"""
-
 import pygame
 import sys
 
@@ -131,6 +124,7 @@ start_button = Button("Start", (400, 350), (200, 80), COLOR_RED, font)
 shuffle_play_button = Button(
     "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, font
 )
+reveal_button = Button("Reveal Cards", (380, 240), (200, 60), COLOR_RED, font)
 
 # Game state
 state = "home"
@@ -152,7 +146,7 @@ def play_game():
     """Display the game screen with cards laid out for player and computer."""
     screen.blit(game_background_image, (0, 0))
 
-    # define card size
+    # Define card size
     card_scale = 0.55
     scaled_card_image = pygame.transform.scale(
         original_card_image,
@@ -209,6 +203,8 @@ def play_game():
         y = comp_y_start_adjusted + i * (card_height + CARD_SPACING)
         screen.blit(scaled_card_image, (x, y))
 
+    # Draw the reveal button
+    reveal_button.draw(screen)
 
 
 # Main loop
@@ -231,8 +227,12 @@ while running:
                 # Handle other events on the game screen if needed
                 pass
         elif state == "play":
-            # Handle events in the play state if needed
-            pass
+            if reveal_button.is_clicked(event):
+                # Add functionality to reveal cards if needed
+                print("Reveal button clicked!")
+            else:
+                # Handle other events in the play state if needed
+                pass
 
     if state == "home":
         home_screen()
