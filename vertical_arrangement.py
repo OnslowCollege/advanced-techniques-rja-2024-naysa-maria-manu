@@ -18,7 +18,7 @@ COLOR_RED = (176, 39, 47)
 FONT_PATH = "Text_features/Font_mont.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
-CARD_IMAGE = "images/UNO_card.jpg"
+CARD_IMAGE = "images/UNO_card2.jpg"
 NUM_CARDS = 7  # Number of cards per player
 CARD_SCALE = 0.5
 CARD_SPACING = 10  # Space between cards
@@ -153,7 +153,7 @@ def play_game():
     screen.blit(game_background_image, (0, 0))
 
     # define card size
-    card_scale = 0.45
+    card_scale = 0.55
     scaled_card_image = pygame.transform.scale(
         original_card_image,
         (
