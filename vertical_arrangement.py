@@ -13,9 +13,11 @@ FONT_PATH = "Text_features/Font_mont.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_IMAGE = "images/UNO_card2.jpg"
-NUM_CARDS = 7  # Number of cards per player
+# Number of cards per player
+NUM_CARDS = 7
 CARD_SCALE = 0.5
-CARD_SPACING = 10  # Space between cards
+# Space between cards
+CARD_SPACING = 10
 
 # Load images and font
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -224,20 +226,16 @@ while running:
             if start_button.is_clicked(event):
                 state = "game"
             else:
-                # Handle other events on the home screen if needed
                 pass
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 state = "play"
             else:
-                # Handle other events on the game screen if needed
                 pass
         elif state == "play":
             if reveal_button.is_clicked(event):
-                # Add functionality to reveal cards if needed
                 print("Reveal button clicked!")
             else:
-                # Handle other events in the play state if needed
                 pass
 
     if state == "home":
