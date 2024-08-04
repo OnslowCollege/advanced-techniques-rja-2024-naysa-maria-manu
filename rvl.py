@@ -73,32 +73,27 @@ for color in card_colors:
 for color in card_colors:
     for special in special_cards:
         card_name = f"{color}_{special}.jpg"
-        card_images[f"{color}_{special}"] = pygame.image.load(
-            f"images/{card_name}"
-        )
+        card_image = pygame.image.load(f"images/{card_name}")
         card_images[f"{color}_{special}"] = pygame.transform.scale(
-            card_images[f"{color}_{special}"],
+            card_image,
             (
-                int(
-                    card_images[f"{color}_{special}"].get_width() * CARD_SCALE
-                ),
-                int(
-                    card_images[f"{color}_{special}"].get_height() * CARD_SCALE
-                ),
+                int(scaled_card_image.get_width()),
+                int(scaled_card_image.get_height()),
             ),
         )
 
 # Load wild cards
 for wild in wild_cards:
     card_name = f"UNO_{wild}.jpg"
-    card_images[wild] = pygame.image.load(f"images/{card_name}")
+    card_image = pygame.image.load(f"images/{card_name}")
     card_images[wild] = pygame.transform.scale(
-        card_images[wild],
+        card_image,
         (
-            int(card_images[wild].get_width() * CARD_SCALE),
-            int(card_images[wild].get_height() * CARD_SCALE),
+            int(scaled_card_image.get_width()),
+            int(scaled_card_image.get_height()),
         ),
     )
+
 
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
