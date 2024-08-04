@@ -51,48 +51,62 @@ special_cards = ["+2", "skip"]
 wild_cards = ["+4"]
 card_images = {}
 
-# Load number cards
-for color in card_colors:
-    base_image = pygame.image.load(f"images/{color}_UNO.jpg")
-    for number in range(10):
-        card_image = base_image.copy()
-        number_text = font_card.render(
-            str(number), True, (0, 0, 0)
-        )  # Black number
-        number_rect = number_text.get_rect(center=card_image.get_rect().center)
-        card_image.blit(number_text, number_rect)
-        card_images[f"{color}_{number}"] = pygame.transform.scale(
-            card_image,
-            (
-                int(card_image.get_width() * CARD_SCALE),
-                int(card_image.get_height() * CARD_SCALE),
-            ),
-        )
+# Load and scale cards
+def load_and_scale_card_images():
+    card_images = {}
+    # Load number cards
+    for color in card_colors:
+        base_image = pygame.image.load(f"images/{color}_UNO.jpg")
+        for number in range(10):
+            card_image = base_image.copy()
+            number_text = font_card.render(
+                str(number), True, (0, 0, 0)
+            )  # Black number
+            number_rect = number_text.get_rect(
+                center=card_image.get_rect().center
+            )
+            card_image.blit(number_text, number_rect)
+            scaled_image = pygame.transform.scale(
+                card_image,
+                (
+                    int(scaled_card_image.get_width()),
+                    int(scaled_card_image.get_height()),
+                ),
+            )
+            card_images[f"{color}_{number}"] = scaled_image
 
-# Load special cards
-for color in card_colors:
-    for special in special_cards:
-        card_name = f"{color}_{special}.jpg"
+    # Load special cards
+    for color in card_colors:
+        for special in special_cards:
+            card_name = f"{color}_{special}.jpg"
+            card_image = pygame.image.load(f"images/{card_name}")
+            scaled_image = pygame.transform.scale(
+                card_image,
+                (
+                    int(scaled_card_image.get_width()),
+                    int(scaled_card_image.get_height()),
+                ),
+            )
+            card_images[f"{color}_{special}"] = scaled_image
+
+    # Load wild cards
+    for wild in wild_cards:
+        card_name = f"UNO_{wild}.jpg"
         card_image = pygame.image.load(f"images/{card_name}")
-        card_images[f"{color}_{special}"] = pygame.transform.scale(
+        scaled_image = pygame.transform.scale(
             card_image,
             (
                 int(scaled_card_image.get_width()),
                 int(scaled_card_image.get_height()),
             ),
         )
+        card_images[wild] = scaled_image
 
-# Load wild cards
-for wild in wild_cards:
-    card_name = f"UNO_{wild}.jpg"
-    card_image = pygame.image.load(f"images/{card_name}")
-    card_images[wild] = pygame.transform.scale(
-        card_image,
-        (
-            int(scaled_card_image.get_width()),
-            int(scaled_card_image.get_height()),
-        ),
-    )
+    return card_images
+
+
+# Initialize card images
+card_images = load_and_scale_card_images()
 
 
 # Create the screen
