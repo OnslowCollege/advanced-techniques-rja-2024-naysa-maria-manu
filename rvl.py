@@ -283,10 +283,9 @@ def play_game():
     ]
 
     for i in range(NUM_CARDS):
-        if reveal_cards:
-            card_image = card_images[player_hand[i]]
-        else:
-            card_image = scaled_card_image
+        card_image = (
+            card_images[player_hand[i]] if reveal_cards else scaled_card_image
+        )
         screen.blit(card_image, positions[i])
 
     # Draw the Reveal Cards button
@@ -312,30 +311,19 @@ while running:
             if start_button.is_clicked(event):
                 state = "game"
             else:
-                # Handle other events on the home screen if needed
-                pass
+                home_screen()
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
-                state = "play"
                 shuffle_and_deal()
+                state = "play"
             else:
-                # Handle other events on the game screen if needed
-                pass
+                game_screen()
         elif state == "play":
             if reveal_button.is_clicked(event):
                 reveal_cards = True
-            else:
-                # Handle other events in the play state if needed
-                pass
+            play_game()
 
-    if state == "home":
-        home_screen()
-    elif state == "game":
-        game_screen()
-    elif state == "play":
-        play_game()
-
-    pygame.display.flip()
+        pygame.display.flip()
 
 pygame.quit()
 sys.exit()
