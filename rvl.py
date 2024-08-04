@@ -9,7 +9,8 @@ pygame.init()
 SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 545
 COLOR_RED = (176, 39, 47)
-FONT_PATH = "Text_features/Comic.ttf"  # Updated font path
+FONT_PATH_BUTTON = "Text_features/Font_mont.ttf"  # Montserrat font for buttons
+FONT_PATH_CARD = "Text_features/Comic.ttf"  # Comic.ttf font for card numbers
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
@@ -26,7 +27,7 @@ REVEAL_BUTTON_SIZE = (270, 60)
 BUTTON_COLOR = COLOR_RED
 TEXT_COLOR = (254, 245, 185)
 
-# Load images and font
+# Load images and fonts
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
 game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
 original_card_image = pygame.image.load(CARD_BACK_IMAGE)
@@ -37,7 +38,12 @@ scaled_card_image = pygame.transform.scale(
         int(original_card_image.get_height() * CARD_SCALE),
     ),
 )
-font = pygame.font.Font(FONT_PATH, 60)  # Increased font size
+font_button = pygame.font.Font(
+    FONT_PATH_BUTTON, 40
+)  # Montserrat font for buttons
+font_card = pygame.font.Font(
+    FONT_PATH_CARD, 60
+)  # Comic.ttf font for card numbers
 
 # Card images
 card_colors = ["red", "yellow", "green", "blue"]
@@ -50,7 +56,9 @@ for color in card_colors:
     base_image = pygame.image.load(f"images/{color}_UNO.jpg")
     for number in range(10):
         card_image = base_image.copy()
-        number_text = font.render(str(number), True, (0, 0, 0))  # Black number
+        number_text = font_card.render(
+            str(number), True, (0, 0, 0)
+        )  # Black number
         number_rect = number_text.get_rect(center=card_image.get_rect().center)
         card_image.blit(number_text, number_rect)
         card_images[f"{color}_{number}"] = pygame.transform.scale(
@@ -187,10 +195,15 @@ class Button:
 
 # Create buttons
 start_button = Button(
-    "Start", (400, 350), (200, 80), COLOR_RED, (255, 255, 255), font
+    "Start", (400, 350), (200, 80), COLOR_RED, (255, 255, 255), font_button
 )
 shuffle_play_button = Button(
-    "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, (255, 255, 255), font
+    "Shuffle and Play",
+    (300, 350),
+    (400, 80),
+    COLOR_RED,
+    (255, 255, 255),
+    font_button,
 )
 reveal_button = Button(
     "Reveal Cards",
@@ -201,7 +214,7 @@ reveal_button = Button(
     REVEAL_BUTTON_SIZE,
     BUTTON_COLOR,
     TEXT_COLOR,
-    font,
+    font_button,
 )
 
 # Game variables
@@ -237,10 +250,7 @@ def play_game():
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
         y = 20
-        if reveal_cards:
-            screen.blit(card_images[computer_hand[i]], (x, y))
-        else:
-            screen.blit(scaled_card_image, (x, y))
+        screen.blit(scaled_card_image, (x, y))
 
     # Display player's cards
     mid_x = SCREEN_WIDTH // 2
