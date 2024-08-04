@@ -207,6 +207,7 @@ reveal_button = Button(
 # Game variables
 player_hand = []
 computer_hand = []
+reveal_cards = False
 
 # Game state
 state = "home"
@@ -235,9 +236,11 @@ def play_game():
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        # Top of the screen
         y = 20
-        screen.blit(scaled_card_image, (x, y))
+        if reveal_cards:
+            screen.blit(card_images[computer_hand[i]], (x, y))
+        else:
+            screen.blit(scaled_card_image, (x, y))
 
     # Display player's cards
     mid_x = SCREEN_WIDTH // 2
@@ -270,7 +273,10 @@ def play_game():
     ]
 
     for i in range(NUM_CARDS):
-        card_image = card_images[player_hand[i]]
+        if reveal_cards:
+            card_image = card_images[player_hand[i]]
+        else:
+            card_image = scaled_card_image
         screen.blit(card_image, positions[i])
 
     # Draw the Reveal Cards button
@@ -284,7 +290,6 @@ def shuffle_and_deal():
     global player_hand, computer_hand
     player_hand = deck[:NUM_CARDS]
     computer_hand = deck[NUM_CARDS : NUM_CARDS * 2]
-
 
 # Main loop
 running = True
@@ -308,10 +313,7 @@ while running:
                 pass
         elif state == "play":
             if reveal_button.is_clicked(event):
-                # Handle the reveal button click here
-                print("Reveal Cards button clicked!")
-                # Reveal the user's and computer's cards
-                play_game()
+                reveal_cards = True
             else:
                 # Handle other events in the play state if needed
                 pass
