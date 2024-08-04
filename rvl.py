@@ -9,7 +9,7 @@ pygame.init()
 SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 545
 COLOR_RED = (176, 39, 47)
-FONT_PATH = "Text_features/Font_mont.ttf"
+FONT_PATH = "Text_features/Comic.ttf"  # Updated font path
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
@@ -37,7 +37,7 @@ scaled_card_image = pygame.transform.scale(
         int(original_card_image.get_height() * CARD_SCALE),
     ),
 )
-font = pygame.font.Font(FONT_PATH, 40)
+font = pygame.font.Font(FONT_PATH, 60)  # Increased font size
 
 # Card images
 card_colors = ["red", "yellow", "green", "blue"]
