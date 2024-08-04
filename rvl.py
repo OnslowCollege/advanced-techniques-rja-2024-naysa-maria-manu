@@ -40,7 +40,7 @@ font_card = pygame.font.Font(CARD_FONT_PATH, 60)
 
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.setCaption("Uno Game")
+pygame.display.set_caption("Uno Game")
 
 # Define card images dictionary
 card_images = {}
@@ -89,7 +89,9 @@ def load_and_scale_card_images():
             ),
         )
 
+
 load_and_scale_card_images()
+
 
 class Button:
     """A class to represent buttons in the game."""
@@ -162,6 +164,7 @@ def shuffle_and_deal():
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
 
+
 def home_screen():
     """Display the home screen with the start button."""
     screen.blit(home_background_image, (0, 0))
@@ -172,7 +175,6 @@ def game_screen():
     """Display the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
-
 
 def play_game():
     """Display the game screen with cards."""
