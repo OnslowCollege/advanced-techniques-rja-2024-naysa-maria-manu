@@ -10,6 +10,7 @@ SCREEN_WIDTH = 960
 SCREEN_HEIGHT = 545
 COLOR_RED = (176, 39, 47)
 FONT_PATH = "Text_features/Font_mont.ttf"
+CARD_FONT_PATH = "Text_features/Comic.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 # Number of cards per player
@@ -25,51 +26,81 @@ REVEAL_BUTTON_SIZE = (270, 60)
 BUTTON_COLOR = COLOR_RED
 TEXT_COLOR = (254, 245, 185)
 
-# Load images and font
+# Define card colors and types
+card_colors = ["blue", "red", "yellow", "green"]
+special_cards = ["+2", "skip", "rev"]
+wild_cards = ["+4"]
+
+# Load images and fonts
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
 game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
-original_card_image = pygame.image.load(
-    "images/UNO_card.jpg"
-)  # Default card image for unknown cards
+original_card_image = pygame.image.load("images/UNO_card.jpg")
+scaled_card_image = pygame.transform.scale(
+    original_card_image,
+    (
+        int(original_card_image.get_width() * CARD_SCALE),
+        int(original_card_image.get_height() * CARD_SCALE),
+    ),
+)
 font = pygame.font.Font(FONT_PATH, 40)
-
-
-# Function to load card images based on filenames
-def load_card_image(filename):
-    image = pygame.image.load(filename)
-    return pygame.transform.scale(
-        image,
-        (
-            int(image.get_width() * CARD_SCALE),
-            int(image.get_height() * CARD_SCALE),
-        ),
-    )
-
-
-# Card filenames
-colors = ["red", "blue", "green", "yellow"]
-numbers = [str(i) for i in range(10)] + [str(i) for i in range(1, 10)]
-specials = ["skip", "rev", "+2"]
-wild_cards = ["UNO_+4.jpg"]
-
-# Load all card images into a dictionary
-card_images = {}
-for color in colors:
-    for number in numbers:
-        filename = f"images/{color}_{number}.jpg"
-        card_images[f"{color}_{number}"] = load_card_image(filename)
-    for special in specials:
-        filename = f"images/{color}_{special}.jpg"
-        card_images[f"{color}_{special}"] = load_card_image(filename)
-for wild in wild_cards:
-    card_images[wild] = load_card_image(f"images/{wild}")
+font_card = pygame.font.Font(CARD_FONT_PATH, 60)
 
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Uno Game")
 
+# Define card images dictionary
+card_images = {}
+
+
+# Load and scale card images
+def load_and_scale_card_images():
+    global card_images
+    card_images = {}
+
+    # Load number cards
+    for color in card_colors:
+        for number in range(10):
+            card_name = f"{color}_UNO{number}.jpg"
+            card_image = pygame.image.load(f"images/{card_name}")
+            card_images[f"{color}_{number}"] = pygame.transform.scale(
+                card_image,
+                (
+                    int(scaled_card_image.get_width()),
+                    int(scaled_card_image.get_height()),
+                ),
+            )
+
+    # Load special cards
+    for color in card_colors:
+        for special in special_cards:
+            card_name = f"{color}_{special}.jpg"
+            card_image = pygame.image.load(f"images/{card_name}")
+            card_images[f"{color}_{special}"] = pygame.transform.scale(
+                card_image,
+                (
+                    int(scaled_card_image.get_width()),
+                    int(scaled_card_image.get_height()),
+                ),
+            )
+
+    # Load wild cards
+    for wild in wild_cards:
+        card_name = f"UNO_{wild}.jpg"
+        card_image = pygame.image.load(f"images/{card_name}")
+        card_images[wild] = pygame.transform.scale(
+            card_image,
+            (
+                int(scaled_card_image.get_width()),
+                int(scaled_card_image.get_height()),
+            ),
+        )
+
+load_and_scale_card_images()
 
 class Button:
+    """A class to represent buttons in the game."""
+
     def __init__(self, text, pos, size, color, text_color, font):
         self.text = text
         self.pos = pos
@@ -78,7 +109,9 @@ class Button:
         self.text_color = text_color
         self.font = font
         self.rect = pygame.Rect(pos, size)
-        self.rendered_text = self.font.render(text, True, self.text_color)
+        self.rendered_text = self.font.render(
+            text, True, self.text_color
+        )  # Text color
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
@@ -116,61 +149,98 @@ reveal_button = Button(
 
 # Game state
 state = "home"
-user_hand = []
-computer_hand = []
+reveal_cards = False
+player_cards = []
+computer_cards = []
+
+
+def shuffle_and_deal():
+    global player_cards, computer_cards
+    deck = [
+        f"{color}_{number}" for color in card_colors for number in range(10)
+    ]
+    deck += [
+        f"{color}_{special}"
+        for color in card_colors
+        for special in special_cards
+    ]
+    deck += [wild for wild in wild_cards] * 4  # 4 wild cards
+    random.shuffle(deck)
+    player_cards = deck[:NUM_CARDS]
+    computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
 
 
 def home_screen():
+    """Display the home screen with the start button."""
     screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
 
 
 def game_screen():
+    """Display the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
 
 
 def play_game():
+    """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards
-    card_width, card_height = list(card_images.values())[0].get_size()
+    card_width, card_height = scaled_card_image.get_size()
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        y = 20  # Top of the screen
-        screen.blit(original_card_image, (x, y))  # Back of the card
+        y = 20
+        screen.blit(scaled_card_image, (x, y))
 
-    # Display player's cards
-    for i, card in enumerate(user_hand):
-        x = (
-            i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
-        )
-        y = SCREEN_HEIGHT - card_height - 20
-        screen.blit(card_images[card], (x, y))
+    # Display player's cards in a U-shape
+    mid_x = SCREEN_WIDTH // 2
+    positions = [
+        # left bottom
+        (
+            mid_x - 3 * card_width - 3 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 100,
+        ),
+        (
+            mid_x - 2 * card_width - 2 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 60,
+        ),
+        (
+            mid_x - card_width - CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        # middle bottom
+        (
+            mid_x - card_width // 2,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        # right bottom
+        (
+            mid_x + card_width + CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        (
+            mid_x + 2 * card_width + 2 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 60,
+        ),
+        (
+            mid_x + 3 * card_width + 3 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 100,
+        ),
+    ]
+
+    for i in range(NUM_CARDS):
+        card_key = player_cards[i]
+        if reveal_cards:
+            screen.blit(card_images[card_key], positions[i])
+        else:
+            screen.blit(scaled_card_image, positions[i])
 
     # Draw the Reveal Cards button
     reveal_button.draw(screen)
-
-
-def shuffle_and_deal():
-    global user_hand, computer_hand
-
-    deck = (
-        [f"{color}_{num}" for color in colors for num in numbers * 2]
-        + [
-            f"{color}_{special}"
-            for color in colors
-            for special in specials * 2
-        ]
-        + wild_cards * 4
-    )
-    random.shuffle(deck)
-    user_hand = deck[:NUM_CARDS]
-    computer_hand = deck[NUM_CARDS : NUM_CARDS * 2]
 
 
 # Main loop
@@ -184,27 +254,19 @@ while running:
             if start_button.is_clicked(event):
                 state = "game"
             else:
-                pass
+                home_screen()
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 shuffle_and_deal()
                 state = "play"
             else:
-                pass
+                game_screen()
         elif state == "play":
             if reveal_button.is_clicked(event):
-                print("Reveal Cards button clicked!")
-            else:
-                pass
+                reveal_cards = True
+            play_game()
 
-    if state == "home":
-        home_screen()
-    elif state == "game":
-        game_screen()
-    elif state == "play":
-        play_game()
-
-    pygame.display.flip()
+        pygame.display.flip()
 
 pygame.quit()
 sys.exit()
