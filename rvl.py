@@ -28,26 +28,19 @@ TEXT_COLOR = (254, 245, 185)
 
 # Define card colors and types
 card_colors = ["blue", "red", "yellow", "green"]
-special_cards = ["+2", "skip", "rev"]
+special_cards = ["+2", "rev", "skip"]
 wild_cards = ["+4"]
 
 # Load images and fonts
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
 game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
-original_card_image = pygame.image.load("images/UNO_card.jpg")
-scaled_card_image = pygame.transform.scale(
-    original_card_image,
-    (
-        int(original_card_image.get_width() * CARD_SCALE),
-        int(original_card_image.get_height() * CARD_SCALE),
-    ),
-)
+
 font = pygame.font.Font(FONT_PATH, 40)
 font_card = pygame.font.Font(CARD_FONT_PATH, 60)
 
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Uno Game")
+pygame.display.setCaption("Uno Game")
 
 # Define card images dictionary
 card_images = {}
@@ -61,13 +54,13 @@ def load_and_scale_card_images():
     # Load number cards
     for color in card_colors:
         for number in range(10):
-            card_name = f"{color}_UNO{number}.jpg"
+            card_name = f"{color}_{number}.jpg"
             card_image = pygame.image.load(f"images/{card_name}")
             card_images[f"{color}_{number}"] = pygame.transform.scale(
                 card_image,
                 (
-                    int(scaled_card_image.get_width()),
-                    int(scaled_card_image.get_height()),
+                    int(card_image.get_width() * CARD_SCALE),
+                    int(card_image.get_height() * CARD_SCALE),
                 ),
             )
 
@@ -79,8 +72,8 @@ def load_and_scale_card_images():
             card_images[f"{color}_{special}"] = pygame.transform.scale(
                 card_image,
                 (
-                    int(scaled_card_image.get_width()),
-                    int(scaled_card_image.get_height()),
+                    int(card_image.get_width() * CARD_SCALE),
+                    int(card_image.get_height() * CARD_SCALE),
                 ),
             )
 
@@ -91,8 +84,8 @@ def load_and_scale_card_images():
         card_images[wild] = pygame.transform.scale(
             card_image,
             (
-                int(scaled_card_image.get_width()),
-                int(scaled_card_image.get_height()),
+                int(card_image.get_width() * CARD_SCALE),
+                int(card_image.get_height() * CARD_SCALE),
             ),
         )
 
@@ -169,7 +162,6 @@ def shuffle_and_deal():
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
 
-
 def home_screen():
     """Display the home screen with the start button."""
     screen.blit(home_background_image, (0, 0))
@@ -187,14 +179,16 @@ def play_game():
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards
-    card_width, card_height = scaled_card_image.get_size()
+    card_width, card_height = list(card_images.values())[0].get_size()
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
         y = 20
-        screen.blit(scaled_card_image, (x, y))
+        screen.blit(
+            card_images["blue_0"], (x, y)
+        )  # Assuming blue_0.jpg as the back of the card
 
     # Display player's cards in a U-shape
     mid_x = SCREEN_WIDTH // 2
@@ -237,11 +231,12 @@ def play_game():
         if reveal_cards:
             screen.blit(card_images[card_key], positions[i])
         else:
-            screen.blit(scaled_card_image, positions[i])
+            screen.blit(
+                card_images["blue_0"], positions[i]
+            )  # Assuming blue_0.jpg as the back of the card
 
     # Draw the Reveal Cards button
     reveal_button.draw(screen)
-
 
 # Main loop
 running = True
