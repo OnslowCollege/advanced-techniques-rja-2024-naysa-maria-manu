@@ -13,6 +13,7 @@ FONT_PATH = "Text_features/Font_mont.ttf"
 CARD_FONT_PATH = "Text_features/Comic.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
+CARD_BACK_IMAGE = "images/UNO_card.jpg"
 # Number of cards per player
 NUM_CARDS = 7
 # Scale down the cards size down by 47%
@@ -34,7 +35,14 @@ wild_cards = ["+4"]
 # Load images and fonts
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
 game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
-
+card_back_image = pygame.image.load(CARD_BACK_IMAGE)
+scaled_card_back_image = pygame.transform.scale(
+    card_back_image,
+    (
+        int(card_back_image.get_width() * CARD_SCALE),
+        int(card_back_image.get_height() * CARD_SCALE),
+    ),
+)
 font = pygame.font.Font(FONT_PATH, 40)
 font_card = pygame.font.Font(CARD_FONT_PATH, 60)
 
@@ -181,16 +189,14 @@ def play_game():
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards
-    card_width, card_height = list(card_images.values())[0].get_size()
+    card_width, card_height = scaled_card_back_image.get_size()
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
         y = 20
-        screen.blit(
-            card_images["blue_0"], (x, y)
-        )  # Assuming blue_0.jpg as the back of the card
+        screen.blit(scaled_card_back_image, (x, y))
 
     # Display player's cards in a U-shape
     mid_x = SCREEN_WIDTH // 2
@@ -233,9 +239,7 @@ def play_game():
         if reveal_cards:
             screen.blit(card_images[card_key], positions[i])
         else:
-            screen.blit(
-                card_images["blue_0"], positions[i]
-            )  # Assuming blue_0.jpg as the back of the card
+            screen.blit(scaled_card_back_image, positions[i])
 
     # Draw the Reveal Cards button
     reveal_button.draw(screen)
