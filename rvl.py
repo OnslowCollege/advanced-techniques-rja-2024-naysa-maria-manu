@@ -17,7 +17,7 @@ CARD_BACK_IMAGE = "images/UNO_card.jpg"
 # Number of cards per player
 NUM_CARDS = 7
 # Scale down the cards size down by 47%
-CARD_SCALE = 0.47
+CARD_SCALE = 0.37
 # Space between cards
 CARD_SPACING = 10
 # Size of the Reveal Cards button
@@ -199,7 +199,7 @@ def play_game():
         screen.blit(scaled_card_back_image, (x, y))
 
     # Display player's cards in a U-shape
-    mid_x = SCREEN_WIDTH // 2
+    mid_x = SCREEN_WIDTH // 2.2
     positions = [
         # left bottom
         (
@@ -216,7 +216,7 @@ def play_game():
         ),
         # middle bottom
         (
-            mid_x - card_width // 2,
+            mid_x - card_width // 25,
             SCREEN_HEIGHT - card_height - 20,
         ),
         # right bottom
