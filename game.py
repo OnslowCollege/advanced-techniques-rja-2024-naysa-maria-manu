@@ -16,7 +16,7 @@ GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
 # Number of cards per player
 NUM_CARDS = 7
-# Scale down the cards size by 47%
+# Scale down the cards size down by 47%
 CARD_SCALE = 0.37
 ENLARGED_SCALE = 0.6
 # Space between cards
@@ -88,9 +88,11 @@ def load_and_scale_card_images():
 
     # Load wild cards
     for wild in wild_cards:
-        card_name = f"UNO_{wild}.jpg"
+        card_name = (
+            f"UNO_{wild}.jpg"  # Wild card images are named with "UNO_" prefix
+        )
         card_image = pygame.image.load(f"images/{card_name}")
-        card_images[wild] = pygame.transform.scale(
+        card_images[f"UNO_{wild}"] = pygame.transform.scale(
             card_image,
             (
                 int(card_image.get_width() * CARD_SCALE),
@@ -98,13 +100,17 @@ def load_and_scale_card_images():
             ),
         )
 
+    # Debugging output to check if all images are loaded
+    print("Loaded card images:")
+    for key in card_images:
+        print(key)
+
 
 load_and_scale_card_images()
 
 
 class Button:
     """A class to represent buttons in the game."""
-
     def __init__(self, text, pos, size, color, text_color, font):
         self.text = text
         self.pos = pos
@@ -164,7 +170,6 @@ class Deck:
 
     def shuffle(self):
         random.shuffle(self.cards)
-
 
 # Player Class
 class Player:
@@ -244,7 +249,7 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for i, card in enumerate(playable_cards):
-                    card_rect = card_images[str(card)].get_rect(
+                    card_rect = get_card_image(card).get_rect(
                         topleft=positions[i]
                     )
                     if card_rect.collidepoint(event.pos):
@@ -294,49 +299,36 @@ show_card_button = Button(
     font,
 )
 
-positions = [
-    (
-        SCREEN_WIDTH // 2
-        - (NUM_CARDS // 2)
-        * (scaled_card_back_image.get_width() + CARD_SPACING),
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
-    ),
-    (
-        SCREEN_WIDTH // 2
-        - (NUM_CARDS // 2 - 1)
-        * (scaled_card_back_image.get_width() + CARD_SPACING),
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
-    ),
-    (
-        SCREEN_WIDTH // 2,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
-    ),
-    (
-        SCREEN_WIDTH // 2
-        + (NUM_CARDS // 2 - 1)
-        * (scaled_card_back_image.get_width() + CARD_SPACING),
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
-    ),
-    (
-        SCREEN_WIDTH // 2
-        + (NUM_CARDS // 2)
-        * (scaled_card_back_image.get_width() + CARD_SPACING),
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
-    ),
-]
+def get_card_image(card):
+    card_name = (
+        f"UNO_{card.value}"
+        if card.color == "wild"
+        else f"{card.color}_{card.value}"
+    )
+    return card_images.get(card_name)
 
-game = Game()
-
-def draw_home_screen():
+# Render Home screen
+def home_screen():
     screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
 
-def draw_game_screen():
+# Render Game screen
+def game_screen():
     screen.blit(game_background_image, (0, 0))
 
-    # Draw player's hand
+    if game.current_card:
+        current_card_image = get_card_image(game.current_card)
+        if current_card_image:
+            screen.blit(
+                current_card_image,
+                (
+                    SCREEN_WIDTH // 2 - current_card_image.get_width() // 2,
+                    SCREEN_HEIGHT // 2 - current_card_image.get_height() // 2,
+                ),
+            )
+
+    # Draw player's cards
     num_cards = len(game.player.hand)
-    # Dynamically calculate positions based on the number of cards
     positions = [
         (
             SCREEN_WIDTH // 2
@@ -349,39 +341,37 @@ def draw_game_screen():
     ]
 
     for i, card in enumerate(game.player.hand):
-        if i == selected_card_index:
-            scaled_image = pygame.transform.scale(
-                card_images[str(card)],
+        card_image = get_card_image(card)
+        if card_image:
+            if i == selected_card_index:
+                scaled_image = pygame.transform.scale(
+                    card_image,
+                    (
+                        int(card_image.get_width() * ENLARGED_SCALE),
+                        int(card_image.get_height() * ENLARGED_SCALE),
+                    ),
+                )
+                screen.blit(
+                    scaled_image, (positions[i][0], positions[i][1] - 10)
+                )
+            else:
+                screen.blit(card_image, positions[i])
+
+    # Draw computer's cards
+    for i, card in enumerate(game.computer.hand):
+        card_image = (
+            get_card_image(card) if reveal_cards else scaled_card_back_image
+        )
+        if card_image:
+            screen.blit(
+                card_image,
                 (
-                    int(card_back_image.get_width() * ENLARGED_SCALE),
-                    int(card_back_image.get_height() * ENLARGED_SCALE),
+                    SCREEN_WIDTH // 2.2
+                    + (i - 3)
+                    * (scaled_card_back_image.get_width() + CARD_SPACING),
+                    10,
                 ),
             )
-            screen.blit(scaled_image, (positions[i][0], positions[i][1] - 10))
-        else:
-            screen.blit(card_images[str(card)], positions[i])
-
-    # Draw computer's hand
-    for i, card in enumerate(game.computer.hand):
-        screen.blit(
-            scaled_card_back_image,
-            (
-                SCREEN_WIDTH // 2.2
-                + (i - 3)
-                * (scaled_card_back_image.get_width() + CARD_SPACING),
-                10,
-            ),
-        )
-
-    # Draw current card
-    if game.current_card:
-        screen.blit(
-            card_images[str(game.current_card)],
-            (
-                SCREEN_WIDTH // 2 - card_back_image.get_width() // 2,
-                SCREEN_HEIGHT // 2 - card_back_image.get_height() // 2,
-            ),
-        )
 
     # Draw buttons
     if not reveal_cards:
@@ -389,73 +379,48 @@ def draw_game_screen():
     if reveal_cards and not show_card:
         show_card_button.draw(screen)
 
+def main():
+    global state, game, selected_card_index, reveal_cards, show_card
 
-def handle_home_events(event):
-    global state
-    if start_button.is_clicked(event):
-        state = "shuffle_play"
+    game = Game()
 
-def handle_shuffle_play_events(event):
-    global state
-    if shuffle_play_button.is_clicked(event):
-        game.start_game()
-        state = "game"
-
-def handle_game_events(event):
-    global reveal_cards, show_card, selected_card_index
-    if reveal_button.is_clicked(event):
-        reveal_cards = True
-    if show_card_button.is_clicked(event):
-        show_card = True
-    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-        for i, card in enumerate(game.player.hand):
-            card_rect = card_images[str(card)].get_rect(topleft=positions[i])
-            if card_rect.collidepoint(event.pos):
-                selected_card_index = i
-                break
-    if (
-        selected_card_index is not None
-        and event.type == pygame.MOUSEBUTTONDOWN
-        and event.button == 1
-    ):
-        card_rect = card_images[
-            str(game.player.hand[selected_card_index])
-        ].get_rect(topleft=positions[selected_card_index])
-        if card_rect.collidepoint(event.pos):
-            if game.check_playable(game.player.hand[selected_card_index]):
-                game.current_card = game.player.play_card(
-                    game.player.hand[selected_card_index]
-                )
-                game.turn = "Computer"
-                selected_card_index = None
-                show_card = False
-
-# Main game loop
-def play_game():
-    global state
-    running = True
-    while running:
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
+                sys.exit()
 
-            if state == "home":
-                handle_home_events(event)
-            elif state == "shuffle_play":
-                handle_shuffle_play_events(event)
-            elif state == "game":
-                handle_game_events(event)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if state == "home":
+                    if start_button.is_clicked(event):
+                        state = "game"
+                        game.start_game()
+                elif state == "game":
+                    if reveal_button.is_clicked(event):
+                        reveal_cards = True
+                    if show_card_button.is_clicked(event):
+                        show_card = True
+                    if not reveal_cards and not show_card:
+                        num_cards = len(game.player.hand)
+                        for i in range(num_cards):
+                            card_rect = get_card_image(
+                                game.player.hand[i]
+                            ).get_rect(topleft=positions[i])
+                            if card_rect.collidepoint(event.pos):
+                                selected_card_index = i
+                                break
+                else:
+                    if shuffle_play_button.is_clicked(event):
+                        game.deck.shuffle()
+                        game.start_game()
 
         if state == "home":
-            draw_home_screen()
-        elif state == "shuffle_play":
-            draw_home_screen()
-            shuffle_play_button.draw(screen)
+            home_screen()
         elif state == "game":
-            draw_game_screen()
+            game_screen()
+            game.play_turn()
 
         pygame.display.flip()
 
-play_game()
-pygame.quit()
-sys.exit()
+if __name__ == "__main__":
+    main()
