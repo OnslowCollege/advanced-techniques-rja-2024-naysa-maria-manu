@@ -190,7 +190,6 @@ class Player:
         ]
         return playable
 
-
 # Game Class
 class Game:
     def __init__(self):
@@ -258,7 +257,6 @@ class Game:
             or card.value == self.current_card.value
             or card.color == "wild"
         )
-
 
 # Game state
 state = "home"
@@ -339,136 +337,123 @@ positions = [
     ),
 ]
 
-# Render Home screen
-def home_screen():
+game = Game()
+
+
+def draw_home_screen():
     screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
 
-# Render Game screen
-def game_screen():
-    screen.blit(game_background_image, (0, 0))
-    shuffle_play_button.draw(screen)
-
-# Render Play Game screen
-def play_game():
-    global positions
-
+def draw_game_screen():
     screen.blit(game_background_image, (0, 0))
 
-    # Draw current card
-    if game.current_card:
-        current_card_image = card_images[str(game.current_card)]
-        screen.blit(
-            current_card_image,
-            (
-                SCREEN_WIDTH // 2 - current_card_image.get_width() // 2,
-                SCREEN_HEIGHT // 2 - current_card_image.get_height() // 2,
-            ),
-        )
-
-    # Draw player's cards
+    # Draw player's hand
     for i, card in enumerate(game.player.hand):
         if i == selected_card_index:
-            enlarged_card_image = pygame.transform.scale(
+            scaled_image = pygame.transform.scale(
                 card_images[str(card)],
                 (
-                    int(card_images[str(card)].get_width() * ENLARGED_SCALE),
-                    int(card_images[str(card)].get_height() * ENLARGED_SCALE),
+                    int(card_back_image.get_width() * ENLARGED_SCALE),
+                    int(card_back_image.get_height() * ENLARGED_SCALE),
                 ),
             )
-            screen.blit(
-                enlarged_card_image, (positions[i][0], positions[i][1] - 30)
-            )
+            screen.blit(scaled_image, (positions[i][0], positions[i][1] - 10))
         else:
             screen.blit(card_images[str(card)], positions[i])
 
-    # Draw computer's cards or reveal them
+    # Draw computer's hand
     for i, card in enumerate(game.computer.hand):
-        if reveal_cards:
-            screen.blit(card_images[str(card)], (positions[i][0], 10))
-        else:
-            screen.blit(scaled_card_back_image, (positions[i][0], 10))
+        screen.blit(
+            scaled_card_back_image,
+            (
+                SCREEN_WIDTH // 2.2
+                + (i - 3)
+                * (scaled_card_back_image.get_width() + CARD_SPACING),
+                10,
+            ),
+        )
 
-    # Draw the Reveal Cards button if not revealed
+    # Draw current card
+    if game.current_card:
+        screen.blit(
+            card_images[str(game.current_card)],
+            (
+                SCREEN_WIDTH // 2 - card_back_image.get_width() // 2,
+                SCREEN_HEIGHT // 2 - card_back_image.get_height() // 2,
+            ),
+        )
+
+    # Draw buttons
     if not reveal_cards:
         reveal_button.draw(screen)
-
-    # Draw the Show Card button if a card is selected
-    if selected_card_index is not None and not show_card:
+    if reveal_cards and not show_card:
         show_card_button.draw(screen)
 
+def handle_home_events(event):
+    global state
+    if start_button.is_clicked(event):
+        state = "shuffle_play"
 
-def handle_player_turn(event):
-    global selected_card_index, reveal_cards, show_card
+def handle_shuffle_play_events(event):
+    global state
+    if shuffle_play_button.is_clicked(event):
+        game.start_game()
+        state = "game"
 
+def handle_game_events(event):
+    global reveal_cards, show_card, selected_card_index
+    if reveal_button.is_clicked(event):
+        reveal_cards = True
+    if show_card_button.is_clicked(event):
+        show_card = True
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-        mouse_x, mouse_y = event.pos
+        for i, card in enumerate(game.player.hand):
+            card_rect = card_images[str(card)].get_rect(topleft=positions[i])
+            if card_rect.collidepoint(event.pos):
+                selected_card_index = i
+                break
+    if (
+        selected_card_index is not None
+        and event.type == pygame.MOUSEBUTTONDOWN
+        and event.button == 1
+    ):
+        card_rect = card_images[
+            str(game.player.hand[selected_card_index])
+        ].get_rect(topleft=positions[selected_card_index])
+        if card_rect.collidepoint(event.pos):
+            if game.check_playable(game.player.hand[selected_card_index]):
+                game.current_card = game.player.play_card(
+                    game.player.hand[selected_card_index]
+                )
+                game.turn = "Computer"
+                selected_card_index = None
+                show_card = False
 
-        # Check if a card was clicked
-        for i in range(NUM_CARDS):
-            card_rect = card_images[game.player.hand[i]].get_rect(
-                topleft=positions[i]
-            )
-            if card_rect.collidepoint(mouse_x, mouse_y):
-                if (
-                    not show_card
-                ):  # Allow card selection only if not showing card
-                    selected_card_index = i
-                    show_card = False
-                return
-
-        # Check if the Show Card button was clicked
-        if selected_card_index is not None and show_card_button.is_clicked(
-            event
-        ):
-            show_card = True
-            reveal_cards = (
-                True  # Also reveal computer's cards to continue the game
-            )
-            game.handle_computer_turn()
-            selected_card_index = (
-                None  # Prevent selecting another card after showing
-            )
-            return
-
-        # Check if the Reveal Cards button was clicked
-        if not reveal_cards and reveal_button.is_clicked(event):
-            reveal_cards = True
-            return
-
-
-def main():
-    global state, reveal_cards, selected_card_index, show_card
-    clock = pygame.time.Clock()
-
-    game.start_game()
-
-    while True:
+# Main game loop
+def play_game():
+    global state
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                running = False
 
             if state == "home":
-                if start_button.is_clicked(event):
-                    state = "game"
+                handle_home_events(event)
+            elif state == "shuffle_play":
+                handle_shuffle_play_events(event)
             elif state == "game":
-                if shuffle_play_button.is_clicked(event):
-                    game.start_game()
-                    state = "play"
-            elif state == "play":
-                handle_player_turn(event)
+                handle_game_events(event)
 
         if state == "home":
-            home_screen()
+            draw_home_screen()
+        elif state == "shuffle_play":
+            shuffle_play_button.draw(screen)
         elif state == "game":
-            game_screen()
-        elif state == "play":
-            play_game()
+            draw_game_screen()
 
         pygame.display.flip()
-        clock.tick(30)
 
-
-if __name__ == "__main__":
-    main()
+play_game()
+pygame.quit()
+sys.exit()
