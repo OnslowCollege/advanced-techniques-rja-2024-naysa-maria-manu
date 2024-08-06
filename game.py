@@ -289,22 +289,56 @@ def play_game():
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((NUM_CARDS - 1) * (card_width + CARD_SPACING)))
-            // 2
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        y = 30
+        y = 20
         screen.blit(scaled_card_back_image, (x, y))
 
-    # Display player's cards
-    for i, card in enumerate(player_cards):
-        card_image = card_images[card]
-        x = (
-            i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((NUM_CARDS - 1) * (card_width + CARD_SPACING)))
-            // 2
-        )
-        y = SCREEN_HEIGHT - card_height - 30
-        screen.blit(card_image, (x, y))
+    # Display player's cards in a U-shape
+    mid_x = SCREEN_WIDTH // 2.2
+    positions = [
+        # left bottom
+        (
+            mid_x - 3 * card_width - 3 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 100,
+        ),
+        (
+            mid_x - 2 * card_width - 2 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 60,
+        ),
+        (
+            mid_x - card_width - CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        # middle bottom
+        (
+            mid_x - card_width // 25,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        # right bottom
+        (
+            mid_x + card_width + CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        (
+            mid_x + 2 * card_width + 2 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 60,
+        ),
+        (
+            mid_x + 3 * card_width + 3 * CARD_SPACING,
+            SCREEN_HEIGHT - card_height - 100,
+        ),
+    ]
+
+    for i in range(NUM_CARDS):
+        card_key = player_cards[i]
+        if reveal_cards:
+            screen.blit(card_images[card_key], positions[i])
+        else:
+            screen.blit(scaled_card_back_image, positions[i])
+
+    # Draw the Reveal Cards button
+    reveal_button.draw(screen)
 
     # Display discard pile
     if discard_pile:
