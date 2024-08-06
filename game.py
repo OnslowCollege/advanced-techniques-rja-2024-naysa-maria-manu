@@ -16,7 +16,7 @@ GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
 # Number of cards per player
 NUM_CARDS = 7
-# Scale down the cards size down by 47%
+# Scale down the cards size by 47%
 CARD_SCALE = 0.37
 ENLARGED_SCALE = 0.6
 # Space between cards
@@ -296,49 +296,36 @@ show_card_button = Button(
 
 positions = [
     (
-        SCREEN_WIDTH // 2.2
-        - 3 * card_back_image.get_width() * CARD_SCALE
-        - 3 * CARD_SPACING,
+        SCREEN_WIDTH // 2
+        - (NUM_CARDS // 2)
+        * (scaled_card_back_image.get_width() + CARD_SPACING),
         SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
     (
-        SCREEN_WIDTH // 2.2
-        - 2 * card_back_image.get_width() * CARD_SCALE
-        - 2 * CARD_SPACING,
+        SCREEN_WIDTH // 2
+        - (NUM_CARDS // 2 - 1)
+        * (scaled_card_back_image.get_width() + CARD_SPACING),
         SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
     (
-        SCREEN_WIDTH // 2.2
-        - card_back_image.get_width() * CARD_SCALE
-        - CARD_SPACING,
+        SCREEN_WIDTH // 2,
         SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
     (
-        SCREEN_WIDTH // 2.2,
+        SCREEN_WIDTH // 2
+        + (NUM_CARDS // 2 - 1)
+        * (scaled_card_back_image.get_width() + CARD_SPACING),
         SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
     (
-        SCREEN_WIDTH // 2.2
-        + card_back_image.get_width() * CARD_SCALE
-        + CARD_SPACING,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
-    ),
-    (
-        SCREEN_WIDTH // 2.2
-        + 2 * card_back_image.get_width() * CARD_SCALE
-        + 2 * CARD_SPACING,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
-    ),
-    (
-        SCREEN_WIDTH // 2.2
-        + 3 * card_back_image.get_width() * CARD_SCALE
-        + 3 * CARD_SPACING,
+        SCREEN_WIDTH // 2
+        + (NUM_CARDS // 2)
+        * (scaled_card_back_image.get_width() + CARD_SPACING),
         SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
 ]
 
 game = Game()
-
 
 def draw_home_screen():
     screen.blit(home_background_image, (0, 0))
@@ -448,6 +435,7 @@ def play_game():
         if state == "home":
             draw_home_screen()
         elif state == "shuffle_play":
+            draw_home_screen()
             shuffle_play_button.draw(screen)
         elif state == "game":
             draw_game_screen()
