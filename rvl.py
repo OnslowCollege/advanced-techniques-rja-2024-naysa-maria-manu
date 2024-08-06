@@ -216,7 +216,7 @@ def play_game():
         ),
         # middle bottom
         (
-            mid_x - card_width // 25,
+            mid_x - card_width // 2,
             SCREEN_HEIGHT - card_height - 20,
         ),
         # right bottom
