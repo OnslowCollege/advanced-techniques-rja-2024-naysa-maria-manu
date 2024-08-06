@@ -415,12 +415,10 @@ while running:
         play_game()
         if current_turn == "computer":
             computer_turn()
-            if (
-                not computer_cards
-            ):  # If the computer has no cards left, it wins
+            if not computer_cards:  #
                 print("Computer wins!")
                 state = "home"
-        if not player_cards:  # If the player has no cards left, they win
+        if not player_cards:
             print("Player wins!")
             state = "home"
 
