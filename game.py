@@ -22,6 +22,7 @@ CARD_SCALE = 0.37
 CARD_SPACING = 10
 # Size of the Reveal Cards button
 REVEAL_BUTTON_SIZE = (270, 60)
+COMPUTER_BUTTON_SIZE = (330, 60)
 
 # Define the new colors
 BUTTON_COLOR = COLOR_RED
@@ -165,10 +166,10 @@ player_first_button = Button(
 computer_first_button = Button(
     "Computer First",
     (
-        SCREEN_WIDTH // 2 - REVEAL_BUTTON_SIZE[0] // 2,
-        SCREEN_HEIGHT // 2 - REVEAL_BUTTON_SIZE[1] // 2 + 80,
+        SCREEN_WIDTH // 2 - COMPUTER_BUTTON_SIZE[0] // 2,
+        SCREEN_HEIGHT // 2 - COMPUTER_BUTTON_SIZE[1] // 2 + 80,
     ),
-    REVEAL_BUTTON_SIZE,
+    COMPUTER_BUTTON_SIZE,
     BUTTON_COLOR,
     TEXT_COLOR,
     font,
