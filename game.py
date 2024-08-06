@@ -118,10 +118,12 @@ class Button:
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
+        """Draws button."""
         pygame.draw.rect(surface, self.color, self.rect)
         surface.blit(self.rendered_text, self.text_rect)
 
     def is_clicked(self, event):
+        """Follows button click."""
         if (
             event.type == pygame.MOUSEBUTTONDOWN
             and event.button == 1
@@ -415,7 +417,7 @@ while running:
         play_game()
         if current_turn == "computer":
             computer_turn()
-            if not computer_cards:  #
+            if not computer_cards:
                 print("Computer wins!")
                 state = "home"
         if not player_cards:
