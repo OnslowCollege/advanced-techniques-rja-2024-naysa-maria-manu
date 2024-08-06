@@ -335,6 +335,19 @@ def draw_game_screen():
     screen.blit(game_background_image, (0, 0))
 
     # Draw player's hand
+    num_cards = len(game.player.hand)
+    # Dynamically calculate positions based on the number of cards
+    positions = [
+        (
+            SCREEN_WIDTH // 2
+            - (num_cards // 2)
+            * (scaled_card_back_image.get_width() + CARD_SPACING)
+            + i * (scaled_card_back_image.get_width() + CARD_SPACING),
+            SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
+        )
+        for i in range(num_cards)
+    ]
+
     for i, card in enumerate(game.player.hand):
         if i == selected_card_index:
             scaled_image = pygame.transform.scale(
@@ -375,6 +388,7 @@ def draw_game_screen():
         reveal_button.draw(screen)
     if reveal_cards and not show_card:
         show_card_button.draw(screen)
+
 
 def handle_home_events(event):
     global state
