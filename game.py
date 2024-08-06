@@ -260,7 +260,12 @@ def play_game():
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
         y = 20
-        screen.blit(scaled_card_back_image, (x, y))
+        if show_card:
+            card_key = computer_cards[i]
+            card_image = card_images[card_key]
+            screen.blit(card_image, (x, y))
+        else:
+            screen.blit(scaled_card_back_image, (x, y))
 
     # Display player's cards in a U-shape
     for i in range(NUM_CARDS):
@@ -303,8 +308,11 @@ def handle_player_turn(event):
                 topleft=positions[i]
             )
             if card_rect.collidepoint(mouse_x, mouse_y):
-                selected_card_index = i
-                show_card = False
+                if (
+                    not show_card
+                ):  # Allow card selection only if not showing card
+                    selected_card_index = i
+                    show_card = False
                 return
 
         # Check if the Show Card button was clicked
@@ -312,6 +320,9 @@ def handle_player_turn(event):
             event
         ):
             show_card = True
+            reveal_cards = (
+                True  # Also reveal computer's cards to continue the game
+            )
             return
 
         # Check if the Reveal Cards button was clicked
