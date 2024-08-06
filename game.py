@@ -1,6 +1,6 @@
 import pygame
-import sys
 import random
+import sys
 
 # Initialize Pygame
 pygame.init()
@@ -113,9 +113,7 @@ class Button:
         self.text_color = text_color
         self.font = font
         self.rect = pygame.Rect(pos, size)
-        self.rendered_text = self.font.render(
-            text, True, self.text_color
-        )  # Text color
+        self.rendered_text = self.font.render(text, True, self.text_color)
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
@@ -131,6 +129,142 @@ class Button:
             return True
         return False
 
+
+# Card Class
+class Card:
+    def __init__(self, color, value):
+        self.color = color
+        self.value = value
+
+    def __repr__(self):
+        return f"{self.color}_{self.value}"
+
+
+# Deck Class
+class Deck:
+    def __init__(self):
+        self.cards = []
+        self.initialize_deck()
+
+    def initialize_deck(self):
+        for color in card_colors:
+            for number in range(10):
+                self.cards.append(Card(color, str(number)))
+            for special in special_cards:
+                self.cards.append(Card(color, special))
+        for wild in wild_cards:
+            self.cards.extend([Card("wild", wild)] * 4)
+        random.shuffle(self.cards)
+
+    def draw_card(self):
+        return self.cards.pop()
+
+    def is_empty(self):
+        return len(self.cards) == 0
+
+    def shuffle(self):
+        random.shuffle(self.cards)
+
+
+# Player Class
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.hand = []
+
+    def draw_card(self, deck):
+        if not deck.is_empty():
+            self.hand.append(deck.draw_card())
+
+    def play_card(self, card):
+        self.hand.remove(card)
+        return card
+
+    def get_playable_cards(self, current_card):
+        playable = [
+            card
+            for card in self.hand
+            if card.color == current_card.color
+            or card.value == current_card.value
+            or card.color == "wild"
+        ]
+        return playable
+
+
+# Game Class
+class Game:
+    def __init__(self):
+        self.deck = Deck()
+        self.player = Player("Player")
+        self.computer = Player("Computer")
+        self.current_card = None
+        self.turn = "Player"
+        self.played_cards = []
+
+    def start_game(self):
+        self.deck.shuffle()
+        self.deal_initial_cards()
+        self.current_card = self.deck.draw_card()
+        self.played_cards.append(self.current_card)
+        self.turn = "Player"
+
+    def deal_initial_cards(self):
+        for _ in range(7):
+            self.player.draw_card(self.deck)
+            self.computer.draw_card(self.deck)
+
+    def play_turn(self):
+        if self.turn == "Player":
+            self.handle_player_turn()
+        else:
+            self.handle_computer_turn()
+
+    def handle_player_turn(self):
+        playable_cards = self.player.get_playable_cards(self.current_card)
+        if playable_cards:
+            selected_card = self.get_player_selected_card(playable_cards)
+            if selected_card:
+                self.current_card = self.player.play_card(selected_card)
+                self.played_cards.append(self.current_card)
+                self.turn = "Computer"
+        else:
+            self.player.draw_card(self.deck)
+            self.turn = "Computer"
+
+    def handle_computer_turn(self):
+        playable_cards = self.computer.get_playable_cards(self.current_card)
+        if playable_cards:
+            selected_card = playable_cards[0]
+            self.current_card = self.computer.play_card(selected_card)
+            self.played_cards.append(self.current_card)
+        else:
+            self.computer.draw_card(self.deck)
+        self.turn = "Player"
+
+    def get_player_selected_card(self, playable_cards):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                for i, card in enumerate(playable_cards):
+                    card_rect = card_images[str(card)].get_rect(
+                        topleft=positions[i]
+                    )
+                    if card_rect.collidepoint(event.pos):
+                        return card
+        return None
+
+    def check_playable(self, card):
+        return (
+            card.color == self.current_card.color
+            or card.value == self.current_card.value
+            or card.color == "wild"
+        )
+
+
+# Game state
+state = "home"
+selected_card_index = None
+reveal_cards = False
+show_card = False
 
 # Create buttons
 start_button = Button(
@@ -162,132 +296,100 @@ show_card_button = Button(
     font,
 )
 
-# Game state
-state = "home"
-reveal_cards = False
-show_card = False
-selected_card_index = None
-player_cards = []
-computer_cards = []
-
-# Card positions
 positions = [
-    # left bottom
     (
         SCREEN_WIDTH // 2.2
         - 3 * card_back_image.get_width() * CARD_SCALE
         - 3 * CARD_SPACING,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 100,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
     (
         SCREEN_WIDTH // 2.2
         - 2 * card_back_image.get_width() * CARD_SCALE
         - 2 * CARD_SPACING,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 60,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
     (
         SCREEN_WIDTH // 2.2
         - card_back_image.get_width() * CARD_SCALE
         - CARD_SPACING,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 20,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
-    # middle bottom
     (
-        SCREEN_WIDTH // 2.2 - card_back_image.get_width() // 25,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 20,
+        SCREEN_WIDTH // 2.2,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
-    # right bottom
     (
         SCREEN_WIDTH // 2.2
         + card_back_image.get_width() * CARD_SCALE
         + CARD_SPACING,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 20,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
     (
         SCREEN_WIDTH // 2.2
         + 2 * card_back_image.get_width() * CARD_SCALE
         + 2 * CARD_SPACING,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 60,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
     (
         SCREEN_WIDTH // 2.2
         + 3 * card_back_image.get_width() * CARD_SCALE
         + 3 * CARD_SPACING,
-        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 100,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 10,
     ),
 ]
 
-
-def shuffle_and_deal():
-    global player_cards, computer_cards, draw_pile, discard_pile
-    deck = [
-        f"{color}_{number}" for color in card_colors for number in range(10)
-    ]
-    deck += [
-        f"{color}_{special}"
-        for color in card_colors
-        for special in special_cards
-    ]
-    deck += [wild for wild in wild_cards] * 4  # 4 wild cards
-    random.shuffle(deck)
-    player_cards = deck[:NUM_CARDS]
-    computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
-    draw_pile = deck[NUM_CARDS * 2 :]
-    discard_pile = [draw_pile.pop()]
-
-
+# Render Home screen
 def home_screen():
-    """Display the home screen with the start button."""
     screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
 
-
+# Render Game screen
 def game_screen():
-    """Display the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
 
-
+# Render Play Game screen
 def play_game():
-    """Display the game screen with cards."""
+    global positions
+
     screen.blit(game_background_image, (0, 0))
 
-    # Display computer's cards
-    card_width, card_height = scaled_card_back_image.get_size()
-    for i in range(NUM_CARDS):
-        x = (
-            i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+    # Draw current card
+    if game.current_card:
+        current_card_image = card_images[str(game.current_card)]
+        screen.blit(
+            current_card_image,
+            (
+                SCREEN_WIDTH // 2 - current_card_image.get_width() // 2,
+                SCREEN_HEIGHT // 2 - current_card_image.get_height() // 2,
+            ),
         )
-        y = 20
-        if show_card:
-            card_key = computer_cards[i]
-            card_image = card_images[card_key]
-            screen.blit(card_image, (x, y))
-        else:
-            screen.blit(scaled_card_back_image, (x, y))
 
-    # Display player's cards in a U-shape
-    for i in range(NUM_CARDS):
-        card_key = player_cards[i]
-        card_pos = positions[i]
-        if reveal_cards or (
-            selected_card_index is not None and selected_card_index == i
-        ):
-            card_image = card_images[card_key]
-            if selected_card_index == i:
-                card_image = pygame.transform.scale(
-                    card_image,
-                    (
-                        int(card_image.get_width() * ENLARGED_SCALE),
-                        int(card_image.get_height() * ENLARGED_SCALE),
-                    ),
-                )
-            screen.blit(card_image, card_pos)
+    # Draw player's cards
+    for i, card in enumerate(game.player.hand):
+        if i == selected_card_index:
+            enlarged_card_image = pygame.transform.scale(
+                card_images[str(card)],
+                (
+                    int(card_images[str(card)].get_width() * ENLARGED_SCALE),
+                    int(card_images[str(card)].get_height() * ENLARGED_SCALE),
+                ),
+            )
+            screen.blit(
+                enlarged_card_image, (positions[i][0], positions[i][1] - 30)
+            )
         else:
-            screen.blit(scaled_card_back_image, card_pos)
+            screen.blit(card_images[str(card)], positions[i])
 
-    # Draw the Reveal Cards button if not already revealed
+    # Draw computer's cards or reveal them
+    for i, card in enumerate(game.computer.hand):
+        if reveal_cards:
+            screen.blit(card_images[str(card)], (positions[i][0], 10))
+        else:
+            screen.blit(scaled_card_back_image, (positions[i][0], 10))
+
+    # Draw the Reveal Cards button if not revealed
     if not reveal_cards:
         reveal_button.draw(screen)
 
@@ -304,7 +406,7 @@ def handle_player_turn(event):
 
         # Check if a card was clicked
         for i in range(NUM_CARDS):
-            card_rect = card_images[player_cards[i]].get_rect(
+            card_rect = card_images[game.player.hand[i]].get_rect(
                 topleft=positions[i]
             )
             if card_rect.collidepoint(mouse_x, mouse_y):
@@ -323,6 +425,10 @@ def handle_player_turn(event):
             reveal_cards = (
                 True  # Also reveal computer's cards to continue the game
             )
+            game.handle_computer_turn()
+            selected_card_index = (
+                None  # Prevent selecting another card after showing
+            )
             return
 
         # Check if the Reveal Cards button was clicked
@@ -335,6 +441,8 @@ def main():
     global state, reveal_cards, selected_card_index, show_card
     clock = pygame.time.Clock()
 
+    game.start_game()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -346,7 +454,7 @@ def main():
                     state = "game"
             elif state == "game":
                 if shuffle_play_button.is_clicked(event):
-                    shuffle_and_deal()
+                    game.start_game()
                     state = "play"
             elif state == "play":
                 handle_player_turn(event)
