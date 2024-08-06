@@ -170,6 +170,53 @@ selected_card_index = None
 player_cards = []
 computer_cards = []
 
+# Card positions
+positions = [
+    # left bottom
+    (
+        SCREEN_WIDTH // 2.2
+        - 3 * card_back_image.get_width() * CARD_SCALE
+        - 3 * CARD_SPACING,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 100,
+    ),
+    (
+        SCREEN_WIDTH // 2.2
+        - 2 * card_back_image.get_width() * CARD_SCALE
+        - 2 * CARD_SPACING,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 60,
+    ),
+    (
+        SCREEN_WIDTH // 2.2
+        - card_back_image.get_width() * CARD_SCALE
+        - CARD_SPACING,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 20,
+    ),
+    # middle bottom
+    (
+        SCREEN_WIDTH // 2.2 - card_back_image.get_width() // 25,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 20,
+    ),
+    # right bottom
+    (
+        SCREEN_WIDTH // 2.2
+        + card_back_image.get_width() * CARD_SCALE
+        + CARD_SPACING,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 20,
+    ),
+    (
+        SCREEN_WIDTH // 2.2
+        + 2 * card_back_image.get_width() * CARD_SCALE
+        + 2 * CARD_SPACING,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 60,
+    ),
+    (
+        SCREEN_WIDTH // 2.2
+        + 3 * card_back_image.get_width() * CARD_SCALE
+        + 3 * CARD_SPACING,
+        SCREEN_HEIGHT - scaled_card_back_image.get_height() - 100,
+    ),
+]
+
 
 def shuffle_and_deal():
     global player_cards, computer_cards, draw_pile, discard_pile
@@ -216,83 +263,36 @@ def play_game():
         screen.blit(scaled_card_back_image, (x, y))
 
     # Display player's cards in a U-shape
-    mid_x = SCREEN_WIDTH // 2.2
-    positions = [
-        # left bottom
-        (
-            mid_x - 3 * card_width - 3 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 100,
-        ),
-        (
-            mid_x - 2 * card_width - 2 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 60,
-        ),
-        (
-            mid_x - card_width - CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        # middle bottom
-        (
-            mid_x - card_width // 25,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        # right bottom
-        (
-            mid_x + card_width + CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        (
-            mid_x + 2 * card_width + 2 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 60,
-        ),
-        (
-            mid_x + 3 * card_width + 3 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 100,
-        ),
-    ]
-
     for i in range(NUM_CARDS):
         card_key = player_cards[i]
         card_pos = positions[i]
         if reveal_cards or (
             selected_card_index is not None and selected_card_index == i
         ):
-            screen.blit(card_images[card_key], card_pos)
+            card_image = card_images[card_key]
+            if selected_card_index == i:
+                card_image = pygame.transform.scale(
+                    card_image,
+                    (
+                        int(card_image.get_width() * ENLARGED_SCALE),
+                        int(card_image.get_height() * ENLARGED_SCALE),
+                    ),
+                )
+            screen.blit(card_image, card_pos)
         else:
             screen.blit(scaled_card_back_image, card_pos)
 
-    # Draw the Reveal Cards button if not revealed yet
+    # Draw the Reveal Cards button if not already revealed
     if not reveal_cards:
         reveal_button.draw(screen)
 
     # Draw the Show Card button if a card is selected
-    if selected_card_index is not None:
+    if selected_card_index is not None and not show_card:
         show_card_button.draw(screen)
-
-    # Draw the discard pile
-    if discard_pile:
-        discard_top = discard_pile[-1]
-        discard_image = card_images[discard_top]
-        screen.blit(
-            discard_image,
-            (
-                SCREEN_WIDTH // 2 - card_width // 2,
-                SCREEN_HEIGHT // 2 - card_height // 2,
-            ),
-        )
-
-    # Draw the draw pile
-    screen.blit(
-        scaled_card_back_image,
-        (
-            SCREEN_WIDTH // 2 + card_width,
-            SCREEN_HEIGHT // 2 - card_height // 2,
-        ),
-    )
 
 
 def handle_player_turn(event):
-    global current_player, selected_card_index, reveal_cards, show_card
+    global selected_card_index, reveal_cards, show_card
 
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
         mouse_x, mouse_y = event.pos
