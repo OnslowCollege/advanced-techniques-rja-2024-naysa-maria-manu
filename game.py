@@ -384,6 +384,7 @@ def play_game():
     pygame.display.flip()
 
 
+
 # Main game loop
 running = True
 while running:
