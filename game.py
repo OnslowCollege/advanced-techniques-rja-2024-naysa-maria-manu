@@ -177,10 +177,16 @@ def shuffle_and_deal():
         for color in card_colors
         for special in special_cards
     ]
-    deck += [wild for wild in wild_cards] * 4  # 4 wild cards
+    # 4 wild cards
+    deck += [wild for wild in wild_cards] * 4
     random.shuffle(deck)
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
+
+    # Print debug
+    print(f"Deck size: {len(deck)}")
+    print(f"Player cards: {len(player_cards)}")
+    print(f"Computer cards: {len(computer_cards)}")
 
 
 def home_screen():
@@ -246,7 +252,7 @@ def play_game():
 def get_card_at_position(x, y):
     """Check if the mouse position is over a card and return the card key."""
     card_width, card_height = scaled_card_back_image.get_size()
-    for i in range(NUM_CARDS):
+    for i in range(len(player_cards)):  # Use the length of player_cards
         card_x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
@@ -258,6 +264,7 @@ def get_card_at_position(x, y):
         ):
             return player_cards[i]
     return None
+
 
 # Main loop
 running = True
