@@ -165,7 +165,7 @@ reveal_cards = False
 reveal_button_clicked = False
 player_cards = []
 computer_cards = []
-
+selected_card = None
 
 def shuffle_and_deal():
     global player_cards, computer_cards
@@ -194,7 +194,6 @@ def game_screen():
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
 
-
 def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
@@ -211,6 +210,7 @@ def play_game():
         screen.blit(scaled_card_back_image, (x, y))
 
     # Display player's cards in a linear layout
+    global selected_card
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
@@ -220,7 +220,12 @@ def play_game():
         y = SCREEN_HEIGHT - card_height - 20
         card_key = player_cards[i]
         if reveal_cards:
-            screen.blit(card_images[card_key], (x, y))
+            if selected_card == card_key:
+                # Move the selected card up
+                y -= 80
+                screen.blit(card_images[card_key], (x, y))
+            else:
+                screen.blit(card_images[card_key], (x, y))
         else:
             screen.blit(scaled_card_back_image, (x, y))
 
@@ -238,6 +243,21 @@ def play_game():
             ),
         )
 
+def get_card_at_position(x, y):
+    """Check if the mouse position is over a card and return the card key."""
+    card_width, card_height = scaled_card_back_image.get_size()
+    for i in range(NUM_CARDS):
+        card_x = (
+            i * (card_width + CARD_SPACING)
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+        )
+        card_y = SCREEN_HEIGHT - card_height - 20
+        if (
+            card_x <= x <= card_x + card_width
+            and card_y <= y <= card_y + card_height
+        ):
+            return player_cards[i]
+    return None
 
 # Main loop
 running = True
@@ -245,6 +265,14 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if state == "play":
+                x, y = event.pos
+                card_key = get_card_at_position(x, y)
+                if card_key:
+                    selected_card = card_key
+                    player_cards.remove(card_key)
 
         if state == "home":
             if start_button.is_clicked(event):
