@@ -177,13 +177,12 @@ def shuffle_and_deal():
         for color in card_colors
         for special in special_cards
     ]
-    # 4 wild cards
-    deck += [wild for wild in wild_cards] * 4
+    deck += [wild for wild in wild_cards] * 4  # 4 wild cards
     random.shuffle(deck)
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
 
-    # Print debug
+    # Print debug information
     print(f"Deck size: {len(deck)}")
     print(f"Player cards: {len(player_cards)}")
     print(f"Computer cards: {len(computer_cards)}")
@@ -199,6 +198,7 @@ def game_screen():
     """Display the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
+
 
 def play_game():
     """Display the game screen with cards."""
@@ -216,24 +216,28 @@ def play_game():
         screen.blit(scaled_card_back_image, (x, y))
 
     # Display player's cards in a linear layout
-    global selected_card
-    for i in range(NUM_CARDS):
+    for i in range(len(player_cards)):  # Use length of player_cards
         x = (
             i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+            + (
+                SCREEN_WIDTH
+                - ((card_width + CARD_SPACING) * len(player_cards))
+            )
+            // 2
         )
         # Bottom of the screen
         y = SCREEN_HEIGHT - card_height - 20
-        card_key = player_cards[i]
-        if reveal_cards:
-            if selected_card == card_key:
-                # Move the selected card up
-                y -= 80
-                screen.blit(card_images[card_key], (x, y))
+        if i < len(player_cards):  # Ensure index is within range
+            card_key = player_cards[i]
+            if reveal_cards:
+                if selected_card == card_key:
+                    # Move the selected card up
+                    y -= 80
+                    screen.blit(card_images[card_key], (x, y))
+                else:
+                    screen.blit(card_images[card_key], (x, y))
             else:
-                screen.blit(card_images[card_key], (x, y))
-        else:
-            screen.blit(scaled_card_back_image, (x, y))
+                screen.blit(scaled_card_back_image, (x, y))
 
     # Draw the Reveal Cards button if not clicked
     if not reveal_button_clicked:
@@ -248,6 +252,7 @@ def play_game():
                 - 20,  # Moved up by 20 pixels
             ),
         )
+
 
 def get_card_at_position(x, y):
     """Check if the mouse position is over a card and return the card key."""
