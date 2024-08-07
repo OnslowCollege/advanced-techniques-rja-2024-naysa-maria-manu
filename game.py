@@ -41,8 +41,8 @@ discard_pile_image = pygame.image.load(DISCARD_PILE_IMAGE)
 scaled_card_back_image = pygame.transform.scale(
     card_back_image,
     (
-        int(card_back_image.get_width() * CARD_SCALE),
-        int(card_back_image.get_height() * CARD_SCALE),
+        int(card_back_image.get_width() * 0.27),
+        int(card_back_image.get_height() * 0.27),
     ),
 )
 font = pygame.font.Font(FONT_PATH, 40)
@@ -285,3 +285,5 @@ while running:
 
 pygame.quit()
 sys.exit()
+
+discard_pile_image
