@@ -231,8 +231,8 @@ def play_game():
             card_key = player_cards[i]
             if reveal_cards:
                 if selected_card == card_key:
-                    # Move the selected card up
-                    y -= 80
+                    # Move the selected card up further
+                    y -= 120
                     screen.blit(card_images[card_key], (x, y))
                 else:
                     screen.blit(card_images[card_key], (x, y))
@@ -254,25 +254,9 @@ def play_game():
         )
 
 
-def get_card_at_position(x, y):
-    """Check if the mouse position is over a card and return the card key."""
-    card_width, card_height = scaled_card_back_image.get_size()
-    for i in range(len(player_cards)):  # Use the length of player_cards
-        card_x = (
-            i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
-        )
-        card_y = SCREEN_HEIGHT - card_height - 20
-        if (
-            card_x <= x <= card_x + card_width
-            and card_y <= y <= card_y + card_height
-        ):
-            return player_cards[i]
-    return None
+# Initialize selected_card outside the main loop
+selected_card = None
 
-
-# Main loop
-running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
