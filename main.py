@@ -16,7 +16,7 @@ GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
 # Number of cards per player
 NUM_CARDS = 7
-# Scale down the cards size down by 47%
+# Scale down the cards size down by 37%
 CARD_SCALE = 0.37
 # Space between cards
 CARD_SPACING = 10
