@@ -15,16 +15,12 @@ HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
 DISCARD_PILE_IMAGE = "images/discard_pile.jpg"
-# Number of cards per player
 NUM_CARDS = 7
-# Scale down the cards size down by 47%
 CARD_SCALE = 0.37
-# Space between cards
 CARD_SPACING = 10
-# Size of the Reveal Cards button
 REVEAL_BUTTON_SIZE = (270, 60)
 
-# Define the new colors
+# Define new colors
 BUTTON_COLOR = COLOR_RED
 TEXT_COLOR = (254, 245, 185)
 
@@ -166,7 +162,7 @@ reveal_button_clicked = False
 player_cards = []
 computer_cards = []
 deck = []
-
+selected_card = None
 
 def shuffle_and_deal():
     global player_cards, computer_cards, deck
@@ -268,28 +264,32 @@ while running:
 
             if reveal_button_clicked:
                 # Check if a card was clicked
-                for i, card in enumerate(player_cards):
-                    card_width, card_height = card_images[card].get_size()
-                    x = (
-                        i * (card_width + CARD_SPACING)
-                        + (
-                            SCREEN_WIDTH
-                            - ((card_width + CARD_SPACING) * NUM_CARDS)
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    for i, card in enumerate(player_cards):
+                        card_width, card_height = card_images[card].get_size()
+                        x = (
+                            i * (card_width + CARD_SPACING)
+                            + (
+                                SCREEN_WIDTH
+                                - ((card_width + CARD_SPACING) * NUM_CARDS)
+                            )
+                            // 2
                         )
-                        // 2
-                    )
-                    y = SCREEN_HEIGHT - card_height - 20
-                    card_rect = pygame.Rect(x, y, card_width, card_height)
-                    if card_rect.collidepoint(event.pos):
-                        # Move the card to the center and remove from player's hand
-                        center_x = (SCREEN_WIDTH - card_width) // 2
-                        center_y = (SCREEN_HEIGHT - card_height) // 2
-                        screen.blit(game_background_image, (0, 0))
-                        screen.blit(card_images[card], (center_x, center_y))
-                        player_cards.pop(i)
-                        pygame.display.flip()
-                        pygame.time.wait(500)
-                        break
+                        y = SCREEN_HEIGHT - card_height - 20
+                        card_rect = pygame.Rect(x, y, card_width, card_height)
+                        if card_rect.collidepoint(event.pos):
+                            # Move card to the center and remove from player's hand
+                            center_x = (SCREEN_WIDTH - card_width) // 2
+                            center_y = (SCREEN_HEIGHT - card_height) // 2
+                            screen.blit(game_background_image, (0, 0))
+                            screen.blit(
+                                card_images[card], (center_x, center_y)
+                            )
+                            pygame.display.flip()
+                            pygame.time.wait(500)
+                            player_cards.pop(i)
+                            selected_card = card
+                            break
 
                 # Check if the discard pile was clicked
                 discard_pile_rect = scaled_discard_pile_image.get_rect()
