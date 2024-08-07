@@ -41,8 +41,15 @@ discard_pile_image = pygame.image.load(DISCARD_PILE_IMAGE)
 scaled_card_back_image = pygame.transform.scale(
     card_back_image,
     (
-        int(card_back_image.get_width() * 0.27),
-        int(card_back_image.get_height() * 0.27),
+        int(card_back_image.get_width() * CARD_SCALE),
+        int(card_back_image.get_height() * CARD_SCALE),
+    ),
+)
+scaled_discard_pile_image = pygame.transform.scale(
+    discard_pile_image,
+    (
+        int(discard_pile_image.get_width() * CARD_SCALE),
+        int(discard_pile_image.get_height() * CARD_SCALE),
     ),
 )
 font = pygame.font.Font(FONT_PATH, 40)
@@ -250,10 +257,11 @@ def play_game():
         reveal_button.draw(screen)
     else:
         screen.blit(
-            discard_pile_image,
+            scaled_discard_pile_image,
             (
-                SCREEN_WIDTH // 2 - discard_pile_image.get_width() // 2,
-                SCREEN_HEIGHT // 2 - discard_pile_image.get_height() // 2,
+                SCREEN_WIDTH // 2 - scaled_discard_pile_image.get_width() // 2,
+                SCREEN_HEIGHT // 2
+                - scaled_discard_pile_image.get_height() // 2,
             ),
         )
 
@@ -285,5 +293,3 @@ while running:
 
 pygame.quit()
 sys.exit()
-
-discard_pile_image
