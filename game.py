@@ -165,10 +165,11 @@ reveal_cards = False
 reveal_button_clicked = False
 player_cards = []
 computer_cards = []
+deck = []
 
 
 def shuffle_and_deal():
-    global player_cards, computer_cards
+    global player_cards, computer_cards, deck
     deck = [
         f"{color}_{number}" for color in card_colors for number in range(10)
     ]
@@ -181,6 +182,7 @@ def shuffle_and_deal():
     random.shuffle(deck)
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
+    deck = deck[NUM_CARDS * 2 :]  # Remaining cards in the deck
 
 
 def home_screen():
@@ -211,7 +213,7 @@ def play_game():
         screen.blit(scaled_card_back_image, (x, y))
 
     # Display player's cards in a linear layout
-    for i in range(NUM_CARDS):
+    for i in range(len(player_cards)):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
@@ -238,6 +240,9 @@ def play_game():
             ),
         )
 
+    pygame.display.flip()
+
+
 # Main loop
 running = True
 while running:
@@ -260,9 +265,48 @@ while running:
             if reveal_button.is_clicked(event):
                 reveal_cards = True
                 reveal_button_clicked = True
+
+            if reveal_button_clicked:
+                # Check if a card was clicked
+                for i, card in enumerate(player_cards):
+                    card_width, card_height = card_images[card].get_size()
+                    x = (
+                        i * (card_width + CARD_SPACING)
+                        + (
+                            SCREEN_WIDTH
+                            - ((card_width + CARD_SPACING) * NUM_CARDS)
+                        )
+                        // 2
+                    )
+                    y = SCREEN_HEIGHT - card_height - 20
+                    card_rect = pygame.Rect(x, y, card_width, card_height)
+                    if card_rect.collidepoint(event.pos):
+                        # Move the card to the center and remove from player's hand
+                        center_x = (SCREEN_WIDTH - card_width) // 2
+                        center_y = (SCREEN_HEIGHT - card_height) // 2
+                        screen.blit(game_background_image, (0, 0))
+                        screen.blit(card_images[card], (center_x, center_y))
+                        player_cards.pop(i)
+                        pygame.display.flip()
+                        pygame.time.wait(500)
+                        break
+
+                # Check if the discard pile was clicked
+                discard_pile_rect = scaled_discard_pile_image.get_rect()
+                discard_pile_rect.topleft = (
+                    SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
+                    SCREEN_HEIGHT // 2
+                    - scaled_discard_pile_image.get_height() // 2
+                    - 20,
+                )
+                if discard_pile_rect.collidepoint(event.pos) and deck:
+                    # Draw a card from the deck and add to player's hand
+                    new_card = deck.pop(0)
+                    player_cards.append(new_card)
+
             play_game()
 
-        pygame.display.flip()
+    pygame.display.flip()
 
 pygame.quit()
 sys.exit()
