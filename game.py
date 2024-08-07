@@ -390,34 +390,32 @@ card_width, card_height = scaled_card_back_image.get_size()
 
 def handle_turns():
     """Handle the game turns and actions."""
+    global reveal_cards
+
     if state == "play":
-        if current_turn == "computer":
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if current_turn == "player":
+                # Player's card selection
+                for i, card in enumerate(player_cards):
+                    x = (
+                        i * (card_width + CARD_SPACING)
+                        + (
+                            SCREEN_WIDTH
+                            - ((card_width + CARD_SPACING) * NUM_CARDS)
+                        )
+                        // 2
+                    )
+                    y = SCREEN_HEIGHT - card_height - 50
+                    card_rect = pygame.Rect(x, y, card_width, card_height)
+                    if card_rect.collidepoint(event.pos):
+                        player_turn(i)
+                        break
+            elif reveal_button.is_clicked(event):
+                reveal_cards = True
+        elif current_turn == "computer":
             pygame.time.wait(1000)  # Simulate thinking time
             computer_turn()
-        # Check if reveal button is clicked for the current turn
-        if reveal_button.is_clicked(event):
-            reveal_cards = True
 
-        if current_turn == "player":
-            # Player's card selection
-            for i, card in enumerate(player_cards):
-                x = (
-                    i * (card_width + CARD_SPACING)
-                    + (
-                        SCREEN_WIDTH
-                        - ((card_width + CARD_SPACING) * NUM_CARDS)
-                    )
-                    // 2
-                )
-                y = SCREEN_HEIGHT - card_height - 50
-                card_rect = pygame.Rect(x, y, card_width, card_height)
-                if card_rect.collidepoint(event.pos):
-                    player_turn(i)
-                    break
-        else:
-            # Computer's turn
-            pygame.time.wait(1000)
-            computer_turn()
 
 # Main loop
 while True:
@@ -441,7 +439,7 @@ while True:
                 current_turn = "computer"
                 state = "play"
         elif state == "play":
-            handle_turns()
+            handle_turns()  # Call handle_turns with current event
 
     if state == "home":
         home_screen()
