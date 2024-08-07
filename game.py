@@ -342,8 +342,20 @@ def play_game():
         else:
             screen.blit(scaled_card_back_image, positions[i])
 
-    # Draw the Reveal Cards button if it is not None
+    # Draw the Reveal Cards button
     if reveal_button:
+        # Calculate the position and size of the button area
+        button_x, button_y = reveal_button.pos
+        button_width, button_height = reveal_button.size
+
+        # Clear the button area with a solid color (background color)
+        pygame.draw.rect(
+            screen,
+            (0, 0, 0),
+            (button_x, button_y, button_width, button_height),
+        )
+
+        # Draw the Reveal Cards button
         reveal_button.draw(screen)
 
     # Display discard pile
@@ -359,6 +371,7 @@ def play_game():
         )
 
     pygame.display.flip()
+
 
 
 
