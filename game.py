@@ -261,9 +261,40 @@ def play_game():
             (
                 SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
                 SCREEN_HEIGHT // 2
-                - scaled_discard_pile_image.get_height() // 2,
+                - scaled_discard_pile_image.get_height() // 2
+                - 20,  # Moved up by 20 pixels
             ),
         )
+
+# Main loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        if state == "home":
+            if start_button.is_clicked(event):
+                state = "game"
+            else:
+                home_screen()
+        elif state == "game":
+            if shuffle_play_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
+            else:
+                game_screen()
+        elif state == "play":
+            if reveal_button.is_clicked(event):
+                reveal_cards = True
+                reveal_button_clicked = True
+            play_game()
+
+        pygame.display.flip()
+
+pygame.quit()
+sys.exit()
+
 
 # Main loop
 running = True
