@@ -118,15 +118,13 @@ class Button:
 
     def __init__(self, text, pos, size, color, text_color, font):
         self.text = text
-        self.pos = pos
-        self.size = size
+        self.pos = pos  # pos should be a tuple (x, y)
+        self.size = size  # size should be a tuple (width, height)
         self.color = color
         self.text_color = text_color
         self.font = font
         self.rect = pygame.Rect(pos, size)
-        self.rendered_text = self.font.render(
-            text, True, self.text_color
-        )  # Text color
+        self.rendered_text = self.font.render(text, True, self.text_color)
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
@@ -143,6 +141,7 @@ class Button:
         ):
             return True
         return False
+
 
 
 # Create buttons
