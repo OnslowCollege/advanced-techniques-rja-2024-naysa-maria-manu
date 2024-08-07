@@ -357,10 +357,6 @@ def play_game():
             ),
         )
 
-    # Display reveal button if cards are not revealed
-    if not reveal_cards:
-        reveal_button.draw(screen)
-
     pygame.display.flip()
 
 
