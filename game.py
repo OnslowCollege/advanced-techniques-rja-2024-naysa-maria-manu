@@ -14,6 +14,7 @@ CARD_FONT_PATH = "Text_features/Comic.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
+DISCARD_PILE_IMAGE = "images/discard_pile.jpg"
 # Number of cards per player
 NUM_CARDS = 7
 # Scale down the cards size down by 47%
@@ -36,6 +37,7 @@ wild_cards = ["+4"]
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
 game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
 card_back_image = pygame.image.load(CARD_BACK_IMAGE)
+discard_pile_image = pygame.image.load(DISCARD_PILE_IMAGE)
 scaled_card_back_image = pygame.transform.scale(
     card_back_image,
     (
@@ -153,6 +155,7 @@ reveal_button = Button(
 # Game state
 state = "home"
 reveal_cards = False
+reveal_button_clicked = False
 player_cards = []
 computer_cards = []
 
@@ -242,8 +245,17 @@ def play_game():
         else:
             screen.blit(scaled_card_back_image, positions[i])
 
-    # Draw the Reveal Cards button
-    reveal_button.draw(screen)
+    # Draw the Reveal Cards button if not clicked
+    if not reveal_button_clicked:
+        reveal_button.draw(screen)
+    else:
+        screen.blit(
+            discard_pile_image,
+            (
+                SCREEN_WIDTH // 2 - discard_pile_image.get_width() // 2,
+                SCREEN_HEIGHT // 2 - discard_pile_image.get_height() // 2,
+            ),
+        )
 
 # Main loop
 running = True
@@ -266,6 +278,7 @@ while running:
         elif state == "play":
             if reveal_button.is_clicked(event):
                 reveal_cards = True
+                reveal_button_clicked = True
             play_game()
 
         pygame.display.flip()
