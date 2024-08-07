@@ -383,9 +383,11 @@ while running:
                     state = "play"
             elif state == "play":
                 if reveal_button.is_clicked(event) and not reveal_cards:
+                    # Shuffle the deck and reveal the player's cards
+                    shuffle_and_deal()  # Re-shuffle deck if needed
                     reveal_cards = True
-                    # Remove reveal button after clicked
-                    state = "choose_turn_order"
+                    # Remove reveal button after clicking
+                    reveal_button = None
                 if current_turn == "player":
                     for i, card in enumerate(player_cards):
                         card_width, card_height = card_images[card].get_size()
