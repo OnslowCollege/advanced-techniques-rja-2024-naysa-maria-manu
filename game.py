@@ -360,6 +360,7 @@ def play_game():
     pygame.display.flip()
 
 
+
 # Main game loop
 running = True
 while running:
@@ -382,7 +383,11 @@ while running:
                     reveal_cards = False
                     state = "play"
             elif state == "play":
-                if reveal_button.is_clicked(event) and not reveal_cards:
+                if (
+                    reveal_button
+                    and reveal_button.is_clicked(event)
+                    and not reveal_cards
+                ):
                     # Shuffle the deck and reveal the player's cards
                     shuffle_and_deal()  # Re-shuffle deck if needed
                     reveal_cards = True
