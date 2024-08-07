@@ -342,8 +342,9 @@ def play_game():
         else:
             screen.blit(scaled_card_back_image, positions[i])
 
-    # Draw the Reveal Cards button
-    reveal_button.draw(screen)
+    # Draw the Reveal Cards button if it is not None
+    if reveal_button:
+        reveal_button.draw(screen)
 
     # Display discard pile
     if discard_pile:
