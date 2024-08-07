@@ -234,6 +234,7 @@ def player_turn(card_index):
 
 
 def computer_turn():
+    """served by computer."""
     global computer_cards, discard_pile, deck
     top_card = discard_pile[-1]
     for i, card in enumerate(computer_cards):
@@ -255,6 +256,7 @@ def computer_turn():
 
 
 def draw_card(player):
+    """Draws cards."""
     global deck
     if deck:
         new_card = deck.pop(0)
