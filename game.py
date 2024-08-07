@@ -375,6 +375,7 @@ def play_game():
 
 
 
+
 # Main game loop
 running = True
 while running:
