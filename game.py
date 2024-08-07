@@ -17,7 +17,7 @@ CARD_BACK_IMAGE = "images/UNO_card.jpg"
 DISCARD_PILE_IMAGE = "images/discard_pile.jpg"
 # Number of cards per player
 NUM_CARDS = 7
-# Scale down the cards size by 37%
+# Scale down the cards size down by 47%
 CARD_SCALE = 0.37
 # Space between cards
 CARD_SPACING = 10
@@ -165,11 +165,10 @@ reveal_cards = False
 reveal_button_clicked = False
 player_cards = []
 computer_cards = []
-discard_pile = []
-selected_card_index = None
+
 
 def shuffle_and_deal():
-    global player_cards, computer_cards, discard_pile
+    global player_cards, computer_cards
     deck = [
         f"{color}_{number}" for color in card_colors for number in range(10)
     ]
@@ -182,7 +181,6 @@ def shuffle_and_deal():
     random.shuffle(deck)
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
-    discard_pile = deck[NUM_CARDS * 2 :]  # Remaining cards in discard pile
 
 
 def home_screen():
@@ -201,26 +199,28 @@ def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
-    # Display computer's cards
+    # Display computer's cards in a linear layout
     card_width, card_height = scaled_card_back_image.get_size()
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
+        # Top of the screen
         y = 20
         screen.blit(scaled_card_back_image, (x, y))
 
-    # Display player's cards
-    card_width, card_height = scaled_card_back_image.get_size()
+    # Display player's cards in a linear layout
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
+        # Bottom of the screen
         y = SCREEN_HEIGHT - card_height - 20
+        card_key = player_cards[i]
         if reveal_cards:
-            screen.blit(card_images[player_cards[i]], (x, y))
+            screen.blit(card_images[card_key], (x, y))
         else:
             screen.blit(scaled_card_back_image, (x, y))
 
@@ -238,37 +238,6 @@ def play_game():
             ),
         )
 
-def handle_click(event):
-    global selected_card_index, player_cards, discard_pile
-    if state == "play":
-        # Check if user clicked on a player's card
-        card_width, card_height = scaled_card_back_image.get_size()
-        for i in range(NUM_CARDS):
-            x = (
-                i * (card_width + CARD_SPACING)
-                + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS))
-                // 2
-            )
-            y = SCREEN_HEIGHT - card_height - 20
-            card_rect = pygame.Rect(x, y, card_width, card_height)
-            if card_rect.collidepoint(event.pos) and reveal_cards:
-                selected_card_index = i
-                player_cards.pop(i)
-                break
-
-        # Check if user clicked on discard pile image
-        discard_pile_rect = pygame.Rect(
-            SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
-            SCREEN_HEIGHT // 2
-            - scaled_discard_pile_image.get_height() // 2
-            - 20,
-            scaled_discard_pile_image.get_width(),
-            scaled_discard_pile_image.get_height(),
-        )
-        if discard_pile_rect.collidepoint(event.pos):
-            if discard_pile:
-                new_card = discard_pile.pop(0)
-                player_cards.append(new_card)
 
 # Main loop
 running = True
@@ -292,52 +261,9 @@ while running:
             if reveal_button.is_clicked(event):
                 reveal_cards = True
                 reveal_button_clicked = True
-
-            if reveal_button_clicked:
-                # Check if a card was clicked
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    for i, card in enumerate(player_cards):
-                        card_width, card_height = card_images[card].get_size()
-                        x = (
-                            i * (card_width + CARD_SPACING)
-                            + (
-                                SCREEN_WIDTH
-                                - ((card_width + CARD_SPACING) * NUM_CARDS)
-                            )
-                            // 2
-                        )
-                        y = SCREEN_HEIGHT - card_height - 20
-                        card_rect = pygame.Rect(x, y, card_width, card_height)
-                        if card_rect.collidepoint(event.pos):
-                            # Move card to the center and remove from player's hand
-                            center_x = (SCREEN_WIDTH - card_width) // 2
-                            center_y = (SCREEN_HEIGHT - card_height) // 2
-                            screen.blit(game_background_image, (0, 0))
-                            screen.blit(
-                                card_images[card], (center_x, center_y)
-                            )
-                            pygame.display.flip()
-                            pygame.time.wait(500)
-                            player_cards.pop(i)
-                            selected_card = card
-                            break
-
-                # Check if the discard pile was clicked
-                discard_pile_rect = scaled_discard_pile_image.get_rect()
-                discard_pile_rect.topleft = (
-                    SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
-                    SCREEN_HEIGHT // 2
-                    - scaled_discard_pile_image.get_height() // 2
-                    - 20,
-                )
-                if discard_pile_rect.collidepoint(event.pos) and deck:
-                    # Draw a card from the deck and add to player's hand
-                    new_card = deck.pop(0)
-                    player_cards.append(new_card)
-
             play_game()
 
-    pygame.display.flip()
+        pygame.display.flip()
 
 pygame.quit()
 sys.exit()
