@@ -385,6 +385,9 @@ def play_game():
         (SCREEN_WIDTH // 2 - turn_text.get_width() // 2, SCREEN_HEIGHT - 50),
     )
 
+card_width, card_height = scaled_card_back_image.get_size()
+
+
 def handle_turns():
     """Handle the game turns and actions."""
     if state == "play":
