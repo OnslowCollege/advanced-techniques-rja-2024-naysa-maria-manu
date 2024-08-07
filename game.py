@@ -320,42 +320,61 @@ def choose_turn_order():
 
 
 def play_game():
-    """Updates the game display."""
-    if game_background_image:
-        screen.blit(game_background_image, (0, 0))
+    """Display the game screen with cards."""
+    screen.blit(game_background_image, (0, 0))
 
-    card_width, card_height = list(card_images.values())[0].get_size()
-
-    # Display computer's cards face down
-    for i in range(len(computer_cards)):
+    # Display computer's cards
+    card_width, card_height = scaled_card_back_image.get_size()
+    for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        y = 50
+        # Top of the screen
+        y = 20
         screen.blit(scaled_card_back_image, (x, y))
 
-    # Display player's cards
-    for i, card in enumerate(player_cards):
-        x = (
-            i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
-        )
-        y = SCREEN_HEIGHT - card_height - 50
-        screen.blit(card_images[card], (x, y))
+    # Display player's cards in a U-shape
+    mid_x = SCREEN_WIDTH // 2
+    positions = [
+        # left bottom
+        (
+            mid_x - 3 * card_width - 3 * CARD_SPACING - 50,
+            SCREEN_HEIGHT - card_height - 100,
+        ),
+        (
+            mid_x - 2 * card_width - 2 * CARD_SPACING - 50,
+            SCREEN_HEIGHT - card_height - 60,
+        ),
+        (
+            mid_x - card_width - CARD_SPACING - 50,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        # middle bottom
+        (
+            mid_x - card_width // 33 - 50,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        # right bottom
+        (
+            mid_x + card_width + CARD_SPACING - 50,
+            SCREEN_HEIGHT - card_height - 20,
+        ),
+        (
+            mid_x + 2 * card_width + 2 * CARD_SPACING - 50,
+            SCREEN_HEIGHT - card_height - 60,
+        ),
+        (
+            mid_x + 3 * card_width + 3 * CARD_SPACING - 50,
+            SCREEN_HEIGHT - card_height - 100,
+        ),
+    ]
 
-    # Display discard pile
-    if discard_pile:
-        top_discard = discard_pile[-1]
-        screen.blit(
-            card_images[top_discard], (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        )
+    for i in range(NUM_CARDS):
+        screen.blit(scaled_card_back_image, positions[i])
 
-    # Display reveal button
-    if not reveal_cards:
-        reveal_button.draw(screen)
-
-    pygame.display.flip()
+    # Draw the Reveal Cards button
+    reveal_button.draw(screen)
 
 
 # Main loop
