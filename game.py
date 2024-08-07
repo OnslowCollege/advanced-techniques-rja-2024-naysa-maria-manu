@@ -27,19 +27,39 @@ card_colors = ["blue", "red", "yellow", "green"]
 special_cards = ["+2", "rev", "skip"]
 wild_cards = ["+4"]
 
-# Load images and fonts
-home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
-game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
-card_back_image = pygame.image.load(CARD_BACK_IMAGE)
-scaled_card_back_image = pygame.transform.scale(
-    card_back_image,
-    (
-        int(card_back_image.get_width() * CARD_SCALE),
-        int(card_back_image.get_height() * CARD_SCALE),
-    ),
+# Load images and fonts with error handling
+def load_image(path):
+    try:
+        return pygame.image.load(path)
+    except pygame.error as e:
+        print(f"Unable to load image at {path}: {e}")
+        return None
+
+
+def load_font(path, size):
+    try:
+        return pygame.font.Font(path, size)
+    except pygame.error as e:
+        print(f"Unable to load font at {path}: {e}")
+        return pygame.font.Font(None, size)
+
+
+home_background_image = load_image(HOME_BACKGROUND_IMAGE)
+game_background_image = load_image(GAME_BACKGROUND_IMAGE)
+card_back_image = load_image(CARD_BACK_IMAGE)
+scaled_card_back_image = (
+    pygame.transform.scale(
+        card_back_image,
+        (
+            int(card_back_image.get_width() * CARD_SCALE),
+            int(card_back_image.get_height() * CARD_SCALE),
+        ),
+    )
+    if card_back_image
+    else None
 )
-font = pygame.font.Font(FONT_PATH, 40)
-font_card = pygame.font.Font(CARD_FONT_PATH, 60)
+font = load_font(FONT_PATH, 40)
+font_card = load_font(CARD_FONT_PATH, 60)
 
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -58,21 +78,36 @@ def load_and_scale_card_images():
     for color in card_colors:
         for number in range(10):
             card_name = f"{color}_{number}.jpg"
-            card_image = pygame.image.load(f"images/{card_name}")
-            card_images[f"{color}_{number}"] = pygame.transform.scale(
-                card_image,
-                (
-                    int(card_image.get_width() * CARD_SCALE),
-                    int(card_image.get_height() * CARD_SCALE),
-                ),
-            )
+            card_image = load_image(f"images/{card_name}")
+            if card_image:
+                card_images[f"{color}_{number}"] = pygame.transform.scale(
+                    card_image,
+                    (
+                        int(card_image.get_width() * CARD_SCALE),
+                        int(card_image.get_height() * CARD_SCALE),
+                    ),
+                )
 
     # Load special cards
     for color in card_colors:
         for special in special_cards:
             card_name = f"{color}_{special}.jpg"
-            card_image = pygame.image.load(f"images/{card_name}")
-            card_images[f"{color}_{special}"] = pygame.transform.scale(
+            card_image = load_image(f"images/{card_name}")
+            if card_image:
+                card_images[f"{color}_{special}"] = pygame.transform.scale(
+                    card_image,
+                    (
+                        int(card_image.get_width() * CARD_SCALE),
+                        int(card_image.get_height() * CARD_SCALE),
+                    ),
+                )
+
+    # Load wild cards
+    for wild in wild_cards:
+        card_name = f"UNO_{wild}.jpg"
+        card_image = load_image(f"images/{card_name}")
+        if card_image:
+            card_images[wild] = pygame.transform.scale(
                 card_image,
                 (
                     int(card_image.get_width() * CARD_SCALE),
@@ -80,27 +115,16 @@ def load_and_scale_card_images():
                 ),
             )
 
-    # Load wild cards
-    for wild in wild_cards:
-        card_name = f"UNO_{wild}.jpg"
-        card_image = pygame.image.load(f"images/{card_name}")
-        card_images[wild] = pygame.transform.scale(
-            card_image,
+    # Load the new wild color card
+    wild_color_image = load_image("images/wild_color.jpg")
+    if wild_color_image:
+        card_images["wild_color"] = pygame.transform.scale(
+            wild_color_image,
             (
-                int(card_image.get_width() * CARD_SCALE),
-                int(card_image.get_height() * CARD_SCALE),
+                int(wild_color_image.get_width() * CARD_SCALE),
+                int(wild_color_image.get_height() * CARD_SCALE),
             ),
         )
-
-    # Load the new wild color card
-    wild_color_image = pygame.image.load("images/wild_color.jpg")
-    card_images["wild_color"] = pygame.transform.scale(
-        wild_color_image,
-        (
-            int(wild_color_image.get_width() * CARD_SCALE),
-            int(wild_color_image.get_height() * CARD_SCALE),
-        ),
-    )
 
 
 load_and_scale_card_images()
@@ -272,30 +296,38 @@ def draw_card(player):
 
 def home_screen():
     """Display the home screen with the start button."""
-    screen.blit(home_background_image, (0, 0))
+    if home_background_image:
+        screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
+    pygame.display.flip()
 
 
 def game_screen():
-    """Display the game screen with the shuffle and play button."""
-    screen.blit(game_background_image, (0, 0))
+    """Display the screen for shuffling and dealing cards."""
+    if game_background_image:
+        screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
+    pygame.display.flip()
 
 
 def choose_turn_order():
-    """Display the screen to choose who goes first."""
-    screen.blit(game_background_image, (0, 0))
+    """Chooses the turn order."""
+    if game_background_image:
+        screen.blit(game_background_image, (0, 0))
     player_first_button.draw(screen)
     computer_first_button.draw(screen)
+    pygame.display.flip()
 
 
 def play_game():
-    """Display the game screen with cards."""
-    screen.blit(game_background_image, (0, 0))
+    """Updates the game display."""
+    if game_background_image:
+        screen.blit(game_background_image, (0, 0))
 
-    # Display computer's cards
-    card_width, card_height = scaled_card_back_image.get_size()
-    for i in range(NUM_CARDS):
+    card_width, card_height = list(card_images.values())[0].get_size()
+
+    # Display computer's cards face down
+    for i in range(len(computer_cards)):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
