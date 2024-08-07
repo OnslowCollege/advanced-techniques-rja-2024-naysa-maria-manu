@@ -376,9 +376,45 @@ def play_game():
     # Draw the Reveal Cards button
     reveal_button.draw(screen)
 
+    # Add logic to display the current player's turn
+    turn_text = font.render(
+        f"Current Turn: {current_turn.capitalize()}", True, TEXT_COLOR
+    )
+    screen.blit(
+        turn_text,
+        (SCREEN_WIDTH // 2 - turn_text.get_width() // 2, SCREEN_HEIGHT - 50),
+    )
 
-card_width, card_height = scaled_card_back_image.get_size()
+def handle_turns():
+    """Handle the game turns and actions."""
+    if state == "play":
+        if current_turn == "computer":
+            pygame.time.wait(1000)  # Simulate thinking time
+            computer_turn()
+        # Check if reveal button is clicked for the current turn
+        if reveal_button.is_clicked(event):
+            reveal_cards = True
 
+        if current_turn == "player":
+            # Player's card selection
+            for i, card in enumerate(player_cards):
+                x = (
+                    i * (card_width + CARD_SPACING)
+                    + (
+                        SCREEN_WIDTH
+                        - ((card_width + CARD_SPACING) * NUM_CARDS)
+                    )
+                    // 2
+                )
+                y = SCREEN_HEIGHT - card_height - 50
+                card_rect = pygame.Rect(x, y, card_width, card_height)
+                if card_rect.collidepoint(event.pos):
+                    player_turn(i)
+                    break
+        else:
+            # Computer's turn
+            pygame.time.wait(1000)
+            computer_turn()
 
 # Main loop
 while True:
@@ -402,26 +438,7 @@ while True:
                 current_turn = "computer"
                 state = "play"
         elif state == "play":
-            if reveal_button.is_clicked(event):
-                reveal_cards = True
-            elif (
-                current_turn == "player"
-                and event.type == pygame.MOUSEBUTTONDOWN
-            ):
-                for i, card in enumerate(player_cards):
-                    x = (
-                        i * (card_width + CARD_SPACING)
-                        + (
-                            SCREEN_WIDTH
-                            - ((card_width + CARD_SPACING) * NUM_CARDS)
-                        )
-                        // 2
-                    )
-                    y = SCREEN_HEIGHT - card_height - 50
-                    card_rect = pygame.Rect(x, y, card_width, card_height)
-                    if card_rect.collidepoint(event.pos):
-                        player_turn(i)
-                        break
+            handle_turns()
 
     if state == "home":
         home_screen()
@@ -431,6 +448,3 @@ while True:
         choose_turn_order()
     elif state == "play":
         play_game()
-        if current_turn == "computer":
-            pygame.time.wait(1000)
-            computer_turn()
