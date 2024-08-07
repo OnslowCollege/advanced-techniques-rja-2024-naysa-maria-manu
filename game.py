@@ -199,58 +199,30 @@ def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
-    # Display computer's cards
+    # Display computer's cards in a linear layout
     card_width, card_height = scaled_card_back_image.get_size()
     for i in range(NUM_CARDS):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
+        # Top of the screen
         y = 20
         screen.blit(scaled_card_back_image, (x, y))
 
-    # Display player's cards in a U-shape
-    mid_x = SCREEN_WIDTH // 2.2
-    positions = [
-        # left bottom
-        (
-            mid_x - 3 * card_width - 3 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 100,
-        ),
-        (
-            mid_x - 2 * card_width - 2 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 60,
-        ),
-        (
-            mid_x - card_width - CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        # middle bottom
-        (
-            mid_x - card_width // 25,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        # right bottom
-        (
-            mid_x + card_width + CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        (
-            mid_x + 2 * card_width + 2 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 60,
-        ),
-        (
-            mid_x + 3 * card_width + 3 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 100,
-        ),
-    ]
-
+    # Display player's cards in a linear layout
     for i in range(NUM_CARDS):
+        x = (
+            i * (card_width + CARD_SPACING)
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+        )
+        # Bottom of the screen
+        y = SCREEN_HEIGHT - card_height - 20
         card_key = player_cards[i]
         if reveal_cards:
-            screen.blit(card_images[card_key], positions[i])
+            screen.blit(card_images[card_key], (x, y))
         else:
-            screen.blit(scaled_card_back_image, positions[i])
+            screen.blit(scaled_card_back_image, (x, y))
 
     # Draw the Reveal Cards button if not clicked
     if not reveal_button_clicked:
@@ -265,36 +237,6 @@ def play_game():
                 - 20,  # Moved up by 20 pixels
             ),
         )
-
-# Main loop
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-        if state == "home":
-            if start_button.is_clicked(event):
-                state = "game"
-            else:
-                home_screen()
-        elif state == "game":
-            if shuffle_play_button.is_clicked(event):
-                shuffle_and_deal()
-                state = "play"
-            else:
-                game_screen()
-        elif state == "play":
-            if reveal_button.is_clicked(event):
-                reveal_cards = True
-                reveal_button_clicked = True
-            play_game()
-
-        pygame.display.flip()
-
-pygame.quit()
-sys.exit()
-
 
 # Main loop
 running = True
