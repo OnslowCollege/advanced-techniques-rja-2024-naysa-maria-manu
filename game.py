@@ -259,7 +259,7 @@ def play_game():
         screen.blit(
             scaled_discard_pile_image,
             (
-                SCREEN_WIDTH // 2 - scaled_discard_pile_image.get_width() // 2,
+                SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
                 SCREEN_HEIGHT // 2
                 - scaled_discard_pile_image.get_height() // 2,
             ),
