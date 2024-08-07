@@ -14,17 +14,11 @@ CARD_FONT_PATH = "Text_features/Comic.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
-# Number of cards per player
 NUM_CARDS = 7
-# Scale down the cards size down by 47%
 CARD_SCALE = 0.37
-# Space between cards
 CARD_SPACING = 10
-# Size of the Reveal Cards button
 REVEAL_BUTTON_SIZE = (270, 60)
 COMPUTER_BUTTON_SIZE = (330, 60)
-
-# Define the new colors
 BUTTON_COLOR = COLOR_RED
 TEXT_COLOR = (254, 245, 185)
 
@@ -97,6 +91,16 @@ def load_and_scale_card_images():
                 int(card_image.get_height() * CARD_SCALE),
             ),
         )
+
+    # Load the new wild color card
+    wild_color_image = pygame.image.load("images/wild_color.jpg")
+    card_images["wild_color"] = pygame.transform.scale(
+        wild_color_image,
+        (
+            int(wild_color_image.get_width() * CARD_SCALE),
+            int(wild_color_image.get_height() * CARD_SCALE),
+        ),
+    )
 
 
 load_and_scale_card_images()
@@ -296,137 +300,74 @@ def play_game():
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        y = 20
+        y = 50
         screen.blit(scaled_card_back_image, (x, y))
 
-    # Display player's cards in a U-shape
-    mid_x = SCREEN_WIDTH // 2.2
-    positions = [
-        # left bottom
-        (
-            mid_x - 3 * card_width - 3 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 100,
-        ),
-        (
-            mid_x - 2 * card_width - 2 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 60,
-        ),
-        (
-            mid_x - card_width - CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        # middle bottom
-        (
-            mid_x - card_width // 25,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        # right bottom
-        (
-            mid_x + card_width + CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        (
-            mid_x + 2 * card_width + 2 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 60,
-        ),
-        (
-            mid_x + 3 * card_width + 3 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 100,
-        ),
-    ]
-
-    for i in range(NUM_CARDS):
-        card_key = player_cards[i]
-        if reveal_cards:
-            screen.blit(card_images[card_key], positions[i])
-        else:
-            screen.blit(scaled_card_back_image, positions[i])
-
-    # Draw the Reveal Cards button
-    if reveal_button:
-        # Calculate the position and size of the button area
-        button_x, button_y = reveal_button.pos
-        button_width, button_height = reveal_button.size
-
-        # Clear the button area with a solid color (background color)
-        pygame.draw.rect(
-            screen,
-            (0, 0, 0),
-            (button_x, button_y, button_width, button_height),
+    # Display player's cards
+    for i, card in enumerate(player_cards):
+        x = (
+            i * (card_width + CARD_SPACING)
+            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-
-        # Draw the Reveal Cards button
-        reveal_button.draw(screen)
+        y = SCREEN_HEIGHT - card_height - 50
+        screen.blit(card_images[card], (x, y))
 
     # Display discard pile
     if discard_pile:
-        top_card = discard_pile[-1]
-        top_card_image = card_images[top_card]
+        top_discard = discard_pile[-1]
         screen.blit(
-            top_card_image,
-            (
-                SCREEN_WIDTH // 2 - card_width // 2,
-                SCREEN_HEIGHT // 2 - card_height // 2,
-            ),
+            card_images[top_discard], (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         )
+
+    # Display reveal button
+    if not reveal_cards:
+        reveal_button.draw(screen)
 
     pygame.display.flip()
 
 
-
-
-
-# Main game loop
-running = True
-while running:
+# Main loop
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if state == "home" and start_button.is_clicked(event):
+            pygame.quit()
+            sys.exit()
+
+        if state == "home":
+            if start_button.is_clicked(event):
                 state = "game"
-            elif state == "game" and shuffle_play_button.is_clicked(event):
+        elif state == "game":
+            if shuffle_play_button.is_clicked(event):
                 shuffle_and_deal()
                 state = "choose_turn_order"
-            elif state == "choose_turn_order":
-                if player_first_button.is_clicked(event):
-                    current_turn = "player"
-                    reveal_cards = False
-                    state = "play"
-                elif computer_first_button.is_clicked(event):
-                    current_turn = "computer"
-                    reveal_cards = False
-                    state = "play"
-            elif state == "play":
-                if (
-                    reveal_button
-                    and reveal_button.is_clicked(event)
-                    and not reveal_cards
-                ):
-                    # Shuffle the deck and reveal the player's cards
-                    shuffle_and_deal()  # Re-shuffle deck if needed
-                    reveal_cards = True
-                    # Remove reveal button after clicking
-                    reveal_button = None
-                if current_turn == "player":
-                    for i, card in enumerate(player_cards):
-                        card_width, card_height = card_images[card].get_size()
-                        x = (
-                            i * (card_width + CARD_SPACING)
-                            + (
-                                SCREEN_WIDTH
-                                - (
-                                    (NUM_CARDS - 1)
-                                    * (card_width + CARD_SPACING)
-                                )
-                            )
-                            // 2
+        elif state == "choose_turn_order":
+            if player_first_button.is_clicked(event):
+                current_turn = "player"
+                state = "play"
+            elif computer_first_button.is_clicked(event):
+                current_turn = "computer"
+                state = "play"
+        elif state == "play":
+            if reveal_button.is_clicked(event):
+                reveal_cards = True
+            elif (
+                current_turn == "player"
+                and event.type == pygame.MOUSEBUTTONDOWN
+            ):
+                for i, card in enumerate(player_cards):
+                    x = (
+                        i * (card_width + CARD_SPACING)
+                        + (
+                            SCREEN_WIDTH
+                            - ((card_width + CARD_SPACING) * NUM_CARDS)
                         )
-                        y = SCREEN_HEIGHT - card_height - 30
-                        card_rect = pygame.Rect(x, y, card_width, card_height)
-                        if card_rect.collidepoint(event.pos):
-                            player_turn(i)
-                            break
+                        // 2
+                    )
+                    y = SCREEN_HEIGHT - card_height - 50
+                    card_rect = pygame.Rect(x, y, card_width, card_height)
+                    if card_rect.collidepoint(event.pos):
+                        player_turn(i)
+                        break
 
     if state == "home":
         home_screen()
@@ -437,15 +378,5 @@ while running:
     elif state == "play":
         play_game()
         if current_turn == "computer":
+            pygame.time.wait(1000)
             computer_turn()
-            if not computer_cards:
-                print("Computer wins!")
-                state = "home"
-        if not player_cards:
-            print("Player wins!")
-            state = "home"
-
-    pygame.display.flip()
-
-pygame.quit()
-sys.exit()
