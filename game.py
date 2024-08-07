@@ -22,19 +22,15 @@ CARD_SCALE = 0.37
 CARD_SPACING = 10
 # Size of the Reveal Cards button
 REVEAL_BUTTON_SIZE = (270, 60)
-COMPUTER_BUTTON_SIZE = (330, 60)
-SHOW_BUTTON_SIZE = (100, 50)
 
 # Define the new colors
 BUTTON_COLOR = COLOR_RED
 TEXT_COLOR = (254, 245, 185)
 
-
 # Define card colors and types
 card_colors = ["blue", "red", "yellow", "green"]
 special_cards = ["+2", "rev", "skip"]
 wild_cards = ["+4"]
-
 
 # Load images and fonts
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
@@ -101,16 +97,6 @@ def load_and_scale_card_images():
             ),
         )
 
-    # Load the new wild color card
-    wild_color_image = pygame.image.load("images/wild_color.jpg")
-    card_images["wild_color"] = pygame.transform.scale(
-        wild_color_image,
-        (
-            int(wild_color_image.get_width() * CARD_SCALE),
-            int(wild_color_image.get_height() * CARD_SCALE),
-        ),
-    )
-
 
 load_and_scale_card_images()
 
@@ -126,16 +112,16 @@ class Button:
         self.text_color = text_color
         self.font = font
         self.rect = pygame.Rect(pos, size)
-        self.rendered_text = self.font.render(text, True, self.text_color)
+        self.rendered_text = self.font.render(
+            text, True, self.text_color
+        )  # Text color
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
-        """Draws button."""
         pygame.draw.rect(surface, self.color, self.rect)
         surface.blit(self.rendered_text, self.text_rect)
 
     def is_clicked(self, event):
-        """Follows button click."""
         if (
             event.type == pygame.MOUSEBUTTONDOWN
             and event.button == 1
@@ -163,53 +149,16 @@ reveal_button = Button(
     TEXT_COLOR,
     font,
 )
-player_first_button = Button(
-    "Player First",
-    (
-        SCREEN_WIDTH // 2 - REVEAL_BUTTON_SIZE[0] // 2,
-        SCREEN_HEIGHT // 2 - REVEAL_BUTTON_SIZE[1] // 2 - 80,
-    ),
-    REVEAL_BUTTON_SIZE,
-    BUTTON_COLOR,
-    TEXT_COLOR,
-    font,
-)
-computer_first_button = Button(
-    "Computer First",
-    (
-        SCREEN_WIDTH // 2 - COMPUTER_BUTTON_SIZE[0] // 2,
-        SCREEN_HEIGHT // 2 - COMPUTER_BUTTON_SIZE[1] // 2 + 80,
-    ),
-    COMPUTER_BUTTON_SIZE,
-    BUTTON_COLOR,
-    TEXT_COLOR,
-    font,
-)
-show_button = Button(
-    "Show",
-    (
-        SCREEN_WIDTH // 2 + REVEAL_BUTTON_SIZE[0] // 2 + 10,
-        SCREEN_HEIGHT // 2 - SHOW_BUTTON_SIZE[1] // 2,
-    ),
-    SHOW_BUTTON_SIZE,
-    BUTTON_COLOR,
-    TEXT_COLOR,
-    font,
-)
-
 
 # Game state
 state = "home"
 reveal_cards = False
 player_cards = []
 computer_cards = []
-discard_pile = []
-current_turn = "player"
-deck = []
 
 
 def shuffle_and_deal():
-    global player_cards, computer_cards, discard_pile, current_turn, deck
+    global player_cards, computer_cards
     deck = [
         f"{color}_{number}" for color in card_colors for number in range(10)
     ]
@@ -222,71 +171,6 @@ def shuffle_and_deal():
     random.shuffle(deck)
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
-    discard_pile = [
-        deck[NUM_CARDS * 2]
-    ]  # Start with one card in the discard pile
-    deck = deck[NUM_CARDS * 2 + 1 :]  # Remaining cards in the deck
-    current_turn = "player"  # Player starts first
-
-
-def is_playable(card, top_card):
-    card_color, card_value = card.split("_")
-    top_color, top_value = top_card.split("_")
-    return (
-        card_color == top_color
-        or card_value == top_value
-        or card in wild_cards
-    )
-
-
-def switch_turn():
-    global current_turn
-    current_turn = "computer" if current_turn == "player" else "player"
-
-
-def player_turn(card_index):
-    global player_cards, discard_pile, deck
-    selected_card = player_cards[card_index]
-    top_card = discard_pile[-1]
-    if is_playable(selected_card, top_card):
-        discard_pile.append(selected_card)
-        player_cards.pop(card_index)
-        switch_turn()
-    else:
-        print("Cannot play this card!")
-
-
-def computer_turn():
-    """served by computer."""
-    global computer_cards, discard_pile, deck
-    top_card = discard_pile[-1]
-    for i, card in enumerate(computer_cards):
-        if is_playable(card, top_card):
-            discard_pile.append(card)
-            computer_cards.pop(i)
-            switch_turn()
-            return
-    # If no card can be played, draw a card
-    if deck:
-        new_card = deck.pop(0)
-        computer_cards.append(new_card)
-        if is_playable(new_card, top_card):
-            discard_pile.append(new_card)
-            computer_cards.pop(-1)
-            switch_turn()
-            return
-    switch_turn()
-
-
-def draw_card(player):
-    """Draws cards."""
-    global deck
-    if deck:
-        new_card = deck.pop(0)
-        if player == "player":
-            player_cards.append(new_card)
-        else:
-            computer_cards.append(new_card)
 
 
 def home_screen():
@@ -299,13 +183,6 @@ def game_screen():
     """Display the game screen with the shuffle and play button."""
     screen.blit(game_background_image, (0, 0))
     shuffle_play_button.draw(screen)
-
-
-def choose_turn_order():
-    """Display the screen to choose who goes first."""
-    screen.blit(game_background_image, (0, 0))
-    player_first_button.draw(screen)
-    computer_first_button.draw(screen)
 
 
 def play_game():
@@ -366,110 +243,32 @@ def play_game():
             screen.blit(scaled_card_back_image, positions[i])
 
     # Draw the Reveal Cards button
-    if reveal_button:
-        # Calculate the position and size of the button area
-        button_x, button_y = reveal_button.pos
-        button_width, button_height = reveal_button.size
+    reveal_button.draw(screen)
 
-        # Clear the button area with a solid color (background color)
-        pygame.draw.rect(
-            screen,
-            (0, 0, 0),
-            (button_x, button_y, button_width, button_height),
-        )
-
-        # Draw the Reveal Cards button
-        reveal_button.draw(screen)
-
-    # Display discard pile
-    if discard_pile:
-        top_card = discard_pile[-1]
-        top_card_image = card_images[top_card]
-        screen.blit(
-            top_card_image,
-            (
-                SCREEN_WIDTH // 2 - card_width // 2,
-                SCREEN_HEIGHT // 2 - card_height // 2,
-            ),
-        )
-
-    pygame.display.flip()
-
-
-# Main game loop
+# Main loop
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if state == "home" and start_button.is_clicked(event):
+
+        if state == "home":
+            if start_button.is_clicked(event):
                 state = "game"
-            elif state == "game" and shuffle_play_button.is_clicked(event):
+            else:
+                home_screen()
+        elif state == "game":
+            if shuffle_play_button.is_clicked(event):
                 shuffle_and_deal()
-                state = "choose_turn_order"
-            elif state == "choose_turn_order":
-                if player_first_button.is_clicked(event):
-                    current_turn = "player"
-                    reveal_cards = False
-                    state = "play"
-                elif computer_first_button.is_clicked(event):
-                    current_turn = "computer"
-                    reveal_cards = False
-                    state = "play"
-            elif state == "play":
-                if (
-                    reveal_button
-                    and reveal_button.is_clicked(event)
-                    and not reveal_cards
-                ):
-                    # Shuffle the deck and reveal the player's cards
-                    shuffle_and_deal()  # Re-shuffle deck if needed
-                    reveal_cards = True
-                    # Remove reveal button after clicking
-                    reveal_button = None
-                if current_turn == "player":
-                    for i, card in enumerate(player_cards):
-                        card_width, card_height = card_images[card].get_size()
-                        x = (
-                            i * (card_width + CARD_SPACING)
-                            + (
-                                SCREEN_WIDTH
-                                - (
-                                    (NUM_CARDS - 1)
-                                    * (card_width + CARD_SPACING)
-                                )
-                            )
-                            // 2
-                        )
-                        y = SCREEN_HEIGHT - card_height - 30
-                        card_rect = pygame.Rect(x, y, card_width, card_height)
-                        if card_rect.collidepoint(event.pos):
-                            player_turn(i)
-                            break
+                state = "play"
+            else:
+                game_screen()
+        elif state == "play":
+            if reveal_button.is_clicked(event):
+                reveal_cards = True
+            play_game()
 
-    if state == "home":
-        home_screen()
-    elif state == "game":
-        game_screen()
-    elif state == "choose_turn_order":
-        choose_turn_order()
-    elif state == "play":
-        play_game()
-        if current_turn == "computer":
-            computer_turn()
-            if not computer_cards:
-                print("Computer wins!")
-                state = "home"
-        if not player_cards:
-            print("Player wins!")
-            state = "home"
-    elif state == "play":
-        if show_button.is_clicked(event):
-            # Code to reveal the selected card
-            pass
-
-    pygame.display.flip()
+        pygame.display.flip()
 
 pygame.quit()
 sys.exit()
