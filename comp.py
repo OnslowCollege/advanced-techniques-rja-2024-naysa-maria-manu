@@ -390,6 +390,7 @@ computer_cards = []
 selected_cards = []
 
 deck = []
+discard_pile = []
 
 
 def draw_card_from_deck():
@@ -500,26 +501,43 @@ def play_game():
             screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
 
         # Draw discard pile
+        if discard_pile:
+            top_card_key = discard_pile[0]  # Top card on discard pile
+            screen.blit(
+                card_images[top_card_key],
+                (
+                    SCREEN_WIDTH // 2 - card_width // 2,
+                    SCREEN_HEIGHT // 2 - card_height // 2,
+                ),
+            )
         draw_card_button.draw(screen)
-
-        # Check if discard pile is clicked
-        draw_card_button.rect.collidepoint(pile_x, pile_y)
 
     pygame.display.flip()
 
 
 # Main loop
 
+def play_card(card_key):
+    global discard_pile, player_cards
+    if card_key in player_cards:
+        player_cards.remove(card_key)
+        discard_pile.insert(
+            0, card_key
+        )  # Add the card to the top of the discard pile
+        print(f"Player played card: {card_key}")
 
 def computer_play():
-    global computer_cards, selected_cards
+    global computer_cards, discard_pile
     if computer_cards:
         # Play the first card from computer's hand (for simplicity)
         card_to_play = computer_cards.pop(0)
-        selected_cards.insert(0, card_to_play)
+        discard_pile.insert(
+            0, card_to_play
+        )  # Add the card to the top of the discard pile
         print(f"Computer played card: {card_to_play}")
 
 
+# Main loop
 # Main loop
 running = True
 while running:
@@ -544,8 +562,8 @@ while running:
                                 previous_card = selected_cards.pop(0)
                                 if previous_card in player_cards:
                                     player_cards.remove(previous_card)
-                            # Add the new card to the top of the pile
-                            selected_cards.insert(0, card_key)
+                            # Play the selected card
+                            play_card(card_key)
                             # Computer's turn after player plays a card
                             computer_play()
 
