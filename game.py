@@ -224,10 +224,11 @@ def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
-    # Calculate card scale based on the number of player cards
-    current_card_scale = CARD_SCALE
+    # Determine the scale based on the number of cards in the player's hand
     if len(player_cards) >= 11:
-        current_card_scale = 0.27  # Reduce scale for 11 or more cards
+        current_card_scale = 0.27  # Reduced scale for 11 or more cards
+    else:
+        current_card_scale = 1.0  # Full scale for fewer than 11 cards
 
     # Scale the back image for computer's cards
     scaled_card_back_image = pygame.transform.scale(
@@ -249,7 +250,7 @@ def play_game():
         screen.blit(scaled_card_back_image, (x, y))
 
     # Display player's cards in a linear layout
-    for i in range(len(player_cards)):  # Use length of player_cards
+    for i in range(len(player_cards)):
         x = (
             i * (card_width + CARD_SPACING)
             + (
@@ -259,36 +260,28 @@ def play_game():
             // 2
         )
         y = SCREEN_HEIGHT - card_height - 20
-        if i < len(player_cards):  # Ensure index is within range
-            card_key = player_cards[i]
-            scaled_card_image = pygame.transform.scale(
-                card_images[card_key],
-                (
-                    int(
-                        card_images[card_key].get_width() * current_card_scale
-                    ),
-                    int(
-                        card_images[card_key].get_height() * current_card_scale
-                    ),
-                ),
-            )
-            if reveal_cards:
-                if card_key in selected_cards:
-                    # Display selected cards as a pile in the center
-                    pile_x = (SCREEN_WIDTH - card_width) // 2
-                    pile_y = (SCREEN_HEIGHT - card_height) // 2
-                    # Display all selected cards stacked
-                    for offset, card_key in enumerate(
-                        reversed(selected_cards)
-                    ):
-                        screen.blit(
-                            scaled_card_image,
-                            (pile_x, pile_y - offset * 10),
-                        )
-                else:
-                    screen.blit(scaled_card_image, (x, y))
+        card_key = player_cards[i]
+        scaled_card_image = pygame.transform.scale(
+            card_images[card_key],
+            (
+                int(card_images[card_key].get_width() * current_card_scale),
+                int(card_images[card_key].get_height() * current_card_scale),
+            ),
+        )
+        if reveal_cards:
+            if card_key in selected_cards:
+                # Display selected cards as a pile in the center
+                pile_x = (SCREEN_WIDTH - card_width) // 2
+                pile_y = (SCREEN_HEIGHT - card_height) // 2
+                # Display all selected cards stacked
+                for offset, card_key in enumerate(reversed(selected_cards)):
+                    screen.blit(
+                        scaled_card_image, (pile_x, pile_y - offset * 10)
+                    )
             else:
-                screen.blit(scaled_card_back_image, (x, y))
+                screen.blit(scaled_card_image, (x, y))
+        else:
+            screen.blit(scaled_card_back_image, (x, y))
 
     # Draw the Reveal Cards button if not clicked
     if not reveal_button_clicked:
