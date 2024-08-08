@@ -167,12 +167,14 @@ deck = []
 
 
 def draw_card_from_deck():
-    """Draw one card from the deck and add it to the player's hand."""
+    """Draw one random card from the deck and add it to the player's hand."""
     global deck, player_cards
     if deck:
-        card = deck.pop()  # Draw the top card from the deck
+        card = random.choice(deck)  # Draw a random card from the deck
+        deck.remove(card)  # Remove the card from the deck
         player_cards.append(card)  # Add it to the player's hand
         print(f"Drawn card: {card}")
+
 
 
 def shuffle_and_deal():
