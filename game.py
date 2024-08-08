@@ -263,54 +263,66 @@ def play_game():
 
     # Print debug information for cards
     print(f"Selected cards: {selected_cards}")
-    print(f"Player cards remaining: {len(player_cards)}")
+    print(f"Player cards count: {len(player_cards)}")
 
-# Main loop
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if state == "play":
+def main():
+    global reveal_button_clicked, selected_cards, player_cards
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
-                card_key = get_card_at_position(x, y)
-                if card_key:
-                    if card_key not in selected_cards:
-                        selected_cards.append(card_key)
-                    else:
-                        selected_cards.remove(card_key)
 
-                if reveal_button.is_clicked(event):
-                    reveal_cards = True
-                    reveal_button_clicked = True
-                    # Debug print before removal
-                    print(f"Selected cards before removal: {selected_cards}")
+                if state == "play":
+                    card_key = get_card_at_position(x, y)
+                    if card_key:
+                        if reveal_button_clicked:
+                            if card_key not in selected_cards:
+                                selected_cards.append(card_key)
+                            else:
+                                selected_cards.remove(card_key)
 
-        if state == "home":
-            if start_button.is_clicked(event):
-                state = "game"
-            else:
-                screen.blit(home_background_image, (0, 0))
-                start_button.draw(screen)
-        elif state == "game":
-            if shuffle_play_button.is_clicked(event):
-                shuffle_and_deal()
-                state = "play"
-            else:
-                screen.blit(game_background_image, (0, 0))
-                shuffle_play_button.draw(screen)
-        elif state == "play":
-            play_game()
-            if reveal_button_clicked and selected_cards:
-                # Remove the selected cards from the user's hand after reveal and selection
-                player_cards = [
-                    card for card in player_cards if card not in selected_cards
-                ]
-                selected_cards.clear()  # Clear selection after removal
+                    if reveal_button.is_clicked(event):
+                        reveal_cards = True
+                        reveal_button_clicked = True
+                        # Debug print before removal
+                        print(
+                            f"Selected cards before removal: {selected_cards}"
+                        )
 
-        pygame.display.flip()
+            if state == "home":
+                if start_button.is_clicked(event):
+                    state = "game"
+                else:
+                    screen.blit(home_background_image, (0, 0))
+                    start_button.draw(screen)
+            elif state == "game":
+                if shuffle_play_button.is_clicked(event):
+                    shuffle_and_deal()
+                    state = "play"
+                else:
+                    screen.blit(game_background_image, (0, 0))
+                    shuffle_play_button.draw(screen)
+            elif state == "play":
+                play_game()
+                if reveal_button_clicked and selected_cards:
+                    # Remove the selected cards from the user's hand after reveal and selection
+                    player_cards = [
+                        card
+                        for card in player_cards
+                        if card not in selected_cards
+                    ]
+                    selected_cards.clear()  # Clear selection after removal
 
-pygame.quit()
-sys.exit()
+            pygame.display.flip()
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
