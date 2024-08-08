@@ -277,10 +277,13 @@ while running:
                 x, y = event.pos
                 card_key = get_card_at_position(x, y)
                 if card_key:
-                    if card_key not in selected_cards:
-                        selected_cards.append(card_key)
-                    else:
-                        selected_cards.remove(card_key)
+                    if (
+                        reveal_cards
+                    ):  # Ensure cards can only be selected after revealing
+                        if card_key not in selected_cards:
+                            selected_cards.append(card_key)
+                        else:
+                            selected_cards.remove(card_key)
 
                 if reveal_button.is_clicked(event):
                     reveal_cards = True
@@ -314,3 +317,4 @@ while running:
 
 pygame.quit()
 sys.exit()
+
