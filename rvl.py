@@ -205,9 +205,15 @@ def play_game():
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        # Bottom of the screen
         y = SCREEN_HEIGHT - card_height - 20
-        screen.blit(scaled_card_back_image, (x, y))
+
+        # Reveal the actual card if reveal_cards is True
+        if reveal_cards:
+            card_image = card_images[player_cards[i]]
+            screen.blit(card_image, (x, y))
+        else:
+            screen.blit(scaled_card_back_image, (x, y))
+
     # Draw the Reveal Cards button
     reveal_button.draw(screen)
 
