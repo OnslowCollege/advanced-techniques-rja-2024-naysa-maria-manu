@@ -234,13 +234,14 @@ def play_game():
             card_key = player_cards[i]
             if reveal_cards:
                 if card_key in selected_cards:
-                    # Move the selected card up further
-                    y -= 120
+                    # Display selected cards as a pile in the center
+                    pile_x = (SCREEN_WIDTH - card_width) // 2
+                    pile_y = (SCREEN_HEIGHT - card_height) // 2
                     # Display all selected cards stacked
                     for offset in range(selected_cards.index(card_key) + 1):
                         screen.blit(
                             card_images[selected_cards[offset]],
-                            (x, y - offset * 10),
+                            (pile_x, pile_y - offset * 10),
                         )
                 else:
                     screen.blit(card_images[card_key], (x, y))
@@ -261,9 +262,10 @@ def play_game():
             ),
         )
 
-    # Print debug information for cards
+    # debug
     print(f"Selected cards: {selected_cards}")
     print(f"Player cards remaining: {len(player_cards)}")
+
 
 # Main loop
 running = True
@@ -317,4 +319,5 @@ while running:
 
 pygame.quit()
 sys.exit()
+
 
