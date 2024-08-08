@@ -14,7 +14,6 @@ CARD_FONT_PATH = "Text_features/Comic.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
-DISCARD_PILE_IMAGE = "images/discard_pile.jpg"
 NUM_CARDS = 7
 CARD_SCALE = 0.37
 CARD_SPACING = 10
@@ -33,19 +32,11 @@ wild_cards = ["+4"]
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
 game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
 card_back_image = pygame.image.load(CARD_BACK_IMAGE)
-discard_pile_image = pygame.image.load(DISCARD_PILE_IMAGE)
 scaled_card_back_image = pygame.transform.scale(
     card_back_image,
     (
         int(card_back_image.get_width() * CARD_SCALE),
         int(card_back_image.get_height() * CARD_SCALE),
-    ),
-)
-scaled_discard_pile_image = pygame.transform.scale(
-    discard_pile_image,
-    (
-        int(discard_pile_image.get_width() * CARD_SCALE),
-        int(discard_pile_image.get_height() * CARD_SCALE),
     ),
 )
 font = pygame.font.Font(FONT_PATH, 40)
@@ -145,6 +136,18 @@ shuffle_play_button = Button(
 )
 reveal_button = Button(
     "Reveal Cards",
+    (
+        SCREEN_WIDTH // 2 - REVEAL_BUTTON_SIZE[0] // 2,
+        SCREEN_HEIGHT // 2 - REVEAL_BUTTON_SIZE[1] // 2,
+    ),
+    REVEAL_BUTTON_SIZE,
+    BUTTON_COLOR,
+    TEXT_COLOR,
+    font,
+)
+
+draw_card_button = Button(
+    "DRAW CARD",
     (
         SCREEN_WIDTH // 2 - REVEAL_BUTTON_SIZE[0] // 2,
         SCREEN_HEIGHT // 2 - REVEAL_BUTTON_SIZE[1] // 2,
@@ -273,15 +276,7 @@ def play_game():
             screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
 
         # Draw discard pile
-        discard_pile_rect = pygame.Rect(
-            SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
-            SCREEN_HEIGHT // 2
-            - scaled_discard_pile_image.get_height() // 2
-            - 20,
-            scaled_discard_pile_image.get_width(),
-            scaled_discard_pile_image.get_height(),
-        )
-        screen.blit(scaled_discard_pile_image, discard_pile_rect)
+        screen.blit(draw_card_button)
 
         # Check if discard pile is clicked
         if discard_pile_rect.collidepoint(pygame.mouse.get_pos()):
@@ -301,15 +296,7 @@ while running:
             if state == "play":
                 x, y = event.pos
                 # Check if discard pile is clicked
-                discard_pile_rect = pygame.Rect(
-                    SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
-                    SCREEN_HEIGHT // 2
-                    - scaled_discard_pile_image.get_height() // 2
-                    - 20,
-                    scaled_discard_pile_image.get_width(),
-                    scaled_discard_pile_image.get_height(),
-                )
-                if discard_pile_rect.collidepoint(x, y):
+                if draw_card_button.collidepoint(x, y):
                     draw_card_from_deck()
                 else:
                     card_key = get_card_at_position(x, y)
