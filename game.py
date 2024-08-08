@@ -271,8 +271,6 @@ def play_game():
         )
 
 
-
-# Main loop
 # Main loop
 running = True
 while running:
@@ -290,7 +288,8 @@ while running:
                     ):  # Ensure cards can only be selected after revealing
                         if card_key not in selected_cards:
                             if len(selected_cards) >= 1:
-                                selected_cards.pop()  # Remove the oldest top card
+                                # Remove the oldest top card from the pile
+                                selected_cards.pop()
                             selected_cards.insert(
                                 0, card_key
                             )  # Add the new card to the top
