@@ -15,13 +15,9 @@ HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
 DISCARD_PILE_IMAGE = "images/discard_pile.jpg"
-# Number of cards per player
 NUM_CARDS = 7
-# Scale down the cards size by 37%
 CARD_SCALE = 0.37
-# Space between cards
 CARD_SPACING = 10
-# Size of the Reveal Cards button
 REVEAL_BUTTON_SIZE = (270, 60)
 
 # Define the new colors
@@ -166,6 +162,7 @@ reveal_button_clicked = False
 player_cards = []
 computer_cards = []
 selected_card = None  # Initialize selected_card outside the main loop
+selected_cards = []  # List to keep track of selected cards
 
 
 def shuffle_and_deal():
@@ -238,10 +235,15 @@ def play_game():
         if i < len(player_cards):  # Ensure index is within range
             card_key = player_cards[i]
             if reveal_cards:
-                if selected_card == card_key:
+                if card_key in selected_cards:
                     # Move the selected card up further
                     y -= 120
-                    screen.blit(card_images[card_key], (x, y))
+                    # Display all selected cards stacked
+                    for offset in range(selected_cards.index(card_key) + 1):
+                        screen.blit(
+                            card_images[selected_cards[offset]],
+                            (x, y - offset * 10),
+                        )
                 else:
                     screen.blit(card_images[card_key], (x, y))
             else:
@@ -274,9 +276,11 @@ while running:
                 x, y = event.pos
                 card_key = get_card_at_position(x, y)
                 if card_key:
-                    selected_card = card_key
+                    if card_key not in selected_cards:
+                        selected_cards.append(card_key)
+                    else:
+                        selected_cards.remove(card_key)
                     player_cards.remove(card_key)
-
 
         if state == "home":
             if start_button.is_clicked(event):
