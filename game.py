@@ -257,13 +257,17 @@ def play_game():
                 SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
                 SCREEN_HEIGHT // 2
                 - scaled_discard_pile_image.get_height() // 2
-                - 20,  # Moved up by 20 pixels
+                - 20,  # Centering with some margin
             ),
         )
 
-# Main loop
-running = True  # Define running to control the loop
+    # Print debug information for cards
+    print(f"Selected cards: {selected_cards}")
+    print(f"Player cards remaining: {len(player_cards)}")
 
+
+# Main loop
+running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -278,15 +282,20 @@ while running:
                         selected_cards.append(card_key)
                     else:
                         selected_cards.remove(card_key)
+
                 if reveal_button.is_clicked(event):
                     reveal_cards = True
                     reveal_button_clicked = True
+                    # Debug print before removing cards
+                    print(f"Selected cards before removal: {selected_cards}")
                     # Remove the selected cards from the user's hand
                     player_cards = [
                         card
                         for card in player_cards
                         if card not in selected_cards
                     ]
+                    # Debug print after removal
+                    print(f"Player cards after removal: {player_cards}")
 
         if state == "home":
             if start_button.is_clicked(event):
