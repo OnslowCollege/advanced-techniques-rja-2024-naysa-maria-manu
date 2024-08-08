@@ -207,13 +207,14 @@ def draw_card_from_deck(player=True):
         # Check if the drawn card is playable
         if can_play_card(card):
             current_playable_card = card
-            return card
+        return card
     else:
         computer_cards.append(card)
         print(f"Computer drew card: {card}")
         if can_play_card(card):
             current_playable_card = card
-            return card
+        return card
+
 
 
 def player_turn():
