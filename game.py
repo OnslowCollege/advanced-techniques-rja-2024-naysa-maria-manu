@@ -303,8 +303,8 @@ while running:
                 shuffle_play_button.draw(screen)
         elif state == "play":
             play_game()
-            if reveal_button_clicked:
-                # Remove the selected cards from the user's hand after reveal
+            if reveal_button_clicked and selected_cards:
+                # Remove the selected cards from the user's hand after reveal and selection
                 player_cards = [
                     card for card in player_cards if card not in selected_cards
                 ]
