@@ -270,12 +270,9 @@ def play_game():
             ),
         )
 
-    # Print debug information for cards
-    print(f"Selected cards: {selected_cards}")
-    print(f"Player cards remaining: {len(player_cards)}")
 
 
-
+# Main loop
 # Main loop
 running = True
 while running:
@@ -292,7 +289,6 @@ while running:
                         reveal_cards
                     ):  # Ensure cards can only be selected after revealing
                         if card_key not in selected_cards:
-                            # Replace the previous top card with the new one
                             if len(selected_cards) >= 1:
                                 selected_cards.pop()  # Remove the oldest top card
                             selected_cards.insert(
@@ -321,11 +317,8 @@ while running:
         elif state == "play":
             play_game()
             if reveal_button_clicked and selected_cards:
-                # Update the player cards to remove the selected ones
-                player_cards = [
-                    card for card in player_cards if card not in selected_cards
-                ]
-                selected_cards.clear()  # Clear selection after removal
+                # Handle selected cards here if needed
+                pass
 
         pygame.display.flip()
 
