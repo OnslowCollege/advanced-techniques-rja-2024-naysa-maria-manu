@@ -18,7 +18,6 @@ NUM_CARDS = 7
 CARD_SCALE = 0.37
 CARD_SPACING = 10
 REVEAL_BUTTON_SIZE = (270, 60)
-DRAW_BUTTON_SIZE = (200, 60)
 
 # Define the new colors
 BUTTON_COLOR = COLOR_RED
@@ -119,11 +118,13 @@ class Button:
         surface.blit(self.rendered_text, self.text_rect)
 
     def is_clicked(self, event):
-        return (
+        if (
             event.type == pygame.MOUSEBUTTONDOWN
             and event.button == 1
             and self.rect.collidepoint(event.pos)
-        )
+        ):
+            return True
+        return False
 
 
 # Create buttons
@@ -148,10 +149,10 @@ reveal_button = Button(
 draw_card_button = Button(
     "DRAW CARD",
     (
-        SCREEN_WIDTH // 2 - DRAW_BUTTON_SIZE[0] // 2,
-        SCREEN_HEIGHT - DRAW_BUTTON_SIZE[1] - 20,
+        SCREEN_WIDTH - REVEAL_BUTTON_SIZE[0] - 20,
+        (SCREEN_HEIGHT - REVEAL_BUTTON_SIZE[1]) // 2,
     ),
-    DRAW_BUTTON_SIZE,
+    REVEAL_BUTTON_SIZE,
     BUTTON_COLOR,
     TEXT_COLOR,
     font,
@@ -179,7 +180,7 @@ def draw_card_from_deck():
 
 
 def shuffle_and_deal():
-    global player_cards, computer_cards
+    global player_cards, computer_cards, deck
     deck = [
         f"{color}_{number}" for color in card_colors for number in range(10)
     ]
@@ -274,11 +275,13 @@ def play_game():
         for offset, card_key in enumerate(reversed(selected_cards)):
             screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
 
-        # Draw draw card button
+        # Draw discard pile
         draw_card_button.draw(screen)
 
-    pygame.display.flip()
+        # Check if discard pile is clicked
+        draw_card_button.rect.collidepoint(pile_x, pile_y)
 
+    pygame.display.flip()
 
 # Main loop
 running = True
