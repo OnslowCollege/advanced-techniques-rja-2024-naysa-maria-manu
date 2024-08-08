@@ -239,12 +239,24 @@ def computer_turn():
     )  # Wait for 2 seconds before the computer plays its card
 
     if computer_cards:
-        # Computer plays a card (for simplicity, choose the first card)
-        card_to_play = computer_cards.pop(0)
-        discard_pile.insert(
-            0, card_to_play
-        )  # Add the card to the top of the discard pile
-        print(f"Computer played card: {card_to_play}")
+        # Top card on the discard pile
+        top_card = discard_pile[0]
+        # Split to get color and number/special
+        top_color, top_value = top_card.split("_")
+
+        # Try to find a matching card in the computer's hand
+        for card in computer_cards:
+            card_color, card_value = card.split("_")
+            if card_color == top_color or card_value == top_value:
+                computer_cards.remove(card)
+                # Add the card to the top of the discard pile
+                discard_pile.insert(0, card)
+                print(f"Computer played card: {card}")
+                # Exit the function after playing a card
+                return
+
+        # If no matching card is found, the computer draws a card (optional)
+        print("Computer has no matching card and passes the turn.")
 
 
 def play_game():
