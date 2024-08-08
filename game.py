@@ -269,8 +269,6 @@ def play_game():
                 - 20,  # Centering with some margin
             ),
         )
-
-
 # Main loop
 running = True
 while running:
@@ -286,13 +284,13 @@ while running:
                     if (
                         reveal_cards
                     ):  # Ensure cards can only be selected after revealing
-                        if card_key not in selected_cards:
-                            if len(selected_cards) >= 1:
-                                # Remove the oldest top card from the pile
-                                selected_cards.pop()
-                            selected_cards.insert(
-                                0, card_key
-                            )  # Add the new card to the top
+                        if len(selected_cards) >= 1:
+                            # Remove the previously selected card from player's hand
+                            previous_card = selected_cards.pop(0)
+                            if previous_card in player_cards:
+                                player_cards.remove(previous_card)
+                        # Add the new card to the top of the pile
+                        selected_cards.insert(0, card_key)
 
                 if reveal_button.is_clicked(event):
                     reveal_cards = True
@@ -315,11 +313,9 @@ while running:
                 shuffle_play_button.draw(screen)
         elif state == "play":
             play_game()
-            if reveal_button_clicked and selected_cards:
-                # Handle selected cards here if needed
-                pass
 
         pygame.display.flip()
 
 pygame.quit()
 sys.exit()
+
