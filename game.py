@@ -17,7 +17,7 @@ CARD_BACK_IMAGE = "images/UNO_card.jpg"
 DISCARD_PILE_IMAGE = "images/discard_pile.jpg"
 # Number of cards per player
 NUM_CARDS = 7
-# Scale down the cards size down by 47%
+# Scale down the cards size by 37%
 CARD_SCALE = 0.37
 # Space between cards
 CARD_SPACING = 10
@@ -165,7 +165,8 @@ reveal_cards = False
 reveal_button_clicked = False
 player_cards = []
 computer_cards = []
-selected_card = None
+selected_card = None  # Initialize selected_card outside the main loop
+
 
 def shuffle_and_deal():
     global player_cards, computer_cards
@@ -187,18 +188,25 @@ def shuffle_and_deal():
     print(f"Player cards: {len(player_cards)}")
     print(f"Computer cards: {len(computer_cards)}")
 
-
-def home_screen():
-    """Display the home screen with the start button."""
-    screen.blit(home_background_image, (0, 0))
-    start_button.draw(screen)
-
-
-def game_screen():
-    """Display the game screen with the shuffle and play button."""
-    screen.blit(game_background_image, (0, 0))
-    shuffle_play_button.draw(screen)
-
+def get_card_at_position(x, y):
+    """Check if the mouse position is over a card and return the card key."""
+    card_width, card_height = scaled_card_back_image.get_size()
+    for i in range(len(player_cards)):  # Use length of player_cards
+        card_x = (
+            i * (card_width + CARD_SPACING)
+            + (
+                SCREEN_WIDTH
+                - ((card_width + CARD_SPACING) * len(player_cards))
+            )
+            // 2
+        )
+        card_y = SCREEN_HEIGHT - card_height - 20
+        if (
+            card_x <= x <= card_x + card_width
+            and card_y <= y <= card_y + card_height
+        ):
+            return player_cards[i]
+    return None
 
 def play_game():
     """Display the game screen with cards."""
@@ -253,9 +261,8 @@ def play_game():
             ),
         )
 
-
-# Initialize selected_card outside the main loop
-selected_card = None
+# Main loop
+running = True  # Define running to control the loop
 
 while running:
     for event in pygame.event.get():
@@ -270,17 +277,20 @@ while running:
                     selected_card = card_key
                     player_cards.remove(card_key)
 
+
         if state == "home":
             if start_button.is_clicked(event):
                 state = "game"
             else:
-                home_screen()
+                screen.blit(home_background_image, (0, 0))
+                start_button.draw(screen)
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 shuffle_and_deal()
                 state = "play"
             else:
-                game_screen()
+                screen.blit(game_background_image, (0, 0))
+                shuffle_play_button.draw(screen)
         elif state == "play":
             if reveal_button.is_clicked(event):
                 reveal_cards = True
