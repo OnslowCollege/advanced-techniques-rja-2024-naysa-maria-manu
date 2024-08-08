@@ -192,7 +192,7 @@ def can_play_card(card):
 
 def draw_card_from_deck(player=True):
     """Draw one random card from the deck and add it to the player's or computer's hand."""
-    global deck, player_cards, computer_cards, current_playable_card
+    global deck, player_cards, computer_cards
 
     if not deck:
         print("The deck is empty")
@@ -204,16 +204,9 @@ def draw_card_from_deck(player=True):
     if player:
         player_cards.append(card)
         print(f"Player drew card: {card}")
-        # Check if the drawn card is playable
-        if can_play_card(card):
-            current_playable_card = card
-        return card
     else:
         computer_cards.append(card)
         print(f"Computer drew card: {card}")
-        if can_play_card(card):
-            current_playable_card = card
-        return card
 
 
 
@@ -362,12 +355,9 @@ def play_game():
         # Draw discard pile
         draw_card_button.draw(screen)
 
-        # Check if discard pile is clicked
-        draw_card_button.rect.collidepoint(pile_x, pile_y)
 
-    pygame.display.flip()
+# main loop
 
-# Main loop
 running = True
 while running:
     for event in pygame.event.get():
@@ -377,15 +367,13 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if state == "play":
                 x, y = event.pos
-                # Check if discard pile is clicked
+                # Check if draw card button is clicked
                 if draw_card_button.rect.collidepoint(x, y):
                     draw_card_from_deck()
                 else:
                     card_key = get_card_at_position(x, y)
                     if card_key:
-                        if (
-                            reveal_cards
-                        ):  # Ensure cards can only be selected after revealing
+                        if reveal_cards:
                             if len(selected_cards) >= 1:
                                 # Remove the previously selected card from player's hand
                                 previous_card = selected_cards.pop(0)
