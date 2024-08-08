@@ -265,7 +265,6 @@ def play_game():
     print(f"Selected cards: {selected_cards}")
     print(f"Player cards remaining: {len(player_cards)}")
 
-
 # Main loop
 running = True
 while running:
@@ -286,16 +285,8 @@ while running:
                 if reveal_button.is_clicked(event):
                     reveal_cards = True
                     reveal_button_clicked = True
-                    # Debug print before removing cards
+                    # Debug print before removal
                     print(f"Selected cards before removal: {selected_cards}")
-                    # Remove the selected cards from the user's hand
-                    player_cards = [
-                        card
-                        for card in player_cards
-                        if card not in selected_cards
-                    ]
-                    # Debug print after removal
-                    print(f"Player cards after removal: {player_cards}")
 
         if state == "home":
             if start_button.is_clicked(event):
@@ -312,6 +303,12 @@ while running:
                 shuffle_play_button.draw(screen)
         elif state == "play":
             play_game()
+            if reveal_button_clicked:
+                # Remove the selected cards from the user's hand after reveal
+                player_cards = [
+                    card for card in player_cards if card not in selected_cards
+                ]
+                selected_cards.clear()  # Clear selection after removal
 
         pygame.display.flip()
 
