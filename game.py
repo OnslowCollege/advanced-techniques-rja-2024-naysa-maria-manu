@@ -224,18 +224,21 @@ def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
-    # Determine the scale based on the number of cards in the player's hand
+    # Determine the scale for the player's cards
     if len(player_cards) >= 11:
-        current_card_scale = 0.27  # Reduced scale for 11 or more cards
+        player_card_scale = 0.27  # Reduced scale for 11 or more cards
     else:
-        current_card_scale = 1.0  # Full scale for fewer than 11 cards
+        player_card_scale = 1.0  # Full scale for fewer than 11 cards
+
+    # Set the scale for the computer's cards
+    computer_card_scale = 0.37
 
     # Scale the back image for computer's cards
     scaled_card_back_image = pygame.transform.scale(
         card_back_image,
         (
-            int(card_back_image.get_width() * current_card_scale),
-            int(card_back_image.get_height() * current_card_scale),
+            int(card_back_image.get_width() * computer_card_scale),
+            int(card_back_image.get_height() * computer_card_scale),
         ),
     )
 
@@ -264,8 +267,8 @@ def play_game():
         scaled_card_image = pygame.transform.scale(
             card_images[card_key],
             (
-                int(card_images[card_key].get_width() * current_card_scale),
-                int(card_images[card_key].get_height() * current_card_scale),
+                int(card_images[card_key].get_width() * player_card_scale),
+                int(card_images[card_key].get_height() * player_card_scale),
             ),
         )
         if reveal_cards:
