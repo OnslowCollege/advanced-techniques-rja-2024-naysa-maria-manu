@@ -174,8 +174,15 @@ deck = []
 
 
 def can_play_card(card):
+    """Check if a card can be played based on the current playable card."""
+    if current_playable_card is None:
+        # Debug print to check if current_playable_card is None
+        print("current_playable_card is None")
+        return True  # Allow any card to be played if there's no current card (initial case)
+
     card_color, card_number = card.split("_")
     discard_color, discard_number = current_playable_card.split("_")
+
     return (
         card_color == discard_color
         or card_number == discard_number
@@ -184,24 +191,30 @@ def can_play_card(card):
 
 
 def draw_card_from_deck(player=True):
-    """Draw one random card from the deck and add it to the player's hand."""
-    global deck, player_cards, computer_cards
-    if deck:
-        card = random.choice(deck)
-        deck.remove(card)
-        if player:
-            player_cards.append(card)
-            print(f"Player drew card: {card}")
-            # Check if the drawn card is playable
-            if can_play_card(card):
-                current_playable_card = card
-                return card
-        else:
-            computer_cards.append(card)
-            print(f"Computer drew card: {card}")
-            if can_play_card(card):
-                current_playable_card = card
-                return card
+    """Draw one random card from the deck and add it to the player's or computer's hand."""
+    global deck, player_cards, computer_cards, current_playable_card
+
+    if not deck:
+        print("The deck is empty")
+        return None
+
+    card = random.choice(deck)
+    deck.remove(card)
+
+    if player:
+        player_cards.append(card)
+        print(f"Player drew card: {card}")
+        # Check if the drawn card is playable
+        if can_play_card(card):
+            current_playable_card = card
+            return card
+    else:
+        computer_cards.append(card)
+        print(f"Computer drew card: {card}")
+        if can_play_card(card):
+            current_playable_card = card
+            return card
+
 
 def player_turn():
     global selected_cards, discard_pile, current_playable_card
