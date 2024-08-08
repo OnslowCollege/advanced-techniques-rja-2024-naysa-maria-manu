@@ -224,6 +224,20 @@ def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
+    # Calculate card scale based on the number of player cards
+    current_card_scale = CARD_SCALE
+    if len(player_cards) >= 11:
+        current_card_scale = 0.27  # Reduce scale for 11 or more cards
+
+    # Scale the back image for computer's cards
+    scaled_card_back_image = pygame.transform.scale(
+        card_back_image,
+        (
+            int(card_back_image.get_width() * current_card_scale),
+            int(card_back_image.get_height() * current_card_scale),
+        ),
+    )
+
     # Display computer's cards in a linear layout
     card_width, card_height = scaled_card_back_image.get_size()
     for i in range(NUM_CARDS):
@@ -247,6 +261,17 @@ def play_game():
         y = SCREEN_HEIGHT - card_height - 20
         if i < len(player_cards):  # Ensure index is within range
             card_key = player_cards[i]
+            scaled_card_image = pygame.transform.scale(
+                card_images[card_key],
+                (
+                    int(
+                        card_images[card_key].get_width() * current_card_scale
+                    ),
+                    int(
+                        card_images[card_key].get_height() * current_card_scale
+                    ),
+                ),
+            )
             if reveal_cards:
                 if card_key in selected_cards:
                     # Display selected cards as a pile in the center
@@ -257,11 +282,11 @@ def play_game():
                         reversed(selected_cards)
                     ):
                         screen.blit(
-                            card_images[card_key],
+                            scaled_card_image,
                             (pile_x, pile_y - offset * 10),
                         )
                 else:
-                    screen.blit(card_images[card_key], (x, y))
+                    screen.blit(scaled_card_image, (x, y))
             else:
                 screen.blit(scaled_card_back_image, (x, y))
 
@@ -273,7 +298,7 @@ def play_game():
         pile_x = (SCREEN_WIDTH - card_width) // 2
         pile_y = (SCREEN_HEIGHT - card_height) // 2
         for offset, card_key in enumerate(reversed(selected_cards)):
-            screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
+            screen.blit(scaled_card_image, (pile_x, pile_y - offset * 10))
 
         # Draw discard pile
         draw_card_button.draw(screen)
