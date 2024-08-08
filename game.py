@@ -252,6 +252,12 @@ def play_game():
     if not reveal_button_clicked:
         reveal_button.draw(screen)
     else:
+        # Display selected cards as a pile in the center
+        pile_x = (SCREEN_WIDTH - card_width) // 2
+        pile_y = (SCREEN_HEIGHT - card_height) // 2
+        for offset, card_key in enumerate(selected_cards):
+            screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
+
         screen.blit(
             scaled_discard_pile_image,
             (
@@ -262,7 +268,7 @@ def play_game():
             ),
         )
 
-    # debug
+    # Print debug information for cards
     print(f"Selected cards: {selected_cards}")
     print(f"Player cards remaining: {len(player_cards)}")
 
@@ -309,7 +315,7 @@ while running:
         elif state == "play":
             play_game()
             if reveal_button_clicked and selected_cards:
-                # Remove the selected cards from the user's hand after reveal and selection
+                # Update the player cards to remove the selected ones
                 player_cards = [
                     card for card in player_cards if card not in selected_cards
                 ]
@@ -319,5 +325,3 @@ while running:
 
 pygame.quit()
 sys.exit()
-
-
