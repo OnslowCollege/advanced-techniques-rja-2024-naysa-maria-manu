@@ -167,6 +167,7 @@ computer_cards = []
 selected_cards = []
 discard_pile = []
 deck = []
+selected_card = None  # To track the card that has been clicked
 
 
 def draw_card_from_deck():
@@ -252,7 +253,7 @@ def play_game():
 
     # Display computer's cards in a linear layout
     card_width, card_height = scaled_card_back_image.get_size()
-    for i in range(NUM_CARDS):
+    for i in range(len(computer_cards)):
         x = (
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
@@ -274,20 +275,9 @@ def play_game():
         if i < len(player_cards):  # Ensure index is within range
             card_key = player_cards[i]
             if reveal_cards:
-                if card_key in selected_cards:
-                    # Display selected cards as a pile in the center
-                    pile_x = (SCREEN_WIDTH - card_width) // 2
-                    pile_y = (SCREEN_HEIGHT - card_height) // 2
-                    # Display all selected cards stacked
-                    for offset, card_key in enumerate(
-                        reversed(selected_cards)
-                    ):
-                        screen.blit(
-                            card_images[card_key],
-                            (pile_x, pile_y - offset * 10),
-                        )
-                else:
-                    screen.blit(card_images[card_key], (x, y))
+                if card_key == selected_card:
+                    y -= 30  # Move selected card up by 30 pixels
+                screen.blit(card_images[card_key], (x, y))
             else:
                 screen.blit(scaled_card_back_image, (x, y))
 
@@ -295,12 +285,6 @@ def play_game():
     if not reveal_button_clicked:
         reveal_button.draw(screen)
     else:
-        # Display selected cards as a pile in the center
-        pile_x = (SCREEN_WIDTH - card_width) // 2
-        pile_y = (SCREEN_HEIGHT - card_height) // 2
-        for offset, card_key in enumerate(reversed(selected_cards)):
-            screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
-
         # Draw discard pile
         if discard_pile:
             top_card_key = discard_pile[0]  # Top card on discard pile
@@ -334,13 +318,19 @@ while running:
                         if (
                             reveal_cards
                         ):  # Ensure cards can only be selected after revealing
-                            if len(selected_cards) >= 1:
-                                # Remove the previously selected card from player's hand
-                                previous_card = selected_cards.pop(0)
-                                if previous_card in player_cards:
-                                    player_cards.remove(previous_card)
+                            selected_card = (
+                                card_key  # Mark this card as selected
+                            )
+                            # Update display to show the selected card moved up
+                            play_game()
+                            pygame.display.flip()
+                            pygame.time.wait(
+                                2000
+                            )  # Wait 2 seconds before playing the card
                             # Play the selected card
                             play_card(card_key)
+                            # Reset selected card
+                            selected_card = None
                             # Wait and then let the computer play
                             computer_turn()
 
