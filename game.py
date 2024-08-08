@@ -161,8 +161,17 @@ reveal_cards = False
 reveal_button_clicked = False
 player_cards = []
 computer_cards = []
-selected_cards = []  # List to keep track of selected cards
+selected_cards = []
+deck = []
 
+
+def draw_card_from_deck():
+    """Draw a card from the deck and add it to the player's hand."""
+    global deck
+    if deck:
+        card = deck.pop()  # Draw the top card from the deck
+        player_cards.append(card)  # Add it to the player's hand
+        print(f"Drawn card: {card}")
 def shuffle_and_deal():
     global player_cards, computer_cards
     deck = [
@@ -260,15 +269,25 @@ def play_game():
         for offset, card_key in enumerate(reversed(selected_cards)):
             screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
 
-        screen.blit(
-            scaled_discard_pile_image,
-            (
-                SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
-                SCREEN_HEIGHT // 2
-                - scaled_discard_pile_image.get_height() // 2
-                - 20,  # Centering with some margin
-            ),
+        # Draw discard pile
+        discard_pile_rect = pygame.Rect(
+            SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
+            SCREEN_HEIGHT // 2
+            - scaled_discard_pile_image.get_height() // 2
+            - 20,
+            scaled_discard_pile_image.get_width(),
+            scaled_discard_pile_image.get_height(),
         )
+        screen.blit(scaled_discard_pile_image, discard_pile_rect)
+
+        # Check if discard pile is clicked
+        if discard_pile_rect.collidepoint(pygame.mouse.get_pos()):
+            draw_card_from_deck()
+
+
+# Initialize the deck
+deck = []
+
 # Main loop
 running = True
 while running:
@@ -307,6 +326,7 @@ while running:
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 shuffle_and_deal()
+                deck = player_cards + computer_cards  # Initialize deck
                 state = "play"
             else:
                 screen.blit(game_background_image, (0, 0))
@@ -318,4 +338,3 @@ while running:
 
 pygame.quit()
 sys.exit()
-
