@@ -167,7 +167,7 @@ computer_cards = []
 selected_cards = []
 discard_pile = []
 deck = []
-card_being_played = None
+
 
 def draw_card_from_deck():
     """Draw one random card from the deck and add it to the player's hand."""
@@ -223,17 +223,16 @@ def get_card_at_position(x, y):
 
 def play_card(card_key):
     """Handle playing a card and update game state."""
-    global discard_pile, player_cards, selected_cards, card_being_played
+    global discard_pile, player_cards, selected_cards
     if card_key in player_cards:
         player_cards.remove(card_key)
         discard_pile.insert(0, card_key)
-        card_being_played = card_key
         print(f"Player played card: {card_key}")
 
 
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
-    global computer_cards, discard_pile, card_being_played
+    global computer_cards, discard_pile
     pygame.time.wait(
         2000
     )  # Wait for 2 seconds before the computer plays its card
@@ -244,8 +243,8 @@ def computer_turn():
         discard_pile.insert(
             0, card_to_play
         )  # Add the card to the top of the discard pile
-        card_being_played = card_to_play
         print(f"Computer played card: {card_to_play}")
+
 
 def play_game():
     """Display the game screen with cards."""
@@ -272,85 +271,100 @@ def play_game():
             // 2
         )
         y = SCREEN_HEIGHT - card_height - 20
-        screen.blit(card_images[player_cards[i]], (x, y))
+        if i < len(player_cards):  # Ensure index is within range
+            card_key = player_cards[i]
+            if reveal_cards:
+                if card_key in selected_cards:
+                    # Display selected cards as a pile in the center
+                    pile_x = (SCREEN_WIDTH - card_width) // 2
+                    pile_y = (SCREEN_HEIGHT - card_height) // 2
+                    # Display all selected cards stacked
+                    for offset, card_key in enumerate(
+                        reversed(selected_cards)
+                    ):
+                        screen.blit(
+                            card_images[card_key],
+                            (pile_x, pile_y - offset * 10),
+                        )
+                else:
+                    screen.blit(card_images[card_key], (x, y))
+            else:
+                screen.blit(scaled_card_back_image, (x, y))
 
-    # Draw the selected cards in the center of the screen
-    if selected_cards:
+    # Draw the Reveal Cards button if not clicked
+    if not reveal_button_clicked:
+        reveal_button.draw(screen)
+    else:
+        # Display selected cards as a pile in the center
         pile_x = (SCREEN_WIDTH - card_width) // 2
         pile_y = (SCREEN_HEIGHT - card_height) // 2
         for offset, card_key in enumerate(reversed(selected_cards)):
             screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
 
-    # Draw the discard pile card in the center
-    if discard_pile:
-        top_card_key = discard_pile[0]
-        screen.blit(
-            card_images[top_card_key],
-            (
-                SCREEN_WIDTH // 2 - card_width // 2,
-                SCREEN_HEIGHT // 2 - card_height // 2,
-            ),
-        )
+        # Draw discard pile
+        if discard_pile:
+            top_card_key = discard_pile[0]  # Top card on discard pile
+            screen.blit(
+                card_images[top_card_key],
+                (
+                    SCREEN_WIDTH // 2 - card_width // 2,
+                    SCREEN_HEIGHT // 2 - card_height // 2,
+                ),
+            )
+        draw_card_button.draw(screen)
 
-    draw_card_button.draw(screen)
+    pygame.display.flip()
 
-def main():
-    global \
-        state, \
-        reveal_cards, \
-        reveal_button_clicked, \
-        selected_cards, \
-        discard_pile
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = event.pos
-                if state == "play":
-                    if draw_card_button.rect.collidepoint(x, y):
-                        draw_card_from_deck()
-                    else:
-                        card_key = get_card_at_position(x, y)
-                        if card_key:
-                            if reveal_cards:  # Ensure cards can only be selected after revealing
-                                if len(selected_cards) >= 1:
-                                    # Remove the previously selected card from player's hand
-                                    previous_card = selected_cards.pop(0)
-                                    if previous_card in player_cards:
-                                        player_cards.remove(previous_card)
-                                # Play the selected card
-                                play_card(card_key)
-                                pygame.display.flip()  # Update display immediately
-                                pygame.time.wait(2000)  # Wait for 2 seconds
-                                computer_turn()  # Let the computer play
+# Main loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
-                if reveal_button.is_clicked(event):
-                    reveal_cards = True
-                    reveal_button_clicked = True
-
-            if state == "home":
-                if start_button.is_clicked(event):
-                    state = "game"
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = event.pos
+            if state == "play":
+                if draw_card_button.rect.collidepoint(x, y):
+                    draw_card_from_deck()
                 else:
-                    screen.blit(home_background_image, (0, 0))
-                    start_button.draw(screen)
-            elif state == "game":
-                if shuffle_play_button.is_clicked(event):
-                    shuffle_and_deal()
-                    state = "play"
-                else:
-                    screen.blit(game_background_image, (0, 0))
-                    shuffle_play_button.draw(screen)
-            elif state == "play":
-                play_game()
+                    card_key = get_card_at_position(x, y)
+                    if card_key:
+                        if (
+                            reveal_cards
+                        ):  # Ensure cards can only be selected after revealing
+                            if len(selected_cards) >= 1:
+                                # Remove the previously selected card from player's hand
+                                previous_card = selected_cards.pop(0)
+                                if previous_card in player_cards:
+                                    player_cards.remove(previous_card)
+                            # Play the selected card
+                            play_card(card_key)
+                            # Wait and then let the computer play
+                            computer_turn()
 
-            pygame.display.flip()
+            if reveal_button.is_clicked(event):
+                reveal_cards = True
+                reveal_button_clicked = True
 
-    pygame.quit()
-    sys.exit()
+        if state == "home":
+            if start_button.is_clicked(event):
+                state = "game"
+            else:
+                screen.blit(home_background_image, (0, 0))
+                start_button.draw(screen)
+        elif state == "game":
+            if shuffle_play_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
+            else:
+                screen.blit(game_background_image, (0, 0))
+                shuffle_play_button.draw(screen)
+        elif state == "play":
+            play_game()
 
-if __name__ == "__main__":
-    main()
+        pygame.display.flip()
+
+pygame.quit()
+sys.exit()
