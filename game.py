@@ -238,9 +238,11 @@ def play_game():
                     pile_x = (SCREEN_WIDTH - card_width) // 2
                     pile_y = (SCREEN_HEIGHT - card_height) // 2
                     # Display all selected cards stacked
-                    for offset in range(selected_cards.index(card_key) + 1):
+                    for offset, card_key in enumerate(
+                        reversed(selected_cards)
+                    ):
                         screen.blit(
-                            card_images[selected_cards[offset]],
+                            card_images[card_key],
                             (pile_x, pile_y - offset * 10),
                         )
                 else:
@@ -255,7 +257,7 @@ def play_game():
         # Display selected cards as a pile in the center
         pile_x = (SCREEN_WIDTH - card_width) // 2
         pile_y = (SCREEN_HEIGHT - card_height) // 2
-        for offset, card_key in enumerate(selected_cards):
+        for offset, card_key in enumerate(reversed(selected_cards)):
             screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
 
         screen.blit(
@@ -271,6 +273,7 @@ def play_game():
     # Print debug information for cards
     print(f"Selected cards: {selected_cards}")
     print(f"Player cards remaining: {len(player_cards)}")
+
 
 
 # Main loop
@@ -289,9 +292,12 @@ while running:
                         reveal_cards
                     ):  # Ensure cards can only be selected after revealing
                         if card_key not in selected_cards:
-                            selected_cards.append(card_key)
-                        else:
-                            selected_cards.remove(card_key)
+                            # Replace the previous top card with the new one
+                            if len(selected_cards) >= 1:
+                                selected_cards.pop()  # Remove the oldest top card
+                            selected_cards.insert(
+                                0, card_key
+                            )  # Add the new card to the top
 
                 if reveal_button.is_clicked(event):
                     reveal_cards = True
