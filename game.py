@@ -162,16 +162,19 @@ reveal_button_clicked = False
 player_cards = []
 computer_cards = []
 selected_cards = []
+
 deck = []
 
 
 def draw_card_from_deck():
-    """Draw a card from the deck and add it to the player's hand."""
-    global deck
+    """Draw one card from the deck and add it to the player's hand."""
+    global deck, player_cards
     if deck:
         card = deck.pop()  # Draw the top card from the deck
         player_cards.append(card)  # Add it to the player's hand
         print(f"Drawn card: {card}")
+
+
 def shuffle_and_deal():
     global player_cards, computer_cards
     deck = [
@@ -223,7 +226,6 @@ def play_game():
             i * (card_width + CARD_SPACING)
             + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
         )
-        # Top of the screen
         y = 20
         screen.blit(scaled_card_back_image, (x, y))
 
@@ -237,7 +239,6 @@ def play_game():
             )
             // 2
         )
-        # Bottom of the screen
         y = SCREEN_HEIGHT - card_height - 20
         if i < len(player_cards):  # Ensure index is within range
             card_key = player_cards[i]
@@ -287,7 +288,6 @@ def play_game():
 
 # Initialize the deck
 deck = []
-
 # Main loop
 running = True
 while running:
@@ -298,24 +298,36 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if state == "play":
                 x, y = event.pos
-                card_key = get_card_at_position(x, y)
-                if card_key:
-                    if (
-                        reveal_cards
-                    ):  # Ensure cards can only be selected after revealing
-                        if len(selected_cards) >= 1:
-                            # Remove the previously selected card from player's hand
-                            previous_card = selected_cards.pop(0)
-                            if previous_card in player_cards:
-                                player_cards.remove(previous_card)
-                        # Add the new card to the top of the pile
-                        selected_cards.insert(0, card_key)
+                # Check if discard pile is clicked
+                discard_pile_rect = pygame.Rect(
+                    SCREEN_WIDTH - scaled_discard_pile_image.get_width() - 20,
+                    SCREEN_HEIGHT // 2
+                    - scaled_discard_pile_image.get_height() // 2
+                    - 20,
+                    scaled_discard_pile_image.get_width(),
+                    scaled_discard_pile_image.get_height(),
+                )
+                if discard_pile_rect.collidepoint(x, y):
+                    draw_card_from_deck()
+                else:
+                    card_key = get_card_at_position(x, y)
+                    if card_key:
+                        if (
+                            reveal_cards
+                        ):  # Ensure cards can only be selected after revealing
+                            if len(selected_cards) >= 1:
+                                # Remove the previously selected card from player's hand
+                                previous_card = selected_cards.pop(0)
+                                if previous_card in player_cards:
+                                    player_cards.remove(previous_card)
+                            # Add the new card to the top of the pile
+                            selected_cards.insert(0, card_key)
 
-                if reveal_button.is_clicked(event):
-                    reveal_cards = True
-                    reveal_button_clicked = True
-                    # Debug print before removal
-                    print(f"Selected cards before removal: {selected_cards}")
+            if reveal_button.is_clicked(event):
+                reveal_cards = True
+                reveal_button_clicked = True
+                # Debug print before removal
+                print(f"Selected cards before removal: {selected_cards}")
 
         if state == "home":
             if start_button.is_clicked(event):
@@ -326,7 +338,6 @@ while running:
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 shuffle_and_deal()
-                deck = player_cards + computer_cards  # Initialize deck
                 state = "play"
             else:
                 screen.blit(game_background_image, (0, 0))
