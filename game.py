@@ -161,9 +161,7 @@ reveal_cards = False
 reveal_button_clicked = False
 player_cards = []
 computer_cards = []
-selected_card = None  # Initialize selected_card outside the main loop
 selected_cards = []  # List to keep track of selected cards
-
 
 def shuffle_and_deal():
     global player_cards, computer_cards
@@ -280,7 +278,15 @@ while running:
                         selected_cards.append(card_key)
                     else:
                         selected_cards.remove(card_key)
-                    player_cards.remove(card_key)
+                if reveal_button.is_clicked(event):
+                    reveal_cards = True
+                    reveal_button_clicked = True
+                    # Remove the selected cards from the user's hand
+                    player_cards = [
+                        card
+                        for card in player_cards
+                        if card not in selected_cards
+                    ]
 
         if state == "home":
             if start_button.is_clicked(event):
@@ -296,9 +302,6 @@ while running:
                 screen.blit(game_background_image, (0, 0))
                 shuffle_play_button.draw(screen)
         elif state == "play":
-            if reveal_button.is_clicked(event):
-                reveal_cards = True
-                reveal_button_clicked = True
             play_game()
 
         pygame.display.flip()
