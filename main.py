@@ -1,3 +1,8 @@
+"""
+Created by: Naysa Maria Manu.
+
+UNO Card game.
+"""
 import pygame
 import sys
 import random

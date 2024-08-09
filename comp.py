@@ -198,6 +198,7 @@ def draw_card_from_deck():
 
 
 def shuffle_and_deal():
+    """Shuffles and hands cards to user and computer."""
     global player_cards, computer_cards, deck
     deck = [
         f"{color}_{number}" for color in card_colors for number in range(10)
@@ -343,25 +344,23 @@ while running:
                     draw_card_from_deck()
                 else:
                     card_key = get_card_at_position(x, y)
-                    if card_key:
-                        if (
-                            reveal_cards
-                        ):  # Ensure cards can only be selected after revealing
-                            selected_card = (
-                                card_key  # Mark this card as selected
-                            )
-                            # Update display to show the selected card moved up
-                            play_game()
-                            pygame.display.flip()
-                            pygame.time.wait(
-                                2000
-                            )  # Wait 2 seconds before playing the card
-                            # Play the selected card
-                            play_card(card_key)
-                            # Reset selected card
-                            selected_card = None
-                            # Wait and then let the computer play
-                            computer_turn()
+                    if card_key and reveal_cards:
+                        # Mark this card as selected
+                        selected_card = card_key
+                        # Update display to show the selected card moved up
+                        play_game()
+                        pygame.display.flip()
+                        # Wait 2 seconds before playing the card
+                        pygame.time.wait(2000)
+                        # Play the selected card
+                        play_card(card_key)
+
+                        # Reset selected card
+                        selected_card = None
+
+                        # Wait and then let the computer play
+                        computer_turn()
+
 
             if reveal_button.is_clicked(event):
                 reveal_cards = True
