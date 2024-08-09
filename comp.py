@@ -1,3 +1,9 @@
+"""
+Created by: Naysa Maria Manu.
+
+UNO Card game.
+"""
+
 import pygame
 import sys
 import random
@@ -52,6 +58,7 @@ card_images = {}
 
 # Load and scale card images
 def load_and_scale_card_images():
+    """Scales and loads card images."""
     global card_images
     card_images = {}
 
@@ -101,6 +108,7 @@ class Button:
     """A class to represent buttons in the game."""
 
     def __init__(self, text, pos, size, color, text_color, font):
+        """Initialize characterstics of buttons."""
         self.text = text
         self.pos = pos
         self.size = size
@@ -114,17 +122,17 @@ class Button:
         self.text_rect = self.rendered_text.get_rect(center=self.rect.center)
 
     def draw(self, surface):
+        """Draws and displays buttons and screen."""
         pygame.draw.rect(surface, self.color, self.rect)
         surface.blit(self.rendered_text, self.text_rect)
 
     def is_clicked(self, event):
-        if (
+        """Handle event on click."""
+        return (
             event.type == pygame.MOUSEBUTTONDOWN
             and event.button == 1
             and self.rect.collidepoint(event.pos)
-        ):
-            return True
-        return False
+        )
 
 
 # Create buttons
@@ -330,41 +338,50 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
-
             if state == "play":
                 if draw_card_button.rect.collidepoint(x, y):
                     draw_card_from_deck()
                 else:
                     card_key = get_card_at_position(x, y)
                     if card_key:
-                        if reveal_cards:
-                            selected_card = card_key
+                        if (
+                            reveal_cards
+                        ):  # Ensure cards can only be selected after revealing
+                            selected_card = (
+                                card_key  # Mark this card as selected
+                            )
+                            # Update display to show the selected card moved up
                             play_game()
                             pygame.display.flip()
-                            pygame.time.wait(2000)
+                            pygame.time.wait(
+                                2000
+                            )  # Wait 2 seconds before playing the card
+                            # Play the selected card
                             play_card(card_key)
+                            # Reset selected card
                             selected_card = None
+                            # Wait and then let the computer play
                             computer_turn()
 
-                if exit_button.is_clicked(event):
-                    running = False  # Exit the game loop
+            if reveal_button.is_clicked(event):
+                reveal_cards = True
+                reveal_button_clicked = True
 
-            elif state == "home":
-                if start_button.is_clicked(event):
-                    state = "game"
-                else:
-                    screen.blit(home_background_image, (0, 0))
-                    start_button.draw(screen)
-                    exit_button.draw(screen)  # Draw exit button in home state
-
-            elif state == "game":
-                if shuffle_play_button.is_clicked(event):
-                    shuffle_and_deal()
-                    state = "play"
-                else:
-                    screen.blit(game_background_image, (0, 0))
-                    shuffle_play_button.draw(screen)
-                    exit_button.draw(screen)  # Draw exit button in game state
+        if state == "home":
+            if start_button.is_clicked(event):
+                state = "game"
+            else:
+                screen.blit(home_background_image, (0, 0))
+                start_button.draw(screen)
+        elif state == "game":
+            if shuffle_play_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
+            else:
+                screen.blit(game_background_image, (0, 0))
+                shuffle_play_button.draw(screen)
+        elif state == "play":
+            play_game()
 
         pygame.display.flip()
 
