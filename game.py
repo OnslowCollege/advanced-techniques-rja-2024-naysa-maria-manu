@@ -1,8 +1,3 @@
-"""
-Created by: Naysa Maria Manu.
-
-UNO Card game.
-"""
 import pygame
 import sys
 import random
@@ -19,13 +14,9 @@ CARD_FONT_PATH = "Text_features/Comic.ttf"
 HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
-# Number of cards per player
 NUM_CARDS = 7
-# Scale down the cards size down by 37%
 CARD_SCALE = 0.37
-# Space between cards
 CARD_SPACING = 10
-# Size of the Reveal Cards button
 REVEAL_BUTTON_SIZE = (270, 60)
 
 # Define the new colors
@@ -155,15 +146,41 @@ reveal_button = Button(
     font,
 )
 
+draw_card_button = Button(
+    "DRAW CARD",
+    (
+        SCREEN_WIDTH - REVEAL_BUTTON_SIZE[0] - 20,
+        (SCREEN_HEIGHT - REVEAL_BUTTON_SIZE[1]) // 2,
+    ),
+    REVEAL_BUTTON_SIZE,
+    BUTTON_COLOR,
+    TEXT_COLOR,
+    font,
+)
+
 # Game state
 state = "home"
 reveal_cards = False
+reveal_button_clicked = False
 player_cards = []
 computer_cards = []
+selected_cards = []
+
+deck = []
+
+
+def draw_card_from_deck():
+    """Draw one random card from the deck and add it to the player's hand."""
+    global deck, player_cards
+    if deck:
+        card = random.choice(deck)  # Draw a random card from the deck
+        deck.remove(card)  # Remove the card from the deck
+        player_cards.append(card)  # Add it to the player's hand
+        print(f"Drawn card: {card}")
 
 
 def shuffle_and_deal():
-    global player_cards, computer_cards
+    global player_cards, computer_cards, deck
     deck = [
         f"{color}_{number}" for color in card_colors for number in range(10)
     ]
@@ -177,23 +194,37 @@ def shuffle_and_deal():
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
 
+    # Print debug information
+    print(f"Deck size: {len(deck)}")
+    print(f"Player cards: {len(player_cards)}")
+    print(f"Computer cards: {len(computer_cards)}")
 
-def home_screen():
-    """Display the home screen with the start button."""
-    screen.blit(home_background_image, (0, 0))
-    start_button.draw(screen)
 
-
-def game_screen():
-    """Display the game screen with the shuffle and play button."""
-    screen.blit(game_background_image, (0, 0))
-    shuffle_play_button.draw(screen)
+def get_card_at_position(x, y):
+    """Check if the mouse position is over a card and return the card key."""
+    card_width, card_height = scaled_card_back_image.get_size()
+    for i in range(len(player_cards)):  # Use length of player_cards
+        card_x = (
+            i * (card_width + CARD_SPACING)
+            + (
+                SCREEN_WIDTH
+                - ((card_width + CARD_SPACING) * len(player_cards))
+            )
+            // 2
+        )
+        card_y = SCREEN_HEIGHT - card_height - 20
+        if (
+            card_x <= x <= card_x + card_width
+            and card_y <= y <= card_y + card_height
+        ):
+            return player_cards[i]
+    return None
 
 def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
-    # Display computer's cards
+    # Display computer's cards in a linear layout
     card_width, card_height = scaled_card_back_image.get_size()
     for i in range(NUM_CARDS):
         x = (
@@ -203,52 +234,54 @@ def play_game():
         y = 20
         screen.blit(scaled_card_back_image, (x, y))
 
-    # Display player's cards in a U-shape
-    mid_x = SCREEN_WIDTH // 2.2
-    positions = [
-        # left bottom
-        (
-            mid_x - 3 * card_width - 3 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 100,
-        ),
-        (
-            mid_x - 2 * card_width - 2 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 60,
-        ),
-        (
-            mid_x - card_width - CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        # middle bottom
-        (
-            mid_x - card_width // 25,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        # right bottom
-        (
-            mid_x + card_width + CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 20,
-        ),
-        (
-            mid_x + 2 * card_width + 2 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 60,
-        ),
-        (
-            mid_x + 3 * card_width + 3 * CARD_SPACING,
-            SCREEN_HEIGHT - card_height - 100,
-        ),
-    ]
+    # Display player's cards in a linear layout
+    for i in range(len(player_cards)):  # Use length of player_cards
+        x = (
+            i * (card_width + CARD_SPACING)
+            + (
+                SCREEN_WIDTH
+                - ((card_width + CARD_SPACING) * len(player_cards))
+            )
+            // 2
+        )
+        y = SCREEN_HEIGHT - card_height - 20
+        if i < len(player_cards):  # Ensure index is within range
+            card_key = player_cards[i]
+            if reveal_cards:
+                if card_key in selected_cards:
+                    # Display selected cards as a pile in the center
+                    pile_x = (SCREEN_WIDTH - card_width) // 2
+                    pile_y = (SCREEN_HEIGHT - card_height) // 2
+                    # Display all selected cards stacked
+                    for offset, card_key in enumerate(
+                        reversed(selected_cards)
+                    ):
+                        screen.blit(
+                            card_images[card_key],
+                            (pile_x, pile_y - offset * 10),
+                        )
+                else:
+                    screen.blit(card_images[card_key], (x, y))
+            else:
+                screen.blit(scaled_card_back_image, (x, y))
 
-    for i in range(NUM_CARDS):
-        card_key = player_cards[i]
-        if reveal_cards:
-            screen.blit(card_images[card_key], positions[i])
-        else:
-            screen.blit(scaled_card_back_image, positions[i])
+    # Draw the Reveal Cards button if not clicked
+    if not reveal_button_clicked:
+        reveal_button.draw(screen)
+    else:
+        # Display selected cards as a pile in the center
+        pile_x = (SCREEN_WIDTH - card_width) // 2
+        pile_y = (SCREEN_HEIGHT - card_height) // 2
+        for offset, card_key in enumerate(reversed(selected_cards)):
+            screen.blit(card_images[card_key], (pile_x, pile_y - offset * 10))
 
-    # Draw the Reveal Cards button
-    reveal_button.draw(screen)
+        # Draw discard pile
+        draw_card_button.draw(screen)
 
+        # Check if discard pile is clicked
+        draw_card_button.rect.collidepoint(pile_x, pile_y)
+
+    pygame.display.flip()
 
 # Main loop
 running = True
@@ -257,20 +290,46 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if state == "play":
+                x, y = event.pos
+                # Check if discard pile is clicked
+                if draw_card_button.rect.collidepoint(x, y):
+                    draw_card_from_deck()
+                else:
+                    card_key = get_card_at_position(x, y)
+                    if card_key:
+                        if (
+                            reveal_cards
+                        ):  # Ensure cards can only be selected after revealing
+                            if len(selected_cards) >= 1:
+                                # Remove the previously selected card from player's hand
+                                previous_card = selected_cards.pop(0)
+                                if previous_card in player_cards:
+                                    player_cards.remove(previous_card)
+                            # Add the new card to the top of the pile
+                            selected_cards.insert(0, card_key)
+
+            if reveal_button.is_clicked(event):
+                reveal_cards = True
+                reveal_button_clicked = True
+                # Debug print before removal
+                print(f"Selected cards before removal: {selected_cards}")
+
         if state == "home":
             if start_button.is_clicked(event):
                 state = "game"
             else:
-                home_screen()
+                screen.blit(home_background_image, (0, 0))
+                start_button.draw(screen)
         elif state == "game":
             if shuffle_play_button.is_clicked(event):
                 shuffle_and_deal()
                 state = "play"
             else:
-                game_screen()
+                screen.blit(game_background_image, (0, 0))
+                shuffle_play_button.draw(screen)
         elif state == "play":
-            if reveal_button.is_clicked(event):
-                reveal_cards = True
             play_game()
 
         pygame.display.flip()
