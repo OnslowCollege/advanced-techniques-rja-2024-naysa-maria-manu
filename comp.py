@@ -242,68 +242,63 @@ def get_card_at_position(x, y):
 
 def play_card(card_key):
     """Handle playing a card and update game state."""
-    global discard_pile, player_cards, selected_cards, deck
+    global discard_pile, player_cards, selected_cards, deck, computer_cards
 
     if card_key in player_cards:
-        card_color, card_value = card_key.split("_")
-
-        if "+4" in card_value:
-            # Check if the player has other matching cards
-            has_matching_card = any(
-                card.split("_")[0] == card_color
-                or card.split("_")[1] == card_value
+        if "+4" in card_key:
+            # Check if player has a matching color or number card
+            top_card = discard_pile[0] if discard_pile else None
+            top_color, top_value = (
+                top_card.split("_") if top_card else (None, None)
+            )
+            matching_card_found = any(
+                card.split("_")[0] == top_color
+                or card.split("_")[1] == top_value
                 for card in player_cards
-                if "+4" not in card
+                if card != card_key
             )
 
-            if has_matching_card:
-                # Invalid play: player has matching cards
+            if not matching_card_found:
+                # Valid +4 card play
+                # Draw 4 cards for the computer
+                for _ in range(4):
+                    if deck:
+                        drawn_card = deck.pop()
+                        computer_cards.append(drawn_card)
+                        print(
+                            f"Computer drew a card from the deck: {drawn_card}"
+                        )
+
+                # Add the +4 card to the discard pile
+                player_cards.remove(card_key)
+                discard_pile.insert(0, card_key)
+                print(f"Player played +4 card: {card_key}")
+
+                # Display the message to select a new color
+                show_message("Select a new color", duration=1500)
+
+                # Ask player to choose a new color
+                # Replace this with actual color selection mechanism
+                new_color = "red"  # Placeholder color selection
+                # Update the discard pile with the new color
+                discard_pile[0] = f"{new_color}_{card_key.split('_')[1]}"
+
+            else:
+                # Invalid +4 card play
                 show_message(
-                    "Invalid play: You have matching cards!", duration=2000
+                    "Invalid selection! You have a matching card.",
+                    duration=2000,
                 )
-                return
-
-            # Handle +4 card
-            # Draw 4 cards for the next player (in this case, the player)
-            for _ in range(4):
-                draw_card_from_deck()
-
-            # Add the +4 card to the discard pile
-            player_cards.remove(card_key)
-            discard_pile.insert(0, card_key)
-            print(f"Player played +4 card: {card_key}")
-
-            # Display the message to select a new color
-            show_message("Select a new color", duration=1500)
-
-            # Ask player to choose a new color (replace this with actual color selection mechanism)
-            new_color = "red"  # Example color
-            # Update the discard pile with the new color
-            discard_pile[0] = f"{new_color}_{card_value}"
+                # You can also handle additional logic for invalid play if needed
 
         else:
             # Handle regular cards
-            if discard_pile:
-                top_card = discard_pile[0]
-                top_color, top_value = top_card.split("_")
-                if (
-                    card_color != top_color
-                    and card_value != top_value
-                    and card_value not in wild_cards
-                ):
-                    # Invalid play: card does not match the top card
-                    show_message(
-                        "Invalid play: Card does not match the top card!",
-                        duration=2000,
-                    )
-                    return
-
             player_cards.remove(card_key)
             discard_pile.insert(0, card_key)
             print(f"Player played card: {card_key}")
 
-        # Display the game state after playing the card
-        play_game()
+            # Proceed to computer's turn
+            computer_turn()
 
 
 def computer_turn():
@@ -351,7 +346,6 @@ def computer_turn():
 
         # Display message for the player to take their turn
         show_message("Your turn", duration=1500)
-
 
 def show_message(message, duration=1500):
     """Display a temporary message on the screen."""
