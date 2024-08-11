@@ -201,6 +201,13 @@ def draw_card_from_deck():
 def shuffle_and_deal():
     """Shuffles and hands cards to user and computer, and sets the initial discard pile card."""
     global player_cards, computer_cards, deck, discard_pile
+    # Define card colors, numbers, and special cards
+    card_colors = ["red", "yellow", "green", "blue"]
+    special_cards = ["skip", "reverse", "draw2"]
+    wild_cards = ["wild", "wild_draw4"]
+    NUM_CARDS = 7  # Number of cards dealt to each player
+
+    # Create and shuffle the deck
     deck = [
         f"{color}_{number}" for color in card_colors for number in range(10)
     ]
@@ -209,24 +216,32 @@ def shuffle_and_deal():
         for color in card_colors
         for special in special_cards
     ]
-    # 4 wild cards
     deck += [wild for wild in wild_cards] * 4
     random.shuffle(deck)
 
     # Draw the initial discard pile card
     initial_discard_card = random.choice(deck)
-    discard_pile.append(initial_discard_card)
+    discard_pile = [initial_discard_card]
     deck.remove(initial_discard_card)
 
     # Deal cards to player and computer
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
+    deck = deck[NUM_CARDS * 2 :]  # Update deck to remove dealt cards
+
+    # Check and replace any +4 cards in the computer's hand
+    if any(card.endswith("_wild_draw4") for card in computer_cards):
+        computer_cards = [
+            card for card in computer_cards if not card.endswith("_wild_draw4")
+        ]
+        computer_cards.append(random.choice(deck))
 
     # Print debug information
     print(f"Deck size: {len(deck)}")
     print(f"Initial discard pile card: {initial_discard_card}")
     print(f"Player cards: {len(player_cards)}")
     print(f"Computer cards: {len(computer_cards)}")
+
 
 
 def get_card_at_position(x, y):
