@@ -207,7 +207,8 @@ def shuffle_and_deal():
         for color in card_colors
         for special in special_cards
     ]
-    deck += [wild for wild in wild_cards] * 4  # 4 wild cards
+    # 4 wild cards
+    deck += [wild for wild in wild_cards] * 4
     random.shuffle(deck)
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
@@ -369,16 +370,14 @@ def computer_turn():
                                 end_game("YOU LOST!")
                         else:
                             # If no match, display message
-                            display_message(
-                                "Your turn", 3000
-                            )  # Display for 3 seconds
+                            # Display for 3 seconds
+                            display_message("Your turn", 3000)
                     except ValueError:
                         print(
                             f"Error: Invalid drawn card format: {drawn_card}"
                         )
-                        display_message(
-                            "Your turn", 3000
-                        )  # Display for 3 seconds
+                        # Display for 3 seconds
+                        display_message("Your turn", 3000)
         else:
             print("Error: No top card on discard pile.")
     else:
@@ -386,7 +385,7 @@ def computer_turn():
 
 
 def end_game(message):
-    """Displays the end game screen with a message."""
+    """Display the end game screen with a message."""
     global state
     state = "end"
     screen.blit(game_background_image, (0, 0))
@@ -468,7 +467,8 @@ def play_game():
         screen.blit(scaled_card_back_image, (x, y))
 
     # Display player's cards in a linear layout
-    for i in range(len(player_cards)):  # Use length of player_cards
+    for i in range(len(player_cards)):
+        # Use length of player_cards
         x = (
             i * (card_width + CARD_SPACING)
             + (
@@ -478,11 +478,13 @@ def play_game():
             // 2
         )
         y = SCREEN_HEIGHT - card_height - 20
-        if i < len(player_cards):  # Ensure index is within range
+        if i < len(player_cards):
+            # Ensure index is within range
             card_key = player_cards[i]
             if reveal_cards:
                 if card_key == selected_card:
-                    y -= 30  # Move selected card up by 30 pixels
+                    # Move selected card up by 30 pixels
+                    y -= 30
                 screen.blit(card_images[card_key], (x, y))
             else:
                 screen.blit(scaled_card_back_image, (x, y))
