@@ -292,7 +292,7 @@ def play_card(card_key):
 def display_message(message, duration):
     """Display a message on the screen for a specific duration."""
     global screen, font, SCREEN_WIDTH, SCREEN_HEIGHT, game_background_image
-    screen.blit(game_background_image, (0, 0))  # Draw the background image
+    screen.blit(game_background_image, (0, 0))
     text = font.render(message, True, COLOR_RED)
     text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
     screen.blit(text, text_rect)
@@ -387,7 +387,7 @@ def end_game(message):
     """Displays the end game screen with a message."""
     global state
     state = "end"
-    screen.fill((0, 0, 0))  # Clear the screen
+    screen.blit(game_background_image, (0, 0))
     text = font.render(message, True, COLOR_RED)
     text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
     screen.blit(text, text_rect)
