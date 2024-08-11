@@ -242,232 +242,46 @@ def get_card_at_position(x, y):
 
 def play_card(card_key):
     """Handle playing a card and update game state."""
-    global discard_pile, player_cards, selected_cards, deck, computer_cards
-
+    global discard_pile, player_cards, selected_cards
     if card_key in player_cards:
-        if "+4" in card_key:
-            # Check if player has a matching color or number card
-            top_card = discard_pile[0] if discard_pile else None
-            if top_card:
-                top_color, top_value = top_card.split("_")
-            else:
-                top_color = top_value = None
+        player_cards.remove(card_key)
+        discard_pile.insert(0, card_key)
+        print(f"Player played card: {card_key}")
 
-            matching_card_found = any(
-                card.split("_")[0] == top_color
-                or card.split("_")[1] == top_value
-                for card in player_cards
-                if card != card_key
-            )
 
-            if not matching_card_found:
-                # Valid +4 card play
-                # Draw 4 cards for the computer
-                for _ in range(4):
-                    if deck:
-                        drawn_card = deck.pop()
-                        computer_cards.append(drawn_card)
-                        print(
-                            f"Computer drew a card from the deck: {drawn_card}"
-                        )
-
-                # Add the +4 card to the discard pile
-                player_cards.remove(card_key)
-                discard_pile.insert(0, card_key)
-                print(f"Player played +4 card: {card_key}")
-
-                # Display the message to select a new color
-                show_message("Select a new color", duration=1500)
-
-                # Ask player to choose a new color
-                # Replace this with actual color selection mechanism
-                new_color = "red"  # Placeholder color selection
-                # Update the discard pile with the new color
-                discard_pile[0] = f"{new_color}_{card_key.split('_')[1]}"
-
-            else:
-                # Invalid +4 card play
-                show_message(
-                    "Invalid selection! You have a matching card.",
-                    duration=2000,
-                )
-                # You can also handle additional logic for invalid play if needed
-
-        else:
-            # Handle regular cards
-            player_cards.remove(card_key)
-            discard_pile.insert(0, card_key)
-            print(f"Player played card: {card_key}")
-
-            # Proceed to computer's turn
-            computer_turn()
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
-    global computer_cards, discard_pile, deck, player_cards
+    global computer_cards, discard_pile
+    pygame.time.wait(
+        2000
+    )  # Wait for 2 seconds before the computer plays its card
 
-    # Delay to simulate thinking
-    pygame.time.wait(2000)
+    if computer_cards:
+        # Top card on the discard pile
+        top_card = discard_pile[0]
+        # Split to get color and number/special
+        top_color, top_value = top_card.split("_")
 
-    # Check if the computer has a matching card
-    top_card = discard_pile[0]
-    top_color, top_value = top_card.split("_")
-    matching_card_found = False
-
-    # Try to find a matching card in the computer's hand
-    for card in computer_cards:
-        try:
-            card_color, card_value = card.split("_")
-        except ValueError:
-            print(f"Skipping malformed card: {card}")
-            continue
-
-        if (
-            card_color == top_color
-            or card_value == top_value
-            or card_value in wild_cards
-        ):
-            matching_card_found = True
-            break
-
-    if matching_card_found:
-        # Play a matching card or +4 card
+        # Try to find a matching card in the computer's hand
         for card in computer_cards:
-            try:
-                card_color, card_value = card.split("_")
-            except ValueError:
-                print(f"Skipping malformed card: {card}")
-                continue
-
-            if (
-                card_color == top_color
-                or card_value == top_value
-                or card_value in wild_cards
-            ):
+            card_color, card_value = card.split("_")
+            if card_color == top_color or card_value == top_value:
                 computer_cards.remove(card)
+                # Add the card to the top of the discard pile
                 discard_pile.insert(0, card)
                 print(f"Computer played card: {card}")
+                # Exit the function after playing a card
+                return
 
-                # Special handling for +4 card
-                if card.startswith("+4"):
-                    # Add 4 cards to the player's hand and show a message
-                    for _ in range(4):
-                        if deck:
-                            drawn_card = deck.pop()
-                            player_cards.append(drawn_card)
-                            print(
-                                f"Player drew a card from the deck: {drawn_card}"
-                            )
-                    # Show message to the player
-                    show_message("Draw 4 cards!", duration=3000)
-
-                # Special handling for +2 card
-                elif card.startswith("+2"):
-                    # Add 2 cards to the player's hand without showing a message
-                    for _ in range(2):
-                        if deck:
-                            drawn_card = deck.pop()
-                            player_cards.append(drawn_card)
-                            print(
-                                f"Player drew a card from the deck: {drawn_card}"
-                            )
-
-                break
-    else:
-        # Draw a card from the deck
-        if deck:
-            drawn_card = deck.pop()
-            computer_cards.append(drawn_card)
-            print(f"Computer drew a card from the deck: {drawn_card}")
-
-        # Display message for the player to take their turn
-        show_message("Your turn", duration=1500)
-
-
-
-
-def show_message(message, duration=1500):
-    """Display a temporary message on the screen."""
-    global screen, font
-    message_surface = font.render(message, True, COLOR_RED)
-    message_rect = message_surface.get_rect(
-        center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-    )
-    screen.blit(message_surface, message_rect)
-    pygame.display.flip()
-    pygame.time.wait(duration)
-    # Optionally, add more debugging information here
-    print(f"Message displayed: {message}")
-
-
-def finish_game(message):
-    """Display the end game screen with a message."""
-    global state
-    state = "end"
-    screen.fill((0, 0, 0))  # Clear the screen
-    text = font.render(message, True, COLOR_RED)
-    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-    screen.blit(text, text_rect)
-
-    # Create the Exit and Return to Main Menu buttons
-    exit_button = Button(
-        "Exit",
-        (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 60),
-        (100, 50),
-        COLOR_RED,
-        (255, 255, 255),
-        font,
-    )
-    menu_button = Button(
-        "Main Menu",
-        (SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 60),
-        (200, 50),
-        COLOR_RED,
-        (255, 255, 255),
-        font,
-    )
-
-    # Draw the buttons
-    exit_button.draw(screen)
-    menu_button.draw(screen)
-
-    pygame.display.flip()
-
-    # Wait for the player's action
-    waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if exit_button.is_clicked(event):
-                pygame.quit()
-                sys.exit()
-            if menu_button.is_clicked(event):
-                # Reset to the home screen
-                global \
-                    player_cards, \
-                    computer_cards, \
-                    deck, \
-                    discard_pile, \
-                    reveal_cards, \
-                    reveal_button_clicked
-                state = "home"
-                player_cards, computer_cards, deck, discard_pile = (
-                    [],
-                    [],
-                    [],
-                    [],
-                )
-                reveal_cards = False
-                reveal_button_clicked = False
-                waiting = False
+        # If no matching card is found, the computer draws a card (optional)
+        print("Computer has no matching card and passes the turn.")
 
 
 def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
-    # Display computer's cards as card backs
+    # Display computer's cards in a linear layout
     card_width, card_height = scaled_card_back_image.get_size()
     for i in range(len(computer_cards)):
         x = (
@@ -529,22 +343,6 @@ while running:
             if state == "play":
                 if draw_card_button.rect.collidepoint(x, y):
                     draw_card_from_deck()
-                    # Check if the drawn card is playable
-                    top_card = discard_pile[0] if discard_pile else None
-                    playable = any(
-                        card.split("_")[0] == top_card.split("_")[0]
-                        or card.split("_")[1] == top_card.split("_")[1]
-                        for card in player_cards
-                        if top_card
-                    )
-
-                    if not playable:
-                        # Pass turn to computer
-                        computer_turn()
-                    else:
-                        # Display the updated game screen
-                        play_game()
-
                 else:
                     card_key = get_card_at_position(x, y)
                     if card_key and reveal_cards:
