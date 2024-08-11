@@ -272,43 +272,44 @@ def computer_turn():
     # Delay to simulate thinking
     pygame.time.wait(2000)
 
-    if discard_pile:
-        top_card = discard_pile[0]
+    # Check if the computer has a matching card
+    top_card = discard_pile[0]
+    top_color, top_value = top_card.split("_")
+    matching_card_found = False
 
-        # Ensure the card format is correct before splitting
-        if "_" in top_card:
-            top_color, top_value = top_card.split("_")
-        else:
-            print(f"Invalid card format: {top_card}")
-            return  # Exit if the card format is invalid
+    # Try to find a matching card in the computer's hand
+    for card in computer_cards:
+        card_color, card_value = card.split("_")
+        if (
+            card_color == top_color
+            or card_value == top_value
+            or card_value in wild_cards
+        ):
+            matching_card_found = True
+            break
 
-        # Try to find a matching card in the computer's hand
-        found_matching_card = False
+    if matching_card_found:
+        # Play a matching card or +4 card
         for card in computer_cards:
             card_color, card_value = card.split("_")
-            if card_color == top_color or card_value == top_value:
+            if (
+                card_color == top_color
+                or card_value == top_value
+                or card_value in wild_cards
+            ):
                 computer_cards.remove(card)
                 discard_pile.insert(0, card)
                 print(f"Computer played card: {card}")
-                found_matching_card = True
                 break
-
-        # If no matching card is found, draw a card from the deck
-        if not found_matching_card:
-            if deck:
-                drawn_card = deck.pop()  # Draw a card from the deck
-                computer_cards.append(
-                    drawn_card
-                )  # Add it to the computer's hand
-                print(f"Computer drew a card from the deck: {drawn_card}")
-            else:
-                print("No cards left in the deck to draw.")
+    else:
+        # Draw a card from the deck
+        if deck:
+            drawn_card = deck.pop()
+            computer_cards.append(drawn_card)
+            print(f"Computer drew a card from the deck: {drawn_card}")
 
         # Display message for the player to take their turn
-        show_message("Your turn")
-        print("Computer has no matching card and passes the turn.")
-
-
+        show_message("Your turn", duration=1500)
 
 
 def show_message(message, duration=1500):
