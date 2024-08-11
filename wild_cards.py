@@ -274,23 +274,7 @@ def play_card(card_key):
                     f"Top card color: {top_color}, Top card value: {top_value}"
                 )  # Debugging statement
 
-                if card_value == "+4":
-                    # Special handling for +4 cards
-                    if (
-                        top_color == "wild"
-                    ):  # Assuming wild cards in discard pile should be handled differently
-                        display_message(
-                            "Invalid move! Can't play +4 card on a wild card.",
-                            2000,
-                        )
-                        print(
-                            f"Player attempted to play an invalid +4 card: {card_key}"
-                        )
-                        pygame.time.wait(2000)
-                        computer_turn()
-                        return
-
-                elif (
+                if (
                     card_color != top_color
                     and card_value != top_value
                     and card_value != "+4"
@@ -321,7 +305,7 @@ def play_card(card_key):
                 pygame.time.wait(2000)
 
             elif card_value == "+4":
-                # Special handling for +4 cards
+                # Computer draws 4 cards
                 for _ in range(4):
                     if deck:
                         drawn_card = random.choice(deck)
@@ -342,11 +326,12 @@ def play_card(card_key):
                 return  # Give the turn back to the player
 
             elif card_value == "skip":
-                display_message("Skip card played! Computer's turn.", 2000)
+                display_message(
+                    "Skip card played! Skipping computer's turn.", 2000
+                )
                 print("Skip card played! Skipping computer's turn.")
                 pygame.time.wait(2000)
                 # Skip the computer's turn
-                computer_turn()
                 return
 
             if not player_cards:
@@ -438,7 +423,7 @@ def computer_turn():
                 # Check if the computer has played a skip card
                 elif "skip" in playable_card:
                     display_message(
-                        "Computer played Skip card! Your turn.", 2000
+                        "Computer played Skip card! Skipping your turn.", 2000
                     )
                     print("Computer played Skip card! Skipping player's turn.")
                     pygame.time.wait(2000)
@@ -489,7 +474,7 @@ def computer_turn():
                             # Check if the computer has played a skip card
                             elif "skip" in drawn_card:
                                 display_message(
-                                    "Computer played Skip card! Your turn.",
+                                    "Computer played Skip card! Skipping your turn.",
                                     2000,
                                 )
                                 print(
@@ -518,6 +503,7 @@ def computer_turn():
             print("Error: No top card on discard pile.")
     else:
         print("Error: No cards in computer's hand.")
+
 
 
 def end_game(message):
