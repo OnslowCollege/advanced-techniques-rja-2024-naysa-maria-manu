@@ -314,7 +314,6 @@ def play_card(card_key):
                 display_message("Computer drew 4 cards!", 2000)
                 print("Computer drew 4 cards.")
                 pygame.time.wait(2000)
-                # Indicate that it's the user's turn
                 display_message("Your turn!", 2000)
                 pygame.time.wait(2000)
                 return
@@ -326,6 +325,14 @@ def play_card(card_key):
                 pygame.time.wait(2000)
                 return  # Give the turn back to the player
 
+            elif card_value == "skip":
+                display_message("Skip card played! Computer's turn.", 2000)
+                print("Skip card played! Skipping computer's turn.")
+                pygame.time.wait(2000)
+                # Skip the computer's turn
+                computer_turn()
+                return
+
             if not player_cards:
                 print("Player has no more cards. Player won the game!")
                 end_game("YOU WON!")
@@ -333,9 +340,7 @@ def play_card(card_key):
             computer_turn()
         except ValueError:
             display_message("Error: Invalid card format.", 2000)
-            print(
-                f"Error: Invalid card format for card: {card_key}"
-            )  # Updated error message
+            print(f"Error: Invalid card format for card: {card_key}")
     else:
         display_message("Error: Card not found in hand.", 2000)
         print(f"Error: Card {card_key} not found in player's hand.")
@@ -414,6 +419,16 @@ def computer_turn():
                     computer_turn()
                     return
 
+                # Check if the computer has played a skip card
+                elif "skip" in playable_card:
+                    display_message(
+                        "Computer played Skip card! Your turn.", 2000
+                    )
+                    print("Computer played Skip card! Skipping player's turn.")
+                    pygame.time.wait(2000)
+                    # Skip the player's turn
+                    return
+
                 # Check if the computer has won
                 if not computer_cards:
                     end_game("YOU LOST!")
@@ -453,6 +468,19 @@ def computer_turn():
 
                                 # After playing the reverse card, the computer should continue its turn
                                 computer_turn()
+                                return
+
+                            # Check if the computer has played a skip card
+                            elif "skip" in drawn_card:
+                                display_message(
+                                    "Computer played Skip card! Your turn.",
+                                    2000,
+                                )
+                                print(
+                                    "Computer played Skip card! Skipping player's turn."
+                                )
+                                pygame.time.wait(2000)
+                                # Skip the player's turn
                                 return
 
                             # Check if the computer has won
