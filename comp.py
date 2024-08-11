@@ -314,8 +314,8 @@ def computer_turn():
     pygame.time.wait(2000)
 
     # Check if the computer has a matching card
-    top_card = discard_pile[0]
-    top_color, top_value = top_card.split("_")
+    top_card = discard_pile[0] if discard_pile else None
+    top_color, top_value = top_card.split("_") if top_card else (None, None)
     matching_card_found = False
 
     # Try to find a matching card in the computer's hand
@@ -351,6 +351,7 @@ def computer_turn():
 
         # Display message for the player to take their turn
         show_message("Your turn", duration=1500)
+
 
 def show_message(message, duration=1500):
     """Display a temporary message on the screen."""
@@ -432,7 +433,7 @@ def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
 
-    # Display computer's cards in a linear layout
+    # Display computer's cards as card backs
     card_width, card_height = scaled_card_back_image.get_size()
     for i in range(len(computer_cards)):
         x = (
@@ -480,6 +481,7 @@ def play_game():
         draw_card_button.draw(screen)
 
     pygame.display.flip()
+
 
 # Main loop
 running = True
