@@ -242,16 +242,32 @@ def get_card_at_position(x, y):
 
 def play_card(card_key):
     """Handle playing a card and update game state."""
-    global discard_pile, player_cards, selected_cards
+    global discard_pile, player_cards, selected_cards, deck
+
     if card_key in player_cards:
         player_cards.remove(card_key)
         discard_pile.insert(0, card_key)
         print(f"Player played card: {card_key}")
 
+        # If the card played is a +4 wild card, draw 4 cards for the computer
+        if card_key in wild_cards:
+            if card_key == "+4":
+                for _ in range(4):
+                    if deck:  # Check if there are cards in the deck
+                        drawn_card = deck.pop()
+                        computer_cards.append(drawn_card)
+                        print(
+                            f"Computer drew a card from the deck: {drawn_card}"
+                        )
+                    else:
+                        print("Deck is empty. Cannot draw more cards.")
+    else:
+        print(f"Card {card_key} not found in player's hand.")
+
 
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
-    global computer_cards, discard_pile
+    global computer_cards, discard_pile, deck
 
     # Delay to simulate thinking
     pygame.time.wait(2000)
@@ -281,6 +297,7 @@ def computer_turn():
         # Display message for the player to take their turn
         show_message("Your turn")
         print("Computer has no matching card and passes the turn.")
+
 
 
 def show_message(message, duration=1500):
