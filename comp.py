@@ -291,13 +291,14 @@ def play_card(card_key):
 
 def display_message(message, duration):
     """Display a message on the screen for a specific duration."""
-    global screen, font, SCREEN_WIDTH, SCREEN_HEIGHT
-    screen.fill((0, 0, 0))  # Clear the screen
+    global screen, font, SCREEN_WIDTH, SCREEN_HEIGHT, game_background_image
+    screen.blit(game_background_image, (0, 0))  # Draw the background image
     text = font.render(message, True, COLOR_RED)
     text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
     screen.blit(text, text_rect)
     pygame.display.flip()
     pygame.time.wait(duration)  # Wait for the specified duration
+
 
 
 def computer_turn():
