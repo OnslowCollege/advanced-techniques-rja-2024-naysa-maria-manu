@@ -247,6 +247,9 @@ def play_card(card_key):
         player_cards.remove(card_key)
         discard_pile.insert(0, card_key)
         print(f"Player played card: {card_key}")
+        # Check if the player has won
+        if not player_cards:
+            end_game("YOU WON!")
 
 
 def computer_turn():
@@ -270,11 +273,78 @@ def computer_turn():
                 # Add the card to the top of the discard pile
                 discard_pile.insert(0, card)
                 print(f"Computer played card: {card}")
+                # Check if the computer has won
+                if not computer_cards:
+                    end_game("YOU LOST!")
                 # Exit the function after playing a card
                 return
 
         # If no matching card is found, the computer draws a card (optional)
         print("Computer has no matching card and passes the turn.")
+
+
+def end_game(message):
+    """Displays the end game screen with a message."""
+    global state
+    state = "end"
+    screen.fill((0, 0, 0))  # Clear the screen
+    text = font.render(message, True, COLOR_RED)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+    screen.blit(text, text_rect)
+
+    # Create the Exit and Return to Main Menu buttons
+    exit_button = Button(
+        "Exit",
+        (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 60),
+        (100, 50),
+        COLOR_RED,
+        (255, 255, 255),
+        font,
+    )
+    menu_button = Button(
+        "Main Menu",
+        (SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 60),
+        (200, 50),
+        COLOR_RED,
+        (255, 255, 255),
+        font,
+    )
+
+    # Draw the buttons
+    exit_button.draw(screen)
+    menu_button.draw(screen)
+
+    pygame.display.flip()
+
+    # Wait for the player's action
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if exit_button.is_clicked(event):
+                pygame.quit()
+                sys.exit()
+            if menu_button.is_clicked(event):
+                # Reset to the home screen
+                global \
+                    player_cards, \
+                    computer_cards, \
+                    deck, \
+                    discard_pile, \
+                    reveal_cards, \
+                    reveal_button_clicked
+                state = "home"
+                player_cards, computer_cards, deck, discard_pile = (
+                    [],
+                    [],
+                    [],
+                    [],
+                )
+                reveal_cards = False
+                reveal_button_clicked = False
+                waiting = False
 
 
 def play_game():
@@ -332,6 +402,7 @@ def play_game():
 
 
 # Main loop
+# Main loop
 running = True
 while running:
     for event in pygame.event.get():
@@ -346,22 +417,13 @@ while running:
                 else:
                     card_key = get_card_at_position(x, y)
                     if card_key and reveal_cards:
-                        # Mark this card as selected
                         selected_card = card_key
-                        # Update display to show the selected card moved up
                         play_game()
                         pygame.display.flip()
-                        # Wait 2 seconds before playing the card
                         pygame.time.wait(2000)
-                        # Play the selected card
                         play_card(card_key)
-
-                        # Reset selected card
                         selected_card = None
-
-                        # Wait and then let the computer play
                         computer_turn()
-
 
             if reveal_button.is_clicked(event):
                 reveal_cards = True
