@@ -248,9 +248,11 @@ def play_card(card_key):
         if "+4" in card_key:
             # Check if player has a matching color or number card
             top_card = discard_pile[0] if discard_pile else None
-            top_color, top_value = (
-                top_card.split("_") if top_card else (None, None)
-            )
+            if top_card:
+                top_color, top_value = top_card.split("_")
+            else:
+                top_color = top_value = None
+
             matching_card_found = any(
                 card.split("_")[0] == top_color
                 or card.split("_")[1] == top_value
@@ -310,7 +312,11 @@ def computer_turn():
 
     # Check if the computer has a matching card
     top_card = discard_pile[0] if discard_pile else None
-    top_color, top_value = top_card.split("_") if top_card else (None, None)
+    if top_card:
+        top_color, top_value = top_card.split("_")
+    else:
+        top_color = top_value = None
+
     matching_card_found = False
 
     # Try to find a matching card in the computer's hand
