@@ -240,6 +240,9 @@ def play_card(card_key):
     """Handle playing a card and update game state."""
     global discard_pile, player_cards
 
+    print(f"Player cards before play: {player_cards}")
+    print(f"Card key to play: {card_key}")
+
     if card_key in player_cards:
         card_color, card_value = card_key.split("_")
         top_card = discard_pile[0] if discard_pile else None
@@ -269,18 +272,11 @@ def play_card(card_key):
 
         # Pass the turn to the computer
         computer_turn()
-
-        # Valid move
-        player_cards.remove(card_key)
-        discard_pile.insert(0, card_key)
-        print(f"Player played card: {card_key}")
-
-        # Check if the player has won
-        if not player_cards:
-            end_game("YOU WON!")
-
-        # Pass the turn to the computer
-        computer_turn()
+    else:
+        # Handle the case where the card is not found in the player's hand
+        display_message(
+            "Error: Card not found in hand.", 2000
+        )  # Display for 2 seconds
 
 
 def display_message(message, duration):
