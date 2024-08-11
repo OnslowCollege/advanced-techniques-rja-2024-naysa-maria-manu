@@ -247,11 +247,24 @@ def play_card(card_key):
 
     if card_key in player_cards:
         try:
+            print(
+                f"Attempting to play card: {card_key}"
+            )  # Debugging statement
             card_color, card_value = card_key.split("_")
+            print(
+                f"Card color: {card_color}, Card value: {card_value}"
+            )  # Debugging statement
+
             top_card = discard_pile[0] if discard_pile else None
 
             if top_card:
                 top_color, top_value = top_card.split("_")
+                print(
+                    f"Top card on discard pile: {top_card}"
+                )  # Debugging statement
+                print(
+                    f"Top card color: {top_color}, Top card value: {top_value}"
+                )  # Debugging statement
 
                 if (
                     card_color != top_color
@@ -297,7 +310,9 @@ def play_card(card_key):
             computer_turn()
         except ValueError:
             display_message("Error: Invalid card format.", 2000)
-            print("Error: Invalid card format.")
+            print(
+                f"Error: Invalid card format for card: {card_key}"
+            )  # Updated error message
     else:
         display_message("Error: Card not found in hand.", 2000)
         print(f"Error: Card {card_key} not found in player's hand.")
