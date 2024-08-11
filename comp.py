@@ -331,7 +331,7 @@ def computer_turn():
             break
 
     if matching_card_found:
-        # Play a matching card or +4 card
+        # Play a matching card or +2/+4 card
         for card in computer_cards:
             card_color, card_value = card.split("_")
             if (
@@ -342,6 +342,11 @@ def computer_turn():
                 computer_cards.remove(card)
                 discard_pile.insert(0, card)
                 print(f"Computer played card: {card}")
+
+                # Check if the played card is a +2 or +4 card
+                if card_value in ["+2", "+4"]:
+                    show_message("Draw cards", duration=3000)
+
                 break  # Ensure only one card is played
     else:
         # Draw a card from the deck
@@ -364,6 +369,7 @@ def show_message(message, duration=1500):
     screen.blit(message_surface, message_rect)
     pygame.display.flip()
     pygame.time.wait(duration)
+    screen.fill((0, 0, 0))  # Clear the screen after displaying the message
 
 
 def finish_game(message):
