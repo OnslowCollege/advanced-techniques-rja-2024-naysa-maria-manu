@@ -338,11 +338,12 @@ def computer_turn():
             # Show message if the played card is a +2 or +4
             if card_value == "+2":
                 show_message("Draw 2 cards", duration=3000)
+                num_cards_to_draw = 2
             elif card_value == "+4":
                 show_message("Draw 4 cards", duration=3000)
+                num_cards_to_draw = 4
 
             # Add cards to the player's hand
-            num_cards_to_draw = 2 if card_value == "+2" else 4
             for _ in range(num_cards_to_draw):
                 if deck:
                     drawn_card = deck.pop()
@@ -381,6 +382,7 @@ def computer_turn():
 
         # Display message for the player to take their turn
         show_message("Your turn", duration=1500)
+
 
 
 def show_message(message, duration=1500):
