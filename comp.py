@@ -317,7 +317,8 @@ def play_game():
     else:
         # Draw discard pile
         if discard_pile:
-            top_card_key = discard_pile[0]  # Top card on discard pile
+            # Top card on discard pile
+            top_card_key = discard_pile[0]
             screen.blit(
                 card_images[top_card_key],
                 (
