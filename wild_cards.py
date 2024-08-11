@@ -454,6 +454,10 @@ def computer_turn():
                             print(
                                 "Computer didn't find a matching card. Your turn."
                             )
+                            display_message("Your turn!", 2000)
+                            pygame.time.wait(
+                                2000
+                            )  # Wait for 2 seconds to show the message
                     except ValueError:
                         print(
                             f"Error: Invalid drawn card format: {drawn_card}"
