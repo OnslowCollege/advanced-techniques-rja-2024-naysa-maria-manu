@@ -318,6 +318,7 @@ def computer_turn():
         top_color = top_value = None
 
     matching_card_found = False
+    special_card_played = False
 
     # Try to find a matching card in the computer's hand
     for card in computer_cards:
@@ -331,25 +332,36 @@ def computer_turn():
             break
 
     if matching_card_found:
-        # Play a matching card or +2/+4 card
+        # Try to play a special card first if available
         for card in computer_cards:
             card_color, card_value = card.split("_")
-            if (
-                card_color == top_color
-                or card_value == top_value
-                or card_value in wild_cards
-            ):
+            if card_value in ["+2", "+4"]:
+                # Play the special card
                 computer_cards.remove(card)
                 discard_pile.insert(0, card)
                 print(f"Computer played card: {card}")
 
-                # Check if the played card is a +2 or +4 card
+                # Show message if the played card is a +2 or +4
                 if card_value in ["+2", "+4"]:
                     show_message("Draw cards", duration=3000)
+                    special_card_played = True
+                break
 
-                break  # Ensure only one card is played
+        # If no special card was played, play a regular matching card
+        if not special_card_played:
+            for card in computer_cards:
+                card_color, card_value = card.split("_")
+                if (
+                    card_color == top_color
+                    or card_value == top_value
+                    or card_value in wild_cards
+                ):
+                    computer_cards.remove(card)
+                    discard_pile.insert(0, card)
+                    print(f"Computer played card: {card}")
+                    break
     else:
-        # Draw a card from the deck
+        # Draw a card from the deck if no matching card is found
         if deck:
             drawn_card = deck.pop()
             computer_cards.append(drawn_card)
