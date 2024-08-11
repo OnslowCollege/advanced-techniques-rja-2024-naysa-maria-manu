@@ -277,6 +277,70 @@ def computer_turn():
         print("Computer has no matching card and passes the turn.")
 
 
+def finish_game(message):
+    """Display the end game screen with a message."""
+    global state
+    state = "end"
+    screen.fill((0, 0, 0))  # Clear the screen
+    text = font.render(message, True, COLOR_RED)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+    screen.blit(text, text_rect)
+
+    # Create the Exit and Return to Main Menu buttons
+    exit_button = Button(
+        "Exit",
+        (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 60),
+        (100, 50),
+        COLOR_RED,
+        (255, 255, 255),
+        font,
+    )
+    menu_button = Button(
+        "Main Menu",
+        (SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 60),
+        (200, 50),
+        COLOR_RED,
+        (255, 255, 255),
+        font,
+    )
+
+    # Draw the buttons
+    exit_button.draw(screen)
+    menu_button.draw(screen)
+
+    pygame.display.flip()
+
+    # Wait for the player's action
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if exit_button.is_clicked(event):
+                pygame.quit()
+                sys.exit()
+            if menu_button.is_clicked(event):
+                # Reset to the home screen
+                global \
+                    player_cards, \
+                    computer_cards, \
+                    deck, \
+                    discard_pile, \
+                    reveal_cards, \
+                    reveal_button_clicked
+                state = "home"
+                player_cards, computer_cards, deck, discard_pile = (
+                    [],
+                    [],
+                    [],
+                    [],
+                )
+                reveal_cards = False
+                reveal_button_clicked = False
+                waiting = False
+
+
 def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
