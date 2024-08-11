@@ -322,7 +322,11 @@ def computer_turn():
 
     # Try to find a matching card in the computer's hand
     for card in computer_cards:
-        card_color, card_value = card.split("_")
+        try:
+            card_color, card_value = card.split("_")
+        except ValueError:
+            print(f"Skipping malformed card: {card}")
+            continue
 
         # Check if it's a special card
         if card_value in ["+2", "+4"]:
@@ -351,7 +355,12 @@ def computer_turn():
     # If no special card was played, play a regular matching card
     if not card_played:
         for card in computer_cards:
-            card_color, card_value = card.split("_")
+            try:
+                card_color, card_value = card.split("_")
+            except ValueError:
+                print(f"Skipping malformed card: {card}")
+                continue
+
             if (
                 card_color == top_color
                 or card_value == top_value
