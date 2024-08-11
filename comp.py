@@ -248,9 +248,13 @@ def play_card(card_key):
         if "+4" in card_key:
             # Check if player has a matching color or number card
             top_card = discard_pile[0] if discard_pile else None
-            top_color, top_value = (
-                top_card.split("_") if top_card else (None, None)
-            )
+            if top_card:
+                top_color, top_value = (
+                    top_card.split("_") if top_card else (None, None)
+                )
+            else:
+                top_color, top_value = (None, None)
+
             matching_card_found = any(
                 card.split("_")[0] == top_color
                 or card.split("_")[1] == top_value
@@ -289,7 +293,7 @@ def play_card(card_key):
                     "Invalid selection! You have a matching card.",
                     duration=2000,
                 )
-                # You can also handle additional logic for invalid play if needed
+                # Additional logic for invalid play can be added here
 
         else:
             # Handle regular cards
@@ -299,6 +303,7 @@ def play_card(card_key):
 
             # Proceed to computer's turn
             computer_turn()
+
 
 
 def computer_turn():
