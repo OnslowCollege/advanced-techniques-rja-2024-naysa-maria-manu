@@ -391,7 +391,7 @@ def finish_game(message):
         (255, 255, 255),
         font,
     )
-    
+
     # Draw the buttons
     exit_button.draw(screen)
     menu_button.draw(screen)
@@ -410,7 +410,13 @@ def finish_game(message):
                 sys.exit()
             if menu_button.is_clicked(event):
                 # Reset to the home screen
-                global player_cards, computer_cards, deck, discard_pile, reveal_cards, reveal_button_clicked
+                global \
+                    player_cards, \
+                    computer_cards, \
+                    deck, \
+                    discard_pile, \
+                    reveal_cards, \
+                    reveal_button_clicked
                 state = "home"
                 player_cards, computer_cards, deck, discard_pile = (
                     [],
@@ -421,8 +427,6 @@ def finish_game(message):
                 reveal_cards = False
                 reveal_button_clicked = False
                 waiting = False
-
-
 
 
 def play_game():
@@ -478,7 +482,6 @@ def play_game():
 
     pygame.display.flip()
 
-
 # Main loop
 running = True
 while running:
@@ -491,6 +494,22 @@ while running:
             if state == "play":
                 if draw_card_button.rect.collidepoint(x, y):
                     draw_card_from_deck()
+                    # Check if the drawn card is playable
+                    top_card = discard_pile[0] if discard_pile else None
+                    playable = any(
+                        card.split("_")[0] == top_card.split("_")[0]
+                        or card.split("_")[1] == top_card.split("_")[1]
+                        for card in player_cards
+                        if top_card
+                    )
+
+                    if not playable:
+                        # Pass turn to computer
+                        computer_turn()
+                    else:
+                        # Display the updated game screen
+                        play_game()
+
                 else:
                     card_key = get_card_at_position(x, y)
                     if card_key and reveal_cards:
