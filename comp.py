@@ -305,7 +305,7 @@ def play_card(card_key):
 
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
-    global computer_cards, discard_pile, deck
+    global computer_cards, discard_pile, deck, player_cards
 
     # Delay to simulate thinking
     pygame.time.wait(2000)
@@ -317,7 +317,6 @@ def computer_turn():
     else:
         top_color = top_value = None
 
-    # Flag to indicate if a card was played
     card_played = False
 
     # Try to find a matching card in the computer's hand
@@ -384,7 +383,6 @@ def computer_turn():
         show_message("Your turn", duration=1500)
 
 
-
 def show_message(message, duration=1500):
     """Display a temporary message on the screen."""
     global screen, font
@@ -395,8 +393,8 @@ def show_message(message, duration=1500):
     screen.blit(message_surface, message_rect)
     pygame.display.flip()
     pygame.time.wait(duration)
-    screen.fill((0, 0, 0))  # Clear the screen after displaying the message
-
+    # Optionally, add more debugging information here
+    print(f"Message displayed: {message}")
 
 
 def finish_game(message):
