@@ -252,7 +252,70 @@ def play_card(card_key):
             end_game("YOU WON!")
 
 
+def display_message(message, duration):
+    """Display a message on the screen for a specific duration."""
+    global screen, font, SCREEN_WIDTH, SCREEN_HEIGHT
+    screen.fill((0, 0, 0))  # Clear the screen
+    text = font.render(message, True, COLOR_RED)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+    screen.blit(text, text_rect)
+    pygame.display.flip()
+    pygame.time.wait(duration)  # Wait for the specified duration
+
+
 def computer_turn():
+    """Handle the computer's turn with a delay after the user plays a card."""
+    global computer_cards, discard_pile, deck
+
+    pygame.time.wait(
+        2000
+    )  # Wait for 2 seconds before the computer plays its card
+
+    if computer_cards:
+        # Top card on the discard pile
+        top_card = discard_pile[0]
+        top_color, top_value = top_card.split("_")
+
+        # Try to find a matching card in the computer's hand
+        playable_card = None
+        for card in computer_cards:
+            card_color, card_value = card.split("_")
+            if card_color == top_color or card_value == top_value:
+                playable_card = card
+                break
+
+        if playable_card:
+            computer_cards.remove(playable_card)
+            discard_pile.insert(0, playable_card)
+            print(f"Computer played card: {playable_card}")
+            # Check if the computer has won
+            if not computer_cards:
+                end_game("YOU LOST!")
+        else:
+            # Draw a card if no matching card is found
+            if deck:
+                drawn_card = random.choice(deck)
+                deck.remove(drawn_card)
+                computer_cards.append(drawn_card)
+                print(f"Computer drew a card: {drawn_card}")
+
+                # Check if the drawn card matches
+                drawn_card_color, drawn_card_value = drawn_card.split("_")
+                if (
+                    drawn_card_color == top_color
+                    or drawn_card_value == top_value
+                ):
+                    # If the drawn card matches, play it
+                    computer_cards.remove(drawn_card)
+                    discard_pile.insert(0, drawn_card)
+                    print(f"Computer played card: {drawn_card}")
+                    # Check if the computer has won
+                    if not computer_cards:
+                        end_game("YOU LOST!")
+                else:
+                    # If no match, display message
+                    display_message("Your turn", 3000)  # Display for 3 seconds
+
     """Handle the computer's turn with a delay after the user plays a card."""
     global computer_cards, discard_pile
     pygame.time.wait(
