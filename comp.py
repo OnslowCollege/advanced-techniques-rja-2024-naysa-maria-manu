@@ -309,15 +309,11 @@ def computer_turn():
     pygame.time.wait(2000)
 
     # Check if the computer has a matching card
-    top_card = discard_pile[0] if discard_pile else None
-    if top_card:
-        top_color, top_value = top_card.split("_")
-    else:
-        top_color = top_value = None
+    top_card = discard_pile[0]
+    top_color, top_value = top_card.split("_")
+    matching_card_found = False
 
-    card_played = False
-
-    # Try to find a matching card or a special card in the computer's hand
+    # Try to find a matching card in the computer's hand
     for card in computer_cards:
         try:
             card_color, card_value = card.split("_")
@@ -325,33 +321,16 @@ def computer_turn():
             print(f"Skipping malformed card: {card}")
             continue
 
-        # Check if it's a special card
-        if card_value in ["+2", "+4"]:
-            # Play the special card
-            computer_cards.remove(card)
-            discard_pile.insert(0, card)
-            print(f"Computer played card: {card}")
-
-            # Show message if the played card is a +2 or +4
-            if card_value == "+2":
-                show_message("Draw 2 cards", duration=3000)
-                num_cards_to_draw = 2
-            elif card_value == "+4":
-                show_message("Draw 4 cards", duration=3000)
-                num_cards_to_draw = 4
-
-            # Add cards to the player's hand
-            for _ in range(num_cards_to_draw):
-                if deck:
-                    drawn_card = deck.pop()
-                    player_cards.append(drawn_card)
-                    print(f"Player drew a card from the deck: {drawn_card}")
-
-            card_played = True
+        if (
+            card_color == top_color
+            or card_value == top_value
+            or card_value in wild_cards
+        ):
+            matching_card_found = True
             break
 
-    # If no special card was played, try to play a regular matching card
-    if not card_played:
+    if matching_card_found:
+        # Play a matching card or +4 card
         for card in computer_cards:
             try:
                 card_color, card_value = card.split("_")
@@ -364,22 +343,45 @@ def computer_turn():
                 or card_value == top_value
                 or card_value in wild_cards
             ):
-                # Play the card
                 computer_cards.remove(card)
                 discard_pile.insert(0, card)
                 print(f"Computer played card: {card}")
-                card_played = True
-                break
 
-    # If no card was played, draw a card from the deck
-    if not card_played:
+                # Special handling for +4 card
+                if card.startswith("+4"):
+                    # Add 4 cards to the player's hand and show a message
+                    for _ in range(4):
+                        if deck:
+                            drawn_card = deck.pop()
+                            player_cards.append(drawn_card)
+                            print(
+                                f"Player drew a card from the deck: {drawn_card}"
+                            )
+                    # Show message to the player
+                    show_message("Draw 4 cards!", duration=3000)
+
+                # Special handling for +2 card
+                elif card.startswith("+2"):
+                    # Add 2 cards to the player's hand without showing a message
+                    for _ in range(2):
+                        if deck:
+                            drawn_card = deck.pop()
+                            player_cards.append(drawn_card)
+                            print(
+                                f"Player drew a card from the deck: {drawn_card}"
+                            )
+
+                break
+    else:
+        # Draw a card from the deck
         if deck:
             drawn_card = deck.pop()
             computer_cards.append(drawn_card)
             print(f"Computer drew a card from the deck: {drawn_card}")
 
-    # Display message for the player to take their turn
-    show_message("Your turn", duration=1500)
+        # Display message for the player to take their turn
+        show_message("Your turn", duration=1500)
+
 
 
 
