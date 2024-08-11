@@ -245,24 +245,32 @@ def play_card(card_key):
     global discard_pile, player_cards, selected_cards, deck
 
     if card_key in player_cards:
-        player_cards.remove(card_key)
-        discard_pile.insert(0, card_key)
-        print(f"Player played card: {card_key}")
+        if "+4" in card_key:
+            # Handle +4 card
+            # Draw 4 cards for the player
+            for _ in range(4):
+                draw_card_from_deck()
 
-        # If the card played is a +4 wild card, draw 4 cards for the computer
-        if card_key in wild_cards:
-            if card_key == "+4":
-                for _ in range(4):
-                    if deck:  # Check if there are cards in the deck
-                        drawn_card = deck.pop()
-                        computer_cards.append(drawn_card)
-                        print(
-                            f"Computer drew a card from the deck: {drawn_card}"
-                        )
-                    else:
-                        print("Deck is empty. Cannot draw more cards.")
-    else:
-        print(f"Card {card_key} not found in player's hand.")
+            # Add the +4 card to the discard pile
+            player_cards.remove(card_key)
+            discard_pile.insert(0, card_key)
+            print(f"Player played +4 card: {card_key}")
+
+            # Display the message to select a new color
+            show_message("Select a new color", duration=1500)
+
+            # Ask player to choose a new color
+            # Replace this with actual color selection mechanism
+            new_color = "red"
+            # Update the discard pile with the new color
+            discard_pile[0] = f"{new_color}_{card_key.split('_')[1]}"
+
+        else:
+            # Handle regular cards
+            player_cards.remove(card_key)
+            discard_pile.insert(0, card_key)
+            print(f"Player played card: {card_key}")
+
 
 
 def computer_turn():
