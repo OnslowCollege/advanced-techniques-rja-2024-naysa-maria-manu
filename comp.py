@@ -242,30 +242,41 @@ def get_card_at_position(x, y):
 
 def play_card(card_key):
     """Handle playing a card and update game state."""
-    global discard_pile, player_cards
+    global discard_pile, player_cards, deck, computer_cards
 
     print(f"Player cards before play: {player_cards}")
     print(f"Card key to play: {card_key}")
 
     if card_key in player_cards:
         try:
+            # Check if the card is a wild +4 card
+            if card_key == "+4":
+                # Player plays +4 card, computer draws 4 cards
+                for _ in range(4):
+                    if deck:
+                        drawn_card = random.choice(deck)
+                        deck.remove(drawn_card)
+                        computer_cards.append(drawn_card)
+                        print(f"Computer drew card: {drawn_card}")
+                # After drawing 4 cards, skip computer's turn
+                discard_pile.insert(0, card_key)
+                player_cards.remove(card_key)
+                print(f"Player played card: {card_key}")
+                display_message("Computer draws 4 cards", 2000)
+                return
+
             card_color, card_value = card_key.split("_")
             top_card = discard_pile[0] if discard_pile else None
 
             if top_card:
                 top_color, top_value = top_card.split("_")
 
-                if (
-                    card_color != top_color
-                    and card_value != top_value
-                    and card_value != "+4"
-                ):
+                if card_color != top_color and card_value != top_value:
                     # Invalid card selection
                     display_message(
                         "Wrong selection! Lost your chance 😔", 2000
-                    )  # Display for 2 seconds
+                    )
                     pygame.time.wait(2000)
-                    # Wait for 2 seconds before proceeding
                     computer_turn()
                     return
 
@@ -280,15 +291,14 @@ def play_card(card_key):
 
             # Pass the turn to the computer
             computer_turn()
+
         except ValueError:
-            # Display for 2 seconds
             print(f"Error: Invalid card format for play_card: {card_key}")
             display_message("Error: Invalid card format.", 2000)
+
     else:
         print(f"Error: Card {card_key} not found in player's hand.")
-        display_message(
-            "Error: Card not found in hand.", 2000
-        )  # Display for 2 seconds
+        display_message("Error: Card not found in hand.", 2000)
 
 
 def display_message(message, duration):
