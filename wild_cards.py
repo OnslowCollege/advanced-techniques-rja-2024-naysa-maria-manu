@@ -243,7 +243,7 @@ def get_card_at_position(x, y):
 
 
 def play_card(card_key):
-    global discard_pile, player_cards, direction
+    global discard_pile, player_cards, computer_cards, direction, deck
 
     if card_key in player_cards:
         try:
@@ -267,6 +267,16 @@ def play_card(card_key):
 
             player_cards.remove(card_key)
             discard_pile.insert(0, card_key)
+
+            if card_value == "+2":
+                # Computer draws 2 cards
+                for _ in range(2):
+                    if deck:
+                        drawn_card = random.choice(deck)
+                        deck.remove(drawn_card)
+                        computer_cards.append(drawn_card)
+                display_message("Computer drew 2 cards!", 2000)
+                pygame.time.wait(2000)
 
             if card_value == "rev":
                 direction *= -1  # Reverse the direction of play
