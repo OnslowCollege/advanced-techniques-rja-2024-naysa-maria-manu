@@ -256,10 +256,14 @@ def play_card(card_key):
                     and card_value != top_value
                     and card_value != "+4"
                 ):
-                    # Return the card to the player's hand and display an error message
+                    # Invalid card selection; display message and let the computer play again
                     display_message(
                         "Wrong selection! Try again.", 2000
                     )  # Display for 2 seconds
+                    pygame.time.wait(
+                        2000
+                    )  # Wait for 2 seconds before proceeding
+                    computer_turn()
                     return
 
             # Valid move
