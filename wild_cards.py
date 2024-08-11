@@ -261,12 +261,16 @@ def play_card(card_key):
                     display_message(
                         "Wrong selection! Lost your chance 😔", 2000
                     )
+                    print(
+                        f"Player attempted to play an invalid card: {card_key}"
+                    )
                     pygame.time.wait(2000)
                     computer_turn()
                     return
 
             player_cards.remove(card_key)
             discard_pile.insert(0, card_key)
+            print(f"Player played: {card_key}")
 
             if card_value == "+2":
                 # Computer draws 2 cards
@@ -276,22 +280,27 @@ def play_card(card_key):
                         deck.remove(drawn_card)
                         computer_cards.append(drawn_card)
                 display_message("Computer drew 2 cards!", 2000)
+                print("Computer drew 2 cards.")
                 pygame.time.wait(2000)
 
             if card_value == "rev":
                 direction *= -1  # Reverse the direction of play
                 display_message("Reverse card played!", 2000)
+                print("Reverse card played! Direction changed.")
                 pygame.time.wait(2000)
                 return  # Give the turn back to the player
 
             if not player_cards:
+                print("Player has no more cards. Player won the game!")
                 end_game("YOU WON!")
 
             computer_turn()
         except ValueError:
             display_message("Error: Invalid card format.", 2000)
+            print("Error: Invalid card format.")
     else:
         display_message("Error: Card not found in hand.", 2000)
+        print(f"Error: Card {card_key} not found in player's hand.")
 
 
 def draw_card_for_computer():
