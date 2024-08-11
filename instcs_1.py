@@ -525,7 +525,6 @@ def play_game():
 
     # Display player's cards in a linear layout
     for i in range(len(player_cards)):
-        # Use length of player_cards
         x = (
             i * (card_width + CARD_SPACING)
             + (
@@ -536,13 +535,15 @@ def play_game():
         )
         y = SCREEN_HEIGHT - card_height - 20
         if i < len(player_cards):
-            # Ensure index is within range
             card_key = player_cards[i]
             if reveal_cards:
                 if card_key == selected_card:
                     # Move selected card up by 30 pixels
                     y -= 30
-                screen.blit(card_images[card_key], (x, y))
+                try:
+                    screen.blit(card_images[card_key], (x, y))
+                except KeyError:
+                    print(f"Card image not found for: {card_key}")
             else:
                 screen.blit(scaled_card_back_image, (x, y))
 
@@ -554,16 +555,20 @@ def play_game():
         if discard_pile:
             # Top card on discard pile
             top_card_key = discard_pile[0]
-            screen.blit(
-                card_images[top_card_key],
-                (
-                    SCREEN_WIDTH // 2 - card_width // 2,
-                    SCREEN_HEIGHT // 2 - card_height // 2,
-                ),
-            )
+            try:
+                screen.blit(
+                    card_images[top_card_key],
+                    (
+                        SCREEN_WIDTH // 2 - card_width // 2,
+                        SCREEN_HEIGHT // 2 - card_height // 2,
+                    ),
+                )
+            except KeyError:
+                print(f"Card image not found for: {top_card_key}")
         draw_card_button.draw(screen)
 
     pygame.display.flip()
+
 
 
 # Main loop
