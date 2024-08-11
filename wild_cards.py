@@ -611,7 +611,7 @@ while running:
                         selected_card = card_key
                         play_game()
                         pygame.display.flip()
-                        pygame.time.wait(2000)
+                        pygame.time.wait(100)
                         play_card(card_key)
                         selected_card = None
 
