@@ -184,26 +184,13 @@ selected_card = None  # To track the card that has been clicked
 
 def draw_card_from_deck():
     """Draw one random card from the deck and add it to the player's hand."""
-    global deck, player_cards, discard_pile
+    global deck, player_cards
 
     if deck:
         card = random.choice(deck)  # Draw a random card from the deck
         deck.remove(card)  # Remove the card from the deck
         player_cards.append(card)  # Add it to the player's hand
         print(f"Drawn card: {card}")
-
-        # Check if the drawn card matches the top card on the discard pile
-        if discard_pile:
-            top_card = discard_pile[0]
-            top_color, top_value = top_card.split("_")
-            drawn_card_color, drawn_card_value = card.split("_")
-
-            if drawn_card_color == top_color or drawn_card_value == top_value:
-                # If the drawn card matches, let the player play it
-                return
-
-        # If no match, pass the turn to the computer
-        computer_turn()
 
 
 def shuffle_and_deal():
@@ -270,6 +257,18 @@ def play_card(card_key):
                     "Wrong selection! Try again.", 2000
                 )  # Display for 2 seconds
                 return
+
+        # Valid move
+        player_cards.remove(card_key)
+        discard_pile.insert(0, card_key)
+        print(f"Player played card: {card_key}")
+
+        # Check if the player has won
+        if not player_cards:
+            end_game("YOU WON!")
+
+        # Pass the turn to the computer
+        computer_turn()
 
         # Valid move
         player_cards.remove(card_key)
@@ -513,4 +512,3 @@ while running:
 
 pygame.quit()
 sys.exit()
-
