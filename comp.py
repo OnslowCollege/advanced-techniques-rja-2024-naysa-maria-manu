@@ -108,7 +108,7 @@ class Button:
     """A class to represent buttons in the game."""
 
     def __init__(self, text, pos, size, color, text_color, font):
-        """Initialize characterstics of buttons."""
+        """Initialize characteristics of buttons."""
         self.text = text
         self.pos = pos
         self.size = size
@@ -181,7 +181,6 @@ reveal_cards = False
 reveal_button_clicked = False
 player_cards = []
 computer_cards = []
-selected_cards = []
 discard_pile = []
 deck = []
 selected_card = None  # To track the card that has been clicked
@@ -242,7 +241,7 @@ def get_card_at_position(x, y):
 
 def play_card(card_key):
     """Handle playing a card and update game state."""
-    global discard_pile, player_cards, selected_cards
+    global discard_pile, player_cards, selected_card
     if card_key in player_cards:
         player_cards.remove(card_key)
         discard_pile.insert(0, card_key)
@@ -315,35 +314,6 @@ def computer_turn():
                 else:
                     # If no match, display message
                     display_message("Your turn", 3000)  # Display for 3 seconds
-
-    """Handle the computer's turn with a delay after the user plays a card."""
-    global computer_cards, discard_pile
-    pygame.time.wait(
-        2000
-    )  # Wait for 2 seconds before the computer plays its card
-
-    if computer_cards:
-        # Top card on the discard pile
-        top_card = discard_pile[0]
-        # Split to get color and number/special
-        top_color, top_value = top_card.split("_")
-
-        # Try to find a matching card in the computer's hand
-        for card in computer_cards:
-            card_color, card_value = card.split("_")
-            if card_color == top_color or card_value == top_value:
-                computer_cards.remove(card)
-                # Add the card to the top of the discard pile
-                discard_pile.insert(0, card)
-                print(f"Computer played card: {card}")
-                # Check if the computer has won
-                if not computer_cards:
-                    end_game("YOU LOST!")
-                # Exit the function after playing a card
-                return
-
-        # If no matching card is found, the computer draws a card (optional)
-        print("Computer has no matching card and passes the turn.")
 
 
 def end_game(message):
@@ -419,7 +389,11 @@ def play_game():
     for i in range(len(computer_cards)):
         x = (
             i * (card_width + CARD_SPACING)
-            + (SCREEN_WIDTH - ((card_width + CARD_SPACING) * NUM_CARDS)) // 2
+            + (
+                SCREEN_WIDTH
+                - ((card_width + CARD_SPACING) * len(computer_cards))
+            )
+            // 2
         )
         y = 20
         screen.blit(scaled_card_back_image, (x, y))
@@ -463,8 +437,6 @@ def play_game():
 
     pygame.display.flip()
 
-
-# Main loop
 # Main loop
 running = True
 while running:
