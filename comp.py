@@ -301,8 +301,6 @@ def play_card(card_key):
 
             # Proceed to computer's turn
             computer_turn()
-
-
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
     global computer_cards, discard_pile, deck, player_cards
@@ -319,7 +317,7 @@ def computer_turn():
 
     card_played = False
 
-    # Try to find a matching card in the computer's hand
+    # Try to find a matching card or a special card in the computer's hand
     for card in computer_cards:
         try:
             card_color, card_value = card.split("_")
@@ -352,7 +350,7 @@ def computer_turn():
             card_played = True
             break
 
-    # If no special card was played, play a regular matching card
+    # If no special card was played, try to play a regular matching card
     if not card_played:
         for card in computer_cards:
             try:
@@ -366,6 +364,7 @@ def computer_turn():
                 or card_value == top_value
                 or card_value in wild_cards
             ):
+                # Play the card
                 computer_cards.remove(card)
                 discard_pile.insert(0, card)
                 print(f"Computer played card: {card}")
@@ -379,8 +378,9 @@ def computer_turn():
             computer_cards.append(drawn_card)
             print(f"Computer drew a card from the deck: {drawn_card}")
 
-        # Display message for the player to take their turn
-        show_message("Your turn", duration=1500)
+    # Display message for the player to take their turn
+    show_message("Your turn", duration=1500)
+
 
 
 def show_message(message, duration=1500):
