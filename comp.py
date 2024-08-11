@@ -262,6 +262,20 @@ def display_message(message, duration):
     pygame.time.wait(duration)  # Wait for the specified duration
 
 
+def handle_draw_cards(player, num_cards):
+    """Draw cards for the player or computer."""
+    global deck, player_cards, computer_cards
+    for _ in range(num_cards):
+        if deck:
+            drawn_card = random.choice(deck)
+            deck.remove(drawn_card)
+            if player == "computer":
+                computer_cards.append(drawn_card)
+            else:
+                player_cards.append(drawn_card)
+            print(f"{player.capitalize()} drew a card: {drawn_card}")
+
+
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
     global computer_cards, discard_pile, deck
@@ -287,6 +301,17 @@ def computer_turn():
             computer_cards.remove(playable_card)
             discard_pile.insert(0, playable_card)
             print(f"Computer played card: {playable_card}")
+
+            # Handle special cards
+            card_color, card_value = playable_card.split("_")
+            if card_value == "+2":
+                handle_draw_cards("player", 2)
+            elif card_value == "+4":
+                handle_draw_cards("player", 4)
+            elif card_value == "rev" or card_value == "skip":
+                # Handle reverse or skip if needed
+                pass
+
             # Check if the computer has won
             if not computer_cards:
                 end_game("YOU LOST!")
@@ -308,12 +333,25 @@ def computer_turn():
                     computer_cards.remove(drawn_card)
                     discard_pile.insert(0, drawn_card)
                     print(f"Computer played card: {drawn_card}")
+
+                    # Handle special cards
+                    if drawn_card_value == "+2":
+                        handle_draw_cards("player", 2)
+                    elif drawn_card_value == "+4":
+                        handle_draw_cards("player", 4)
+                    elif (
+                        drawn_card_value == "rev" or drawn_card_value == "skip"
+                    ):
+                        # Handle reverse or skip if needed
+                        pass
+
                     # Check if the computer has won
                     if not computer_cards:
                         end_game("YOU LOST!")
                 else:
                     # If no match, display message
                     display_message("Your turn", 3000)  # Display for 3 seconds
+
 
 
 def end_game(message):
