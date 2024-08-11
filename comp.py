@@ -245,9 +245,26 @@ def play_card(card_key):
     global discard_pile, player_cards, selected_cards, deck
 
     if card_key in player_cards:
-        if "+4" in card_key:
+        card_color, card_value = card_key.split("_")
+
+        if "+4" in card_value:
+            # Check if the player has other matching cards
+            has_matching_card = any(
+                card.split("_")[0] == card_color
+                or card.split("_")[1] == card_value
+                for card in player_cards
+                if "+4" not in card
+            )
+
+            if has_matching_card:
+                # Invalid play: player has matching cards
+                show_message(
+                    "Invalid play: You have matching cards!", duration=2000
+                )
+                return
+
             # Handle +4 card
-            # Draw 4 cards for the player
+            # Draw 4 cards for the next player (in this case, the player)
             for _ in range(4):
                 draw_card_from_deck()
 
@@ -259,18 +276,33 @@ def play_card(card_key):
             # Display the message to select a new color
             show_message("Select a new color", duration=1500)
 
-            # Ask player to choose a new color
-            # Replace this with actual color selection mechanism
-            new_color = "red"
+            # Ask player to choose a new color (replace this with actual color selection mechanism)
+            new_color = "red"  # Example color
             # Update the discard pile with the new color
-            discard_pile[0] = f"{new_color}_{card_key.split('_')[1]}"
+            discard_pile[0] = f"{new_color}_{card_value}"
 
         else:
             # Handle regular cards
+            top_card = discard_pile[0]
+            top_color, top_value = top_card.split("_")
+            if (
+                card_color != top_color
+                and card_value != top_value
+                and card_value not in wild_cards
+            ):
+                # Invalid play: card does not match the top card
+                show_message(
+                    "Invalid play: Card does not match the top card!",
+                    duration=2000,
+                )
+                return
+
             player_cards.remove(card_key)
             discard_pile.insert(0, card_key)
             print(f"Player played card: {card_key}")
 
+        # Display the game state after playing the card
+        play_game()
 
 
 def computer_turn():
