@@ -187,9 +187,12 @@ def draw_card_from_deck():
     global deck, player_cards
 
     if deck:
-        card = random.choice(deck)  # Draw a random card from the deck
-        deck.remove(card)  # Remove the card from the deck
-        player_cards.append(card)  # Add it to the player's hand
+        # Draw a random card from the deck
+        card = random.choice(deck)
+        # Remove the card from the deck
+        deck.remove(card)
+        # Add it to the player's hand
+        player_cards.append(card)
         print(f"Drawn card: {card}")
 
 
@@ -256,13 +259,12 @@ def play_card(card_key):
                     and card_value != top_value
                     and card_value != "+4"
                 ):
-                    # Invalid card selection; display message and let the computer play again
+                    # Invalid card selection
                     display_message(
-                        "Wrong selection! Try again.", 2000
+                        "Wrong selection! Lost your chance 😔", 2000
                     )  # Display for 2 seconds
-                    pygame.time.wait(
-                        2000
-                    )  # Wait for 2 seconds before proceeding
+                    pygame.time.wait(2000)
+                    # Wait for 2 seconds before proceeding
                     computer_turn()
                     return
 
@@ -278,10 +280,9 @@ def play_card(card_key):
             # Pass the turn to the computer
             computer_turn()
         except ValueError:
+            # Display for 2 seconds
             print(f"Error: Invalid card format for play_card: {card_key}")
-            display_message(
-                "Error: Invalid card format.", 2000
-            )  # Display for 2 seconds
+            display_message("Error: Invalid card format.", 2000)
     else:
         print(f"Error: Card {card_key} not found in player's hand.")
         display_message(
@@ -297,7 +298,8 @@ def display_message(message, duration):
     text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
     screen.blit(text, text_rect)
     pygame.display.flip()
-    pygame.time.wait(duration)  # Wait for the specified duration
+    # Wait for the specified duration
+    pygame.time.wait(duration)
 
 
 
