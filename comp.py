@@ -304,7 +304,6 @@ def computer_turn():
     )  # Wait for 2 seconds before the computer plays its card
 
     if computer_cards:
-        # Top card on the discard pile
         top_card = discard_pile[0]
         top_color, top_value = top_card.split("_")
 
@@ -344,9 +343,6 @@ def computer_turn():
                     # Check if the computer has won
                     if not computer_cards:
                         end_game("YOU LOST!")
-                else:
-                    # If no match, display message
-                    display_message("Your turn", 3000)  # Display for 3 seconds
 
 
 def end_game(message):
@@ -492,7 +488,6 @@ while running:
                         pygame.time.wait(2000)
                         play_card(card_key)
                         selected_card = None
-                        computer_turn()
 
             if reveal_button.is_clicked(event):
                 reveal_cards = True
@@ -518,3 +513,4 @@ while running:
 
 pygame.quit()
 sys.exit()
+
