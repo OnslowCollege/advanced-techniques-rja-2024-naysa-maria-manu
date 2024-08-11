@@ -252,14 +252,13 @@ def play_card(card_key):
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
     global computer_cards, discard_pile
-    pygame.time.wait(
-        2000
-    )  # Wait for 2 seconds before the computer plays its card
 
+    # Delay to simulate thinking
+    pygame.time.wait(2000)
+
+    # Check if the computer has a matching card
     if computer_cards:
-        # Top card on the discard pile
         top_card = discard_pile[0]
-        # Split to get color and number/special
         top_color, top_value = top_card.split("_")
 
         # Try to find a matching card in the computer's hand
@@ -267,16 +266,32 @@ def computer_turn():
             card_color, card_value = card.split("_")
             if card_color == top_color or card_value == top_value:
                 computer_cards.remove(card)
-                # Add the card to the top of the discard pile
                 discard_pile.insert(0, card)
                 print(f"Computer played card: {card}")
-                # Exit the function after playing a card
-                return
+                return  # Exit the function after playing a card
 
-        # If no matching card is found, the computer draws a card (optional)
+        # If no matching card is found, the computer draws a card from the discard pile
+        if discard_pile:
+            drawn_card = discard_pile.pop(1)  # Draw the second card from the discard pile
+            computer_cards.append(drawn_card)  # Add it to the computer's hand
+            print(f"Computer drew a card from the discard pile: {drawn_card}")
+        else:
+            print("No cards left in discard pile to draw.")
+
+    # Display message for the player to take their turn
+    show_message("Your turn", duration=1500) optional)
         print("Computer has no matching card and passes the turn.")
+        
+def show_message(message, duration=1500):
+    """Display a temporary message on the screen."""
+    global screen, font
+    message_surface = font.render(message, True, COLOR_RED)
+    message_rect = message_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+    screen.blit(message_surface, message_rect)
+    pygame.display.flip()
+    pygame.time.wait(duration)
 
-
+        
 def finish_game(message):
     """Display the end game screen with a message."""
     global state
@@ -287,23 +302,13 @@ def finish_game(message):
     screen.blit(text, text_rect)
 
     # Create the Exit and Return to Main Menu buttons
-    exit_button = Button(
-        "Exit",
-        (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 60),
-        (100, 50),
-        COLOR_RED,
-        (255, 255, 255),
-        font,
-    )
-    menu_button = Button(
-        "Main Menu",
+    exit_button = Button("Exit", (SCREEN_WIDTH // 2 - 150,
+                SCREEN_HEIGHT // 2 + 60), (100, 50),
+                    COLOR_RED, (255, 255, 255), font)
+    menu_button = Button("Main Menu",
         (SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 60),
-        (200, 50),
-        COLOR_RED,
-        (255, 255, 255),
-        font,
-    )
-
+        (200, 50), COLOR_RED, (255, 255, 255), font)
+    
     # Draw the buttons
     exit_button.draw(screen)
     menu_button.draw(screen)
@@ -322,23 +327,13 @@ def finish_game(message):
                 sys.exit()
             if menu_button.is_clicked(event):
                 # Reset to the home screen
-                global \
-                    player_cards, \
-                    computer_cards, \
-                    deck, \
-                    discard_pile, \
-                    reveal_cards, \
-                    reveal_button_clicked
+                global player_cards, computer_cards, deck, discard_pile, reveal_cards, reveal_button_clicked
                 state = "home"
-                player_cards, computer_cards, deck, discard_pile = (
-                    [],
-                    [],
-                    [],
-                    [],
-                )
+                player_cards, computer_cards, deck,discard_pile = [], [], [], []
                 reveal_cards = False
                 reveal_button_clicked = False
                 waiting = False
+
 
 
 def play_game():
