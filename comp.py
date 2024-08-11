@@ -270,28 +270,31 @@ def computer_turn():
                 print(f"Computer played card: {card}")
                 return  # Exit the function after playing a card
 
-        # If no matching card is found, the computer draws a card from the discard pile
-        if discard_pile:
-            drawn_card = discard_pile.pop(1)  # Draw the second card from the discard pile
+        # If no matching card is found, draw a card from the deck
+        if deck:
+            drawn_card = deck.pop()  # Draw a card from the deck
             computer_cards.append(drawn_card)  # Add it to the computer's hand
-            print(f"Computer drew a card from the discard pile: {drawn_card}")
+            print(f"Computer drew a card from the deck: {drawn_card}")
         else:
-            print("No cards left in discard pile to draw.")
+            print("No cards left in the deck to draw.")
 
-    # Display message for the player to take their turn
-    show_message("Your turn", duration=1500) optional)
+        # Display message for the player to take their turn
+        show_message("Your turn")
         print("Computer has no matching card and passes the turn.")
-        
+
+
 def show_message(message, duration=1500):
     """Display a temporary message on the screen."""
     global screen, font
     message_surface = font.render(message, True, COLOR_RED)
-    message_rect = message_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+    message_rect = message_surface.get_rect(
+        center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+    )
     screen.blit(message_surface, message_rect)
     pygame.display.flip()
     pygame.time.wait(duration)
 
-        
+
 def finish_game(message):
     """Display the end game screen with a message."""
     global state
@@ -302,12 +305,22 @@ def finish_game(message):
     screen.blit(text, text_rect)
 
     # Create the Exit and Return to Main Menu buttons
-    exit_button = Button("Exit", (SCREEN_WIDTH // 2 - 150,
-                SCREEN_HEIGHT // 2 + 60), (100, 50),
-                    COLOR_RED, (255, 255, 255), font)
-    menu_button = Button("Main Menu",
+    exit_button = Button(
+        "Exit",
+        (SCREEN_WIDTH // 2 - 150, SCREEN_HEIGHT // 2 + 60),
+        (100, 50),
+        COLOR_RED,
+        (255, 255, 255),
+        font,
+    )
+    menu_button = Button(
+        "Main Menu",
         (SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 60),
-        (200, 50), COLOR_RED, (255, 255, 255), font)
+        (200, 50),
+        COLOR_RED,
+        (255, 255, 255),
+        font,
+    )
     
     # Draw the buttons
     exit_button.draw(screen)
@@ -329,10 +342,16 @@ def finish_game(message):
                 # Reset to the home screen
                 global player_cards, computer_cards, deck, discard_pile, reveal_cards, reveal_button_clicked
                 state = "home"
-                player_cards, computer_cards, deck,discard_pile = [], [], [], []
+                player_cards, computer_cards, deck, discard_pile = (
+                    [],
+                    [],
+                    [],
+                    [],
+                )
                 reveal_cards = False
                 reveal_button_clicked = False
                 waiting = False
+
 
 
 
