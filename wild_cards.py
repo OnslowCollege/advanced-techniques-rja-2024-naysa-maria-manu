@@ -343,7 +343,7 @@ def display_message(message, duration):
 
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
-    global computer_cards, discard_pile, deck
+    global computer_cards, discard_pile, deck, direction
 
     pygame.time.wait(
         2000
@@ -378,6 +378,15 @@ def computer_turn():
                 computer_cards.remove(playable_card)
                 discard_pile.insert(0, playable_card)
                 print(f"Computer played: {playable_card}")
+
+                # Check if the computer has played a reverse card
+                if "rev" in playable_card:
+                    direction *= -1  # Reverse the direction of play
+                    display_message("Computer played Reverse card!", 2000)
+                    pygame.time.wait(2000)
+                    # The turn should go back to the player
+                    return
+
                 # Check if the computer has won
                 if not computer_cards:
                     end_game("YOU LOST!")
@@ -402,6 +411,19 @@ def computer_turn():
                             computer_cards.remove(drawn_card)
                             discard_pile.insert(0, drawn_card)
                             print(f"Computer played: {drawn_card}")
+
+                            # Check if the computer has played a reverse card
+                            if "rev" in drawn_card:
+                                direction *= (
+                                    -1
+                                )  # Reverse the direction of play
+                                display_message(
+                                    "Computer played Reverse card!", 2000
+                                )
+                                pygame.time.wait(2000)
+                                # The turn should go back to the player
+                                return
+
                             # Check if the computer has won
                             if not computer_cards:
                                 end_game("YOU LOST!")
@@ -417,6 +439,7 @@ def computer_turn():
             print("Error: No top card on discard pile.")
     else:
         print("Error: No cards in computer's hand.")
+
 
 
 def end_game(message):
