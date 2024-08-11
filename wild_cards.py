@@ -411,12 +411,16 @@ def computer_turn():
                 # Check if the computer has played a reverse card
                 if "rev" in playable_card:
                     direction *= -1  # Reverse the direction of play
-                    display_message("Computer played Reverse card!", 2000)
+                    display_message(
+                        "Computer played Reverse card! Direction changed.",
+                        2000,
+                    )
+                    print("Computer played Reverse card! Direction changed.")
                     pygame.time.wait(
                         2000
                     )  # Wait for 2 seconds to show the message
 
-                    # After playing the reverse card, the computer should continue its turn
+                    # Continue the computer's turn
                     computer_turn()
                     return
 
@@ -461,13 +465,17 @@ def computer_turn():
                                     -1
                                 )  # Reverse the direction of play
                                 display_message(
-                                    "Computer played Reverse card!", 2000
+                                    "Computer played Reverse card! Direction changed.",
+                                    2000,
+                                )
+                                print(
+                                    "Computer played Reverse card! Direction changed."
                                 )
                                 pygame.time.wait(
                                     2000
                                 )  # Wait for 2 seconds to show the message
 
-                                # After playing the reverse card, the computer should continue its turn
+                                # Continue the computer's turn
                                 computer_turn()
                                 return
 
