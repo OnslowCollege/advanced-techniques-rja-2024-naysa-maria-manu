@@ -179,7 +179,9 @@ player_cards = []
 computer_cards = []
 discard_pile = []
 deck = []
-selected_card = None  # To track the card that has been clicked
+# To track the card that has been clicked
+selected_card = None
+direction = 1
 
 
 def draw_card_from_deck():
@@ -241,11 +243,7 @@ def get_card_at_position(x, y):
 
 
 def play_card(card_key):
-    """Handle playing a card and update game state."""
     global discard_pile, player_cards, direction
-
-    print(f"Player cards before play: {player_cards}")
-    print(f"Card key to play: {card_key}")
 
     if card_key in player_cards:
         try:
@@ -260,42 +258,30 @@ def play_card(card_key):
                     and card_value != top_value
                     and card_value != "+4"
                 ):
-                    # Invalid card selection
                     display_message(
                         "Wrong selection! Lost your chance 😔", 2000
-                    )  # Display for 2 seconds
+                    )
                     pygame.time.wait(2000)
-                    # Wait for 2 seconds before proceeding
                     computer_turn()
                     return
 
-            # Valid move
             player_cards.remove(card_key)
             discard_pile.insert(0, card_key)
-            print(f"Player played card: {card_key}")
 
             if card_value == "rev":
-                # Reverse the direction of play
-                direction *= -1
+                direction *= -1  # Reverse the direction of play
                 display_message("Reverse card played!", 2000)
                 pygame.time.wait(2000)
                 return  # Give the turn back to the player
 
-            # Check if the player has won
             if not player_cards:
                 end_game("YOU WON!")
 
-            # Pass the turn to the computer
             computer_turn()
         except ValueError:
-            # Display for 2 seconds
-            print(f"Error: Invalid card format for play_card: {card_key}")
             display_message("Error: Invalid card format.", 2000)
     else:
-        print(f"Error: Card {card_key} not found in player's hand.")
-        display_message(
-            "Error: Card not found in hand.", 2000
-        )  # Display for 2 seconds
+        display_message("Error: Card not found in hand.", 2000)
 
 
 def draw_card_for_computer():
@@ -322,42 +308,26 @@ def display_message(message, duration):
 
 
 def computer_turn():
-    """Handle the computer's turn with a delay after the user plays a card."""
     global computer_cards, discard_pile, deck, direction
 
-    pygame.time.wait(
-        2000
-    )  # Wait for 2 seconds before the computer plays its card
+    pygame.time.wait(2000)
 
     if computer_cards:
-        # Top card on the discard pile
         top_card = discard_pile[0] if discard_pile else None
 
         if top_card:
-            try:
-                top_color, top_value = top_card.split("_")
-            except ValueError:
-                print(f"Error: Invalid top card format: {top_card}")
-                return
+            top_color, top_value = top_card.split("_")
 
-            # Try to find a matching card in the computer's hand
             playable_card = None
             for card in computer_cards:
-                try:
-                    card_color, card_value = card.split("_")
-                    if card_color == top_color or card_value == top_value:
-                        playable_card = card
-                        break
-                except ValueError:
-                    print(
-                        f"Error: Invalid card format in computer's hand: {card}"
-                    )
-                    continue
+                card_color, card_value = card.split("_")
+                if card_color == top_color or card_value == top_value:
+                    playable_card = card
+                    break
 
             if playable_card:
                 computer_cards.remove(playable_card)
                 discard_pile.insert(0, playable_card)
-                print(f"Computer played card: {playable_card}")
 
                 if playable_card.endswith("rev"):
                     direction *= -1
@@ -365,47 +335,28 @@ def computer_turn():
                     pygame.time.wait(2000)
                     computer_turn()  # The computer plays again
 
-                # Check if the computer has won
                 if not computer_cards:
                     end_game("YOU LOST!")
             else:
-                # Draw a card if no matching card is found
                 if deck:
                     drawn_card = random.choice(deck)
                     deck.remove(drawn_card)
                     computer_cards.append(drawn_card)
-                    print(f"Computer drew a card: {drawn_card}")
 
-                    # Check if the drawn card matches
-                    try:
-                        drawn_card_color, drawn_card_value = drawn_card.split(
-                            "_"
-                        )
-                        if (
-                            drawn_card_color == top_color
-                            or drawn_card_value == top_value
-                        ):
-                            # If the drawn card matches, play it
-                            computer_cards.remove(drawn_card)
-                            discard_pile.insert(0, drawn_card)
-                            print(f"Computer played card: {drawn_card}")
-                            # Check if the computer has won
-                            if not computer_cards:
-                                end_game("YOU LOST!")
-                        else:
-                            # If no match, display message
-                            # Display for 3 seconds
-                            display_message("Your turn", 3000)
-                    except ValueError:
-                        print(
-                            f"Error: Invalid drawn card format: {drawn_card}"
-                        )
-                        # Display for 3 seconds
-                        display_message("Your turn", 3000)
+                    drawn_card_color, drawn_card_value = drawn_card.split("_")
+                    if (
+                        drawn_card_color == top_color
+                        or drawn_card_value == top_value
+                    ):
+                        computer_cards.remove(drawn_card)
+                        discard_pile.insert(0, drawn_card)
+
+                        if not computer_cards:
+                            end_game("YOU LOST!")
         else:
-            print("Error: No top card on discard pile.")
+            display_message("Error: No top card on discard pile.", 3000)
     else:
-        print("Error: No cards in computer's hand.")
+        display_message("Error: No cards in computer's hand.", 3000)
 
 
 def end_game(message):
