@@ -283,19 +283,20 @@ def play_card(card_key):
 
         else:
             # Handle regular cards
-            top_card = discard_pile[0]
-            top_color, top_value = top_card.split("_")
-            if (
-                card_color != top_color
-                and card_value != top_value
-                and card_value not in wild_cards
-            ):
-                # Invalid play: card does not match the top card
-                show_message(
-                    "Invalid play: Card does not match the top card!",
-                    duration=2000,
-                )
-                return
+            if discard_pile:
+                top_card = discard_pile[0]
+                top_color, top_value = top_card.split("_")
+                if (
+                    card_color != top_color
+                    and card_value != top_value
+                    and card_value not in wild_cards
+                ):
+                    # Invalid play: card does not match the top card
+                    show_message(
+                        "Invalid play: Card does not match the top card!",
+                        duration=2000,
+                    )
+                    return
 
             player_cards.remove(card_key)
             discard_pile.insert(0, card_key)
