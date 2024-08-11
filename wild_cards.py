@@ -274,7 +274,23 @@ def play_card(card_key):
                     f"Top card color: {top_color}, Top card value: {top_value}"
                 )  # Debugging statement
 
-                if (
+                if card_value == "+4":
+                    # Special handling for +4 cards
+                    if (
+                        top_color == "wild"
+                    ):  # Assuming wild cards in discard pile should be handled differently
+                        display_message(
+                            "Invalid move! Can't play +4 card on a wild card.",
+                            2000,
+                        )
+                        print(
+                            f"Player attempted to play an invalid +4 card: {card_key}"
+                        )
+                        pygame.time.wait(2000)
+                        computer_turn()
+                        return
+
+                elif (
                     card_color != top_color
                     and card_value != top_value
                     and card_value != "+4"
@@ -305,7 +321,7 @@ def play_card(card_key):
                 pygame.time.wait(2000)
 
             elif card_value == "+4":
-                # Computer draws 4 cards
+                # Special handling for +4 cards
                 for _ in range(4):
                     if deck:
                         drawn_card = random.choice(deck)
