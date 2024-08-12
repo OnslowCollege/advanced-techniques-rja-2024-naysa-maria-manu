@@ -186,6 +186,54 @@ deck = []
 # To track the card that has been clicked
 selected_card = None
 direction = 1
+def shuffle_and_deal():
+    """Shuffles and hands cards to user and computer, and sets the initial discard pile card."""
+    global player_cards, computer_cards, deck, discard_pile
+
+    # Create the deck
+    deck = [
+        f"{color}_{number}" for color in card_colors for number in range(10)
+    ]
+    deck += [
+        f"{color}_{special}"
+        for color in card_colors
+        for special in special_cards
+    ]
+    # 4 wild cards
+    deck += [wild for wild in wild_cards] * 4
+    random.shuffle(deck)
+
+    # Draw the initial discard pile card
+    initial_discard_card = random.choice(deck)
+    discard_pile.append(initial_discard_card)
+    deck.remove(initial_discard_card)
+
+    # Deal cards to player and computer
+    player_cards = deck[:NUM_CARDS]
+    computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
+
+    # Remove +4 cards from the computer's hand and draw a replacement card
+    new_computer_cards = []
+    for card in computer_cards:
+        if "+4" in card:
+            # Remove +4 card from computer's hand
+            print(f"Removing +4 card from computer's hand: {card}")
+            # Draw a new card from the deck
+            if deck:
+                new_card = random.choice(deck)
+                deck.remove(new_card)
+                new_computer_cards.append(new_card)
+                print(f"Replaced with new card: {new_card}")
+        else:
+            new_computer_cards.append(card)
+
+    computer_cards = new_computer_cards
+
+    # Print debug information
+    print(f"Deck size: {len(deck)}")
+    print(f"Initial discard pile card: {initial_discard_card}")
+    print(f"Player cards: {len(player_cards)}")
+    print(f"Computer cards: {len(computer_cards)}")
 
 def display_instructions():
     """Display the instructions image with the 'Shuffle and Play' button."""
@@ -283,56 +331,6 @@ def draw_card_from_deck():
         # Add it to the player's hand
         player_cards.append(card)
         print(f"Drawn card: {card}")
-
-
-def shuffle_and_deal():
-    """Shuffles and hands cards to user and computer, and sets the initial discard pile card."""
-    global player_cards, computer_cards, deck, discard_pile
-
-    # Create the deck
-    deck = [
-        f"{color}_{number}" for color in card_colors for number in range(10)
-    ]
-    deck += [
-        f"{color}_{special}"
-        for color in card_colors
-        for special in special_cards
-    ]
-    # 4 wild cards
-    deck += [wild for wild in wild_cards] * 4
-    random.shuffle(deck)
-
-    # Draw the initial discard pile card
-    initial_discard_card = random.choice(deck)
-    discard_pile.append(initial_discard_card)
-    deck.remove(initial_discard_card)
-
-    # Deal cards to player and computer
-    player_cards = deck[:NUM_CARDS]
-    computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
-
-    # Remove +4 cards from the computer's hand and draw a replacement card
-    new_computer_cards = []
-    for card in computer_cards:
-        if "+4" in card:
-            # Remove +4 card from computer's hand
-            print(f"Removing +4 card from computer's hand: {card}")
-            # Draw a new card from the deck
-            if deck:
-                new_card = random.choice(deck)
-                deck.remove(new_card)
-                new_computer_cards.append(new_card)
-                print(f"Replaced with new card: {new_card}")
-        else:
-            new_computer_cards.append(card)
-
-    computer_cards = new_computer_cards
-
-    # Print debug information
-    print(f"Deck size: {len(deck)}")
-    print(f"Initial discard pile card: {initial_discard_card}")
-    print(f"Player cards: {len(player_cards)}")
-    print(f"Computer cards: {len(computer_cards)}")
 
 
 def get_card_at_position(x, y):
@@ -756,15 +754,7 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
-
-            if state == "home":
-                if start_button.is_clicked(event):
-                    shuffle_and_deal()
-                    state = "play"
-                elif shuffle_play_button.is_clicked(event):
-                    shuffle_and_deal()
-                    state = "play"
-            elif state == "play":
+            if state == "play":
                 if draw_card_button.rect.collidepoint(x, y):
                     draw_card_from_deck()
                 else:
@@ -777,14 +767,24 @@ while running:
                         play_card(card_key)
                         selected_card = None
 
-                if reveal_button.is_clicked(event):
-                    reveal_cards = True
-                    reveal_button_clicked = True
+            if reveal_button.is_clicked(event):
+                reveal_cards = True
+                reveal_button_clicked = True
 
         if state == "home":
-            screen.blit(home_background_image, (0, 0))
-            start_button.draw(screen)
-            shuffle_play_button.draw(screen)
+            if start_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
+            else:
+                screen.blit(home_background_image, (0, 0))
+                start_button.draw(screen)
+        elif state == "home":
+            if shuffle_play_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
+            else:
+                screen.blit(game_background_image, (0, 0))
+                shuffle_play_button.draw(screen)
         elif state == "play":
             play_game()
 
