@@ -188,7 +188,7 @@ selected_card = None
 direction = 1
 
 def display_instructions():
-    """Display the instructions image."""
+    """Display the instructions image with the 'Shuffle and Play' button."""
     # Load the instructions image
     instructions_image = pygame.image.load("images/instructions.jpg")
 
@@ -199,9 +199,24 @@ def display_instructions():
 
     # Display the image on the screen
     screen.blit(instructions_image, (0, 0))
-    pygame.display.flip()
 
-    # Wait for the player to press a key to return to the home screen
+    # Draw the Shuffle and Play button on the instructions screen
+    shuffle_play_button = Button(
+        "Shuffle and Play",
+        (
+            SCREEN_WIDTH // 2 - 200,
+            SCREEN_HEIGHT - 100,
+        ),  # Position at the bottom center
+        (400, 80),
+        COLOR_RED,
+        (255, 255, 255),
+        font,
+    )
+    shuffle_play_button.draw(screen)
+
+    pygame.display.flip()  # Update the display
+
+    # Wait for player interaction
     waiting = True
     while waiting:
         for event in pygame.event.get():
@@ -209,6 +224,10 @@ def display_instructions():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                waiting = False
+            if shuffle_play_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
                 waiting = False
 
 
