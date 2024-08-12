@@ -471,10 +471,10 @@ def computer_turn():
                 if "rev" in playable_card:
                     direction *= -1  # Reverse the direction of play
                     display_message(
-                        "Computer played Reverse card! Direction changed.",
+                        "Computer played Reverse card!",
                         2000,
                     )
-                    print("Computer played Reverse card! Direction changed.")
+                    print("Computer played Reverse card!")
                     pygame.time.wait(
                         2000
                     )  # Wait for 2 seconds to show the message
@@ -524,15 +524,12 @@ def computer_turn():
                                     -1
                                 )  # Reverse the direction of play
                                 display_message(
-                                    "Computer played Reverse card! Direction changed.",
+                                    "Computer played Reverse card!",
                                     2000,
                                 )
-                                print(
-                                    "Computer played Reverse card! Direction changed."
-                                )
-                                pygame.time.wait(
-                                    2000
-                                )  # Wait for 2 seconds to show the message
+                                print("Computer played Reverse card!")
+                                # Wait for 2 seconds to show the message
+                                pygame.time.wait(2000)
 
                                 # Continue the computer's turn
                                 computer_turn()
@@ -559,9 +556,8 @@ def computer_turn():
                                 "Computer didn't find a matching card. Your turn."
                             )
                             display_message("Your turn!", 2000)
-                            pygame.time.wait(
-                                2000
-                            )  # Wait for 2 seconds to show the message
+                            # Wait for 2 seconds to show the message
+                            pygame.time.wait(2000)
                     except ValueError:
                         print(
                             f"Error: Invalid drawn card format: {drawn_card}"
@@ -750,9 +746,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-
-if __name__ == "__main__":
-    main()
 
 
 # Main loop
