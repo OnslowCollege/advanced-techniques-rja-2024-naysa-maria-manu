@@ -598,7 +598,6 @@ def end_game(message):
     # Draw the buttons
     exit_button.draw(screen)
     menu_button.draw(screen)
-    instructions_button.draw(screen)
 
     pygame.display.flip()
 
