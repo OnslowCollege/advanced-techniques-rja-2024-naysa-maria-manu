@@ -729,16 +729,19 @@ def main():
                             play_card(card_key)
                             selected_card = None
 
-                    if reveal_button.is_clicked(event):
-                        reveal_cards = True
-                        reveal_button_clicked = True
+                if reveal_button.is_clicked(event):
+                    reveal_cards = True
+                    reveal_button_clicked = True
+
+            elif state == "end":
+                end_game("Game Over")  # Or your specific end game condition
 
         if state == "home":
             draw_home_screen()
         elif state == "play":
             play_game()
         elif state == "end":
-            end_game("Game Over")  # Or your specific end game condition
+            end_game("Game Over")
 
         pygame.display.flip()
 
