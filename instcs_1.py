@@ -298,9 +298,7 @@ def play_card(card_key):
                     and card_value != top_value
                     and card_value != "+4"
                 ):
-                    display_message(
-                        "Wrong selection! Lost your chance 😔", 2000
-                    )
+                    display_message("Wrong selection! Lost your chance", 2000)
                     print(
                         f"Player attempted to play an invalid card: {card_key}"
                     )
@@ -345,12 +343,11 @@ def play_card(card_key):
                 return  # Give the turn back to the player
 
             elif card_value == "skip":
-                display_message(
-                    "Skip card played! Skipping computer's turn.", 2000
-                )
-                print("Skip card played! Skipping computer's turn.")
+                # skip the other player's turn
+                direction *= -1
+                display_message("Skip card played!", 2000)
+                print("Skip card played!")
                 pygame.time.wait(2000)
-                # Skip the computer's turn
                 return
 
             if not player_cards:
