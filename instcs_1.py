@@ -136,6 +136,9 @@ class Button:
 start_button = Button(
     "Start", (400, 350), (200, 80), COLOR_RED, (255, 255, 255), font
 )
+instructions_button = Button(
+    "Instructions", (660, 350), (200, 80), COLOR_RED, (255, 255, 255), font
+)
 exit_button = Button(
     "Exit",
     (SCREEN_WIDTH - 120, SCREEN_HEIGHT - 60),
@@ -563,6 +566,7 @@ def end_game(message):
     # Draw the buttons
     exit_button.draw(screen)
     menu_button.draw(screen)
+    instructions_button.draw(screen)
 
     pygame.display.flip()
 
