@@ -187,49 +187,6 @@ deck = []
 selected_card = None
 direction = 1
 
-def display_instructions():
-    """Display the instructions image with the 'Shuffle and Play' button."""
-    # Load the instructions image
-    instructions_image = pygame.image.load("images/instructions.jpg")
-
-    # Resize the image to fit the screen, if necessary
-    instructions_image = pygame.transform.scale(
-        instructions_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
-    )
-
-    # Display the image on the screen
-    screen.blit(instructions_image, (0, 0))
-
-    # Draw the Shuffle and Play button on the instructions screen
-    shuffle_play_button = Button(
-        "Shuffle and Play",
-        (
-            SCREEN_WIDTH // 2 - 200,
-            SCREEN_HEIGHT - 100,
-        ),  # Position at the bottom center
-        (400, 80),
-        COLOR_RED,
-        (255, 255, 255),
-        font,
-    )
-    shuffle_play_button.draw(screen)
-
-    pygame.display.flip()  # Update the display
-
-    # Wait for player interaction
-    waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                waiting = False
-            if shuffle_play_button.is_clicked(event):
-                shuffle_and_deal()
-                state = "play"
-                waiting = False
-
 
 def draw_home_screen():
     """Draw the home screen with all buttons."""
@@ -283,6 +240,100 @@ def draw_card_from_deck():
         # Add it to the player's hand
         player_cards.append(card)
         print(f"Drawn card: {card}")
+
+
+def shuffle_and_deal():
+    """Shuffles and hands cards to user and computer, and sets the initial discard pile card."""
+    global player_cards, computer_cards, deck, discard_pile
+
+    # Create the deck
+    deck = [
+        f"{color}_{number}" for color in card_colors for number in range(10)
+    ]
+    deck += [
+        f"{color}_{special}"
+        for color in card_colors
+        for special in special_cards
+    ]
+    # 4 wild cards
+    deck += [wild for wild in wild_cards] * 4
+    random.shuffle(deck)
+
+    # Draw the initial discard pile card
+    initial_discard_card = random.choice(deck)
+    discard_pile.append(initial_discard_card)
+    deck.remove(initial_discard_card)
+
+    # Deal cards to player and computer
+    player_cards = deck[:NUM_CARDS]
+    computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
+
+    # Remove +4 cards from the computer's hand and draw a replacement card
+    new_computer_cards = []
+    for card in computer_cards:
+        if "+4" in card:
+            # Remove +4 card from computer's hand
+            print(f"Removing +4 card from computer's hand: {card}")
+            # Draw a new card from the deck
+            if deck:
+                new_card = random.choice(deck)
+                deck.remove(new_card)
+                new_computer_cards.append(new_card)
+                print(f"Replaced with new card: {new_card}")
+        else:
+            new_computer_cards.append(card)
+
+    computer_cards = new_computer_cards
+
+    # Print debug information
+    print(f"Deck size: {len(deck)}")
+    print(f"Initial discard pile card: {initial_discard_card}")
+    print(f"Player cards: {len(player_cards)}")
+    print(f"Computer cards: {len(computer_cards)}")
+
+
+def display_instructions():
+    """Display the instructions image with the 'Shuffle and Play' button."""
+    # Load the instructions image
+    instructions_image = pygame.image.load("images/instructions.jpg")
+
+    # Resize the image to fit the screen, if necessary
+    instructions_image = pygame.transform.scale(
+        instructions_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
+    )
+
+    # Display the image on the screen
+    screen.blit(instructions_image, (0, 0))
+
+    # Draw the Shuffle and Play button on the instructions screen
+    shuffle_play_button = Button(
+        "Shuffle and Play",
+        (
+            SCREEN_WIDTH // 2 - 200,
+            SCREEN_HEIGHT - 100,
+        ),  # Position at the bottom center
+        (400, 80),
+        COLOR_RED,
+        (255, 255, 255),
+        font,
+    )
+    shuffle_play_button.draw(screen)
+
+    pygame.display.flip()  # Update the display
+
+    # Wait for player interaction
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                waiting = False
+            if shuffle_play_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
+                waiting = False
 
 
 def get_card_at_position(x, y):
@@ -635,54 +686,7 @@ def end_game(message):
             if instructions_button.is_clicked(event):
                 display_instructions()
 
-def shuffle_and_deal():
-    """Shuffles and hands cards to user and computer, and sets the initial discard pile card."""
-    global player_cards, computer_cards, deck, discard_pile
 
-    # Create the deck
-    deck = [
-        f"{color}_{number}" for color in card_colors for number in range(10)
-    ]
-    deck += [
-        f"{color}_{special}"
-        for color in card_colors
-        for special in special_cards
-    ]
-    # 4 wild cards
-    deck += [wild for wild in wild_cards] * 4
-    random.shuffle(deck)
-
-    # Draw the initial discard pile card
-    initial_discard_card = random.choice(deck)
-    discard_pile.append(initial_discard_card)
-    deck.remove(initial_discard_card)
-
-    # Deal cards to player and computer
-    player_cards = deck[:NUM_CARDS]
-    computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
-
-    # Remove +4 cards from the computer's hand and draw a replacement card
-    new_computer_cards = []
-    for card in computer_cards:
-        if "+4" in card:
-            # Remove +4 card from computer's hand
-            print(f"Removing +4 card from computer's hand: {card}")
-            # Draw a new card from the deck
-            if deck:
-                new_card = random.choice(deck)
-                deck.remove(new_card)
-                new_computer_cards.append(new_card)
-                print(f"Replaced with new card: {new_card}")
-        else:
-            new_computer_cards.append(card)
-
-    computer_cards = new_computer_cards
-
-    # Print debug information
-    print(f"Deck size: {len(deck)}")
-    print(f"Initial discard pile card: {initial_discard_card}")
-    print(f"Player cards: {len(player_cards)}")
-    print(f"Computer cards: {len(computer_cards)}")
 def play_game():
     """Display the game screen with cards."""
     screen.blit(game_background_image, (0, 0))
