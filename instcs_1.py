@@ -775,7 +775,8 @@ while running:
 
         if state == "home":
             if start_button.is_clicked(event):
-                state = "game"
+                shuffle_and_deal()
+                state = "play"
             else:
                 screen.blit(home_background_image, (0, 0))
                 start_button.draw(screen)
