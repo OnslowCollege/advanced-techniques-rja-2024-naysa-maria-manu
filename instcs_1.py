@@ -703,7 +703,9 @@ def main():
                 sys.exit()
 
             if state == "home":
-                if start_button.is_clicked(event):
+                if start_button.is_clicked(event) or play_button.is_clicked(
+                    event
+                ):
                     state = "play"
                     shuffle_and_deal()
                 elif instructions_button.is_clicked(event):
@@ -743,8 +745,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 
 # Main loop
 running = True
