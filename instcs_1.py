@@ -692,6 +692,7 @@ def play_game():
 
     pygame.display.flip()
 
+
 def main():
     """Main game loop."""
     global state, reveal_cards, reveal_button_clicked
