@@ -284,7 +284,8 @@ def play_card(card_key):
 
             top_card = discard_pile[0] if discard_pile else None
 
-            if top_card:
+            # Allow the +4 card to be played at any time
+            if card_value != "+4" and top_card:
                 top_color, top_value = top_card.split("_")
                 print(
                     f"Top card on discard pile: {top_card}"
@@ -293,11 +294,7 @@ def play_card(card_key):
                     f"Top card color: {top_color}, Top card value: {top_value}"
                 )  # Debugging statement
 
-                if (
-                    card_color != top_color
-                    and card_value != top_value
-                    and card_value != "+4"
-                ):
+                if card_color != top_color and card_value != top_value:
                     display_message("Wrong selection! Lost your chance", 2000)
                     print(
                         f"Player attempted to play an invalid card: {card_key}"
@@ -361,6 +358,7 @@ def play_card(card_key):
     else:
         display_message("Error: Card not found in hand.", 2000)
         print(f"Error: Card {card_key} not found in player's hand.")
+
 
 
 def draw_card_for_computer():
@@ -535,15 +533,17 @@ def computer_turn():
 
                             # Check if the computer has played a skip card
                             elif "skip" in drawn_card:
+                                direction *= -1
                                 display_message(
-                                    "Computer played Skip card! Skipping your turn.",
+                                    "Computer played Skip card!",
                                     2000,
                                 )
-                                print(
-                                    "Computer played Skip card! Skipping player's turn."
-                                )
+                                print("Computer played Skip card!")
+                                # Wait for 2 seconds to show the message
                                 pygame.time.wait(2000)
-                                # Skip the player's turn
+
+                                # Continue the computer's turn
+                                computer_turn()
                                 return
 
                             # Check if the computer has won
