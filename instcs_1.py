@@ -137,7 +137,7 @@ start_button = Button(
     "Start", (400, 350), (200, 80), COLOR_RED, (255, 255, 255), font
 )
 instructions_button = Button(
-    "Instructions", (660, 350), (200, 80), COLOR_RED, (255, 255, 255), font
+    "Instructions", (700, 700), (200, 80), COLOR_RED, (255, 255, 255), font
 )
 exit_button = Button(
     "Exit",
@@ -190,7 +190,7 @@ direction = 1
 def display_instructions():
     """Display the instructions image."""
     # Load the instructions image
-    instructions_image = pygame.image.load("instructions.jpg")
+    instructions_image = pygame.image.load("images/instructions.jpg")
 
     # Resize the image to fit the screen, if necessary
     instructions_image = pygame.transform.scale(
