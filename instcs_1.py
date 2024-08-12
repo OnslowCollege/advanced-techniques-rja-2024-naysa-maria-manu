@@ -485,13 +485,13 @@ def computer_turn():
 
                 # Check if the computer has played a skip card
                 elif "skip" in playable_card:
+                    direction *= -1  # Reverse the direction of play
                     display_message(
-                        "Computer played Skip card! Skipping your turn.", 2000
+                        "Computer played Sip card!",
+                        2000,
                     )
-                    print("Computer played Skip card! Skipping player's turn.")
+                    print("Computer played Skip card!")
                     pygame.time.wait(2000)
-                    # Skip the player's turn
-                    return
 
                 # Check if the computer has won
                 if not computer_cards:
