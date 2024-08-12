@@ -197,51 +197,6 @@ def draw_home_screen():
     pygame.display.flip()  # Update the display
 
 
-def main():
-    """Main game loop."""
-    global state
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            if state == "home":
-                if start_button.is_clicked(event):
-                    state = "play"
-                    shuffle_and_deal()
-                elif instructions_button.is_clicked(event):
-                    display_instructions()
-                elif exit_button.is_clicked(event):
-                    pygame.quit()
-                    sys.exit()
-
-        if state == "home":
-            draw_home_screen()
-        elif state == "play":
-            play_game()
-        elif state == "end":
-            end_game("Game Over")  # Or your specific end game condition
-
-
-if __name__ == "__main__":
-    main()
-
-
-def draw_card_from_deck():
-    """Draw one random card from the deck and add it to the player's hand."""
-    global deck, player_cards
-
-    if deck:
-        # Draw a random card from the deck
-        card = random.choice(deck)
-        # Remove the card from the deck
-        deck.remove(card)
-        # Add it to the player's hand
-        player_cards.append(card)
-        print(f"Drawn card: {card}")
-
-
 def shuffle_and_deal():
     """Shuffles and hands cards to user and computer, and sets the initial discard pile card."""
     global player_cards, computer_cards, deck, discard_pile
@@ -290,6 +245,49 @@ def shuffle_and_deal():
     print(f"Initial discard pile card: {initial_discard_card}")
     print(f"Player cards: {len(player_cards)}")
     print(f"Computer cards: {len(computer_cards)}")
+def main():
+    """Main game loop."""
+    global state
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if state == "home":
+                if start_button.is_clicked(event):
+                    state = "play"
+                    shuffle_and_deal()
+                elif instructions_button.is_clicked(event):
+                    display_instructions()
+                elif exit_button.is_clicked(event):
+                    pygame.quit()
+                    sys.exit()
+
+        if state == "home":
+            draw_home_screen()
+        elif state == "play":
+            play_game()
+        elif state == "end":
+            end_game("Game Over")  # Or your specific end game condition
+
+
+if __name__ == "__main__":
+    main()
+
+
+def draw_card_from_deck():
+    """Draw one random card from the deck and add it to the player's hand."""
+    global deck, player_cards
+
+    if deck:
+        # Draw a random card from the deck
+        card = random.choice(deck)
+        # Remove the card from the deck
+        deck.remove(card)
+        # Add it to the player's hand
+        player_cards.append(card)
+        print(f"Drawn card: {card}")
 
 
 def display_instructions():
