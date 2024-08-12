@@ -332,6 +332,7 @@ def play_card(card_key):
                 pygame.time.wait(2000)
                 return
 
+
             elif card_value == "rev":
                 direction *= -1  # Reverse the direction of play
                 display_message("Reverse card played!", 2000)
