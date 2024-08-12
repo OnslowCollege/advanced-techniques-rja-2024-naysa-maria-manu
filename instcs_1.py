@@ -694,7 +694,7 @@ def play_game():
 
 def main():
     """Main game loop."""
-    global state
+    global state, reveal_cards, reveal_button_clicked
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -711,12 +711,37 @@ def main():
                     pygame.quit()
                     sys.exit()
 
+            elif state == "play":
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    x, y = event.pos
+                    if draw_card_button.rect.collidepoint(x, y):
+                        draw_card_from_deck()
+                    else:
+                        card_key = get_card_at_position(x, y)
+                        if card_key and reveal_cards:
+                            selected_card = card_key
+                            play_game()
+                            pygame.display.flip()
+                            pygame.time.wait(100)
+                            play_card(card_key)
+                            selected_card = None
+
+                    if reveal_button.is_clicked(event):
+                        reveal_cards = True
+                        reveal_button_clicked = True
+
         if state == "home":
             draw_home_screen()
         elif state == "play":
             play_game()
         elif state == "end":
             end_game("Game Over")  # Or your specific end game condition
+
+        pygame.display.flip()
+
+
+if __name__ == "__main__":
+    main()
 
 
 if __name__ == "__main__":
