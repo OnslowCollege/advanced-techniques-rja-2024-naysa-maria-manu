@@ -271,15 +271,23 @@ def get_card_at_position(x, y):
 def play_card(card_key):
     global discard_pile, player_cards, computer_cards, direction, deck
 
+    # Check if the card is in the player's hand
     if card_key in player_cards:
         try:
             print(f"Attempting to play card: {card_key}")
-            card_color, card_value = card_key.split("_")
+
+            # Split the card into color and value
+            card_parts = card_key.split("_")
+            if len(card_parts) != 2:
+                raise ValueError(f"Invalid card format for card: {card_key}")
+
+            card_color, card_value = card_parts
             top_card = discard_pile[0] if discard_pile else None
 
             if top_card:
                 top_color, top_value = top_card.split("_")
 
+                # Check if the card matches the top card's color or value, or is a special card like +4
                 if (
                     card_color != top_color
                     and card_value != top_value
@@ -291,21 +299,25 @@ def play_card(card_key):
                     computer_turn()
                     return
 
+            # If the card matches, play it
             player_cards.remove(card_key)
             discard_pile.insert(0, card_key)
             print(f"Player played: {card_key}")
 
-            # Handle special cards...
-            # (existing logic for handling +2, +4, skip, reverse, etc.)
+            # Handle special cards (like +2, +4, reverse, etc.)
+            # (Existing logic for handling special cards should go here)
 
+            # Check if the player has won
             if not player_cards:
                 end_game("YOU WON!")
+                return
 
             # If the player played a valid card but didn't win, it's the computer's turn
             computer_turn()
-        except ValueError:
-            display_message("Error: Invalid card format.", 2000)
-            print(f"Error: Invalid card format for card: {card_key}")
+        except ValueError as e:
+            # Display the specific error
+            display_message(str(e), 2000)
+            print(str(e))
     else:
         display_message("Error: Card not found in hand.", 2000)
         print(f"Error: Card {card_key} not found in player's hand.")
@@ -345,6 +357,7 @@ def draw_card_from_deck():
                 display_message("No matching card. Computer's turn.", 2000)
                 pygame.time.wait(2000)
                 computer_turn()
+
 
 
 def display_message(message, duration):
