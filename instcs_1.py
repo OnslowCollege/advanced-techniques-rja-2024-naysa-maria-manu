@@ -238,7 +238,7 @@ def display_instructions():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 waiting = False
-            if shuffle_play_button.is_clicked(event):
+            if start_button.is_clicked(event):
                 shuffle_and_deal()
                 state = "play"
                 waiting = False
