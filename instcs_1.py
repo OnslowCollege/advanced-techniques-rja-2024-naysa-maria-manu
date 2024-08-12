@@ -224,19 +224,8 @@ def display_instructions():
     # Display the image on the screen
     screen.blit(instructions_image, (0, 0))
 
-    # Draw the Shuffle and Play button on the instructions screen
-    shuffle_play_button = Button(
-        "Shuffle and Play",
-        (
-            SCREEN_WIDTH // 2 - 200,
-            SCREEN_HEIGHT - 100,
-        ),  # Position at the bottom center
-        (400, 80),
-        COLOR_RED,
-        (255, 255, 255),
-        font,
-    )
-    shuffle_play_button.draw(screen)
+    # Draw the Start button on the instructions screen
+    start_button.draw(screen)
 
     pygame.display.flip()  # Update the display
 
