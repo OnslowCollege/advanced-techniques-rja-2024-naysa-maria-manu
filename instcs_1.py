@@ -141,7 +141,7 @@ instructions_button = Button(
 )
 exit_button = Button(
     "Exit",
-    (SCREEN_WIDTH - 120, SCREEN_HEIGHT - 60),
+    (SCREEN_WIDTH - 400, SCREEN_HEIGHT - 90),
     (100, 50),
     COLOR_RED,
     (255, 255, 255),
