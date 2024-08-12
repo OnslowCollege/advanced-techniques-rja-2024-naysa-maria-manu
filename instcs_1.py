@@ -211,6 +211,47 @@ def display_instructions():
             if event.type == pygame.KEYDOWN:
                 waiting = False
 
+
+def draw_home_screen():
+    """Draw the home screen with all buttons."""
+    screen.blit(home_background_image, (0, 0))  # Draw background first
+    start_button.draw(screen)
+    instructions_button.draw(screen)
+    exit_button.draw(screen)
+    pygame.display.flip()  # Update the display
+
+
+def main():
+    """Main game loop."""
+    global state
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if state == "home":
+                if start_button.is_clicked(event):
+                    state = "play"
+                    shuffle_and_deal()
+                elif instructions_button.is_clicked(event):
+                    display_instructions()
+                elif exit_button.is_clicked(event):
+                    pygame.quit()
+                    sys.exit()
+
+        if state == "home":
+            draw_home_screen()
+        elif state == "play":
+            play_game()
+        elif state == "end":
+            end_game("Game Over")  # Or your specific end game condition
+
+
+if __name__ == "__main__":
+    main()
+
+
 def draw_card_from_deck():
     """Draw one random card from the deck and add it to the player's hand."""
     global deck, player_cards
