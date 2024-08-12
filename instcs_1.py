@@ -197,83 +197,6 @@ def draw_home_screen():
     pygame.display.flip()  # Update the display
 
 
-def shuffle_and_deal():
-    """Shuffles and hands cards to user and computer, and sets the initial discard pile card."""
-    global player_cards, computer_cards, deck, discard_pile
-
-    # Create the deck
-    deck = [
-        f"{color}_{number}" for color in card_colors for number in range(10)
-    ]
-    deck += [
-        f"{color}_{special}"
-        for color in card_colors
-        for special in special_cards
-    ]
-    # 4 wild cards
-    deck += [wild for wild in wild_cards] * 4
-    random.shuffle(deck)
-
-    # Draw the initial discard pile card
-    initial_discard_card = random.choice(deck)
-    discard_pile.append(initial_discard_card)
-    deck.remove(initial_discard_card)
-
-    # Deal cards to player and computer
-    player_cards = deck[:NUM_CARDS]
-    computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
-
-    # Remove +4 cards from the computer's hand and draw a replacement card
-    new_computer_cards = []
-    for card in computer_cards:
-        if "+4" in card:
-            # Remove +4 card from computer's hand
-            print(f"Removing +4 card from computer's hand: {card}")
-            # Draw a new card from the deck
-            if deck:
-                new_card = random.choice(deck)
-                deck.remove(new_card)
-                new_computer_cards.append(new_card)
-                print(f"Replaced with new card: {new_card}")
-        else:
-            new_computer_cards.append(card)
-
-    computer_cards = new_computer_cards
-
-    # Print debug information
-    print(f"Deck size: {len(deck)}")
-    print(f"Initial discard pile card: {initial_discard_card}")
-    print(f"Player cards: {len(player_cards)}")
-    print(f"Computer cards: {len(computer_cards)}")
-def main():
-    """Main game loop."""
-    global state
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            if state == "home":
-                if start_button.is_clicked(event):
-                    state = "play"
-                    shuffle_and_deal()
-                elif instructions_button.is_clicked(event):
-                    display_instructions()
-                elif exit_button.is_clicked(event):
-                    pygame.quit()
-                    sys.exit()
-
-        if state == "home":
-            draw_home_screen()
-        elif state == "play":
-            play_game()
-        elif state == "end":
-            end_game("Game Over")  # Or your specific end game condition
-
-
-if __name__ == "__main__":
-    main()
 
 
 def draw_card_from_deck():
@@ -744,6 +667,35 @@ def play_game():
 
     pygame.display.flip()
 
+def main():
+    """Main game loop."""
+    global state
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if state == "home":
+                if start_button.is_clicked(event):
+                    state = "play"
+                    shuffle_and_deal()
+                elif instructions_button.is_clicked(event):
+                    display_instructions()
+                elif exit_button.is_clicked(event):
+                    pygame.quit()
+                    sys.exit()
+
+        if state == "home":
+            draw_home_screen()
+        elif state == "play":
+            play_game()
+        elif state == "end":
+            end_game("Game Over")  # Or your specific end game condition
+
+
+if __name__ == "__main__":
+    main()
 
 
 # Main loop
