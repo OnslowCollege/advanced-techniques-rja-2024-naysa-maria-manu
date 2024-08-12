@@ -1,6 +1,7 @@
 # Created by: Naysa Maria Manu.
 
 # UNO Card game.
+
 import pygame
 import sys
 import random
@@ -14,9 +15,8 @@ SCREEN_HEIGHT = 545
 COLOR_RED = (176, 39, 47)
 FONT_PATH = "Text_features/Font_mont.ttf"
 CARD_FONT_PATH = "Text_features/Comic.ttf"
-HOME_BACKGROUND_IMAGE = "images/UNO_Home.jpg"
+HOME_BACKGROUND_IMAGE = "images/home_screen.jpg"
 GAME_BACKGROUND_IMAGE = "images/UNO_bg.jpg"
-INSTRUCTIONS_BACKGROUND_IMAGE = "images/instructions.jpg"
 CARD_BACK_IMAGE = "images/UNO_card.jpg"
 NUM_CARDS = 7
 CARD_SCALE = 0.37
@@ -32,12 +32,10 @@ card_colors = ["blue", "red", "yellow", "green"]
 special_cards = ["+2", "rev", "skip"]
 wild_cards = ["+4"]
 
+
 # Load images and fonts
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
 game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
-instructions_background_image = pygame.image.load(
-    INSTRUCTIONS_BACKGROUND_IMAGE
-)
 card_back_image = pygame.image.load(CARD_BACK_IMAGE)
 scaled_card_back_image = pygame.transform.scale(
     card_back_image,
@@ -161,17 +159,7 @@ reveal_button = Button(
     TEXT_COLOR,
     font,
 )
-instructions_button = Button(
-    "Instructions", (400, 450), (200, 80), COLOR_RED, (255, 255, 255), font
-)
-play_button = Button(
-    "Play",
-    (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT - 100),
-    (200, 50),
-    COLOR_RED,
-    (255, 255, 255),
-    font,
-)
+
 draw_card_button = Button(
     "DRAW CARD",
     (
@@ -197,14 +185,6 @@ selected_card = None
 direction = 1
 
 
-def show_instructions():
-    """Display the instructions screen."""
-    global screen
-    screen.blit(instructions_background_image, (0, 0))
-    play_button.draw(screen)
-    pygame.display.flip()
-
-
 def draw_card_from_deck():
     """Draw one random card from the deck and add it to the player's hand."""
     global deck, player_cards
@@ -220,8 +200,10 @@ def draw_card_from_deck():
 
 
 def shuffle_and_deal():
-    """Shuffles and hands cards to user and computer."""
-    global player_cards, computer_cards, deck
+    """Shuffles and hands cards to user and computer, and sets the initial discard pile card."""
+    global player_cards, computer_cards, deck, discard_pile
+
+    # Create the deck
     deck = [
         f"{color}_{number}" for color in card_colors for number in range(10)
     ]
@@ -233,11 +215,36 @@ def shuffle_and_deal():
     # 4 wild cards
     deck += [wild for wild in wild_cards] * 4
     random.shuffle(deck)
+
+    # Draw the initial discard pile card
+    initial_discard_card = random.choice(deck)
+    discard_pile.append(initial_discard_card)
+    deck.remove(initial_discard_card)
+
+    # Deal cards to player and computer
     player_cards = deck[:NUM_CARDS]
     computer_cards = deck[NUM_CARDS : NUM_CARDS * 2]
 
+    # Remove +4 cards from the computer's hand and draw a replacement card
+    new_computer_cards = []
+    for card in computer_cards:
+        if "+4" in card:
+            # Remove +4 card from computer's hand
+            print(f"Removing +4 card from computer's hand: {card}")
+            # Draw a new card from the deck
+            if deck:
+                new_card = random.choice(deck)
+                deck.remove(new_card)
+                new_computer_cards.append(new_card)
+                print(f"Replaced with new card: {new_card}")
+        else:
+            new_computer_cards.append(card)
+
+    computer_cards = new_computer_cards
+
     # Print debug information
     print(f"Deck size: {len(deck)}")
+    print(f"Initial discard pile card: {initial_discard_card}")
     print(f"Player cards: {len(player_cards)}")
     print(f"Computer cards: {len(computer_cards)}")
 
@@ -317,12 +324,35 @@ def play_card(card_key):
                 print("Computer drew 2 cards.")
                 pygame.time.wait(2000)
 
-            if card_value == "rev":
+            elif card_value == "+4":
+                # Computer draws 4 cards
+                for _ in range(4):
+                    if deck:
+                        drawn_card = random.choice(deck)
+                        deck.remove(drawn_card)
+                        computer_cards.append(drawn_card)
+                display_message("Computer drew 4 cards!", 2000)
+                print("Computer drew 4 cards.")
+                pygame.time.wait(2000)
+                display_message("Your turn!", 2000)
+                pygame.time.wait(2000)
+                return
+
+            elif card_value == "rev":
                 direction *= -1  # Reverse the direction of play
                 display_message("Reverse card played!", 2000)
                 print("Reverse card played! Direction changed.")
                 pygame.time.wait(2000)
                 return  # Give the turn back to the player
+
+            elif card_value == "skip":
+                display_message(
+                    "Skip card played! Skipping computer's turn.", 2000
+                )
+                print("Skip card played! Skipping computer's turn.")
+                pygame.time.wait(2000)
+                # Skip the computer's turn
+                return
 
             if not player_cards:
                 print("Player has no more cards. Player won the game!")
@@ -331,9 +361,7 @@ def play_card(card_key):
             computer_turn()
         except ValueError:
             display_message("Error: Invalid card format.", 2000)
-            print(
-                f"Error: Invalid card format for card: {card_key}"
-            )  # Updated error message
+            print(f"Error: Invalid card format for card: {card_key}")
     else:
         display_message("Error: Card not found in hand.", 2000)
         print(f"Error: Card {card_key} not found in player's hand.")
@@ -364,7 +392,7 @@ def display_message(message, duration):
 
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
-    global computer_cards, discard_pile, deck
+    global computer_cards, discard_pile, deck, direction
 
     pygame.time.wait(
         2000
@@ -399,6 +427,33 @@ def computer_turn():
                 computer_cards.remove(playable_card)
                 discard_pile.insert(0, playable_card)
                 print(f"Computer played: {playable_card}")
+
+                # Check if the computer has played a reverse card
+                if "rev" in playable_card:
+                    direction *= -1  # Reverse the direction of play
+                    display_message(
+                        "Computer played Reverse card! Direction changed.",
+                        2000,
+                    )
+                    print("Computer played Reverse card! Direction changed.")
+                    pygame.time.wait(
+                        2000
+                    )  # Wait for 2 seconds to show the message
+
+                    # Continue the computer's turn
+                    computer_turn()
+                    return
+
+                # Check if the computer has played a skip card
+                elif "skip" in playable_card:
+                    display_message(
+                        "Computer played Skip card! Skipping your turn.", 2000
+                    )
+                    print("Computer played Skip card! Skipping player's turn.")
+                    pygame.time.wait(2000)
+                    # Skip the player's turn
+                    return
+
                 # Check if the computer has won
                 if not computer_cards:
                     end_game("YOU LOST!")
@@ -423,6 +478,40 @@ def computer_turn():
                             computer_cards.remove(drawn_card)
                             discard_pile.insert(0, drawn_card)
                             print(f"Computer played: {drawn_card}")
+
+                            # Check if the computer has played a reverse card
+                            if "rev" in drawn_card:
+                                direction *= (
+                                    -1
+                                )  # Reverse the direction of play
+                                display_message(
+                                    "Computer played Reverse card! Direction changed.",
+                                    2000,
+                                )
+                                print(
+                                    "Computer played Reverse card! Direction changed."
+                                )
+                                pygame.time.wait(
+                                    2000
+                                )  # Wait for 2 seconds to show the message
+
+                                # Continue the computer's turn
+                                computer_turn()
+                                return
+
+                            # Check if the computer has played a skip card
+                            elif "skip" in drawn_card:
+                                display_message(
+                                    "Computer played Skip card! Skipping your turn.",
+                                    2000,
+                                )
+                                print(
+                                    "Computer played Skip card! Skipping player's turn."
+                                )
+                                pygame.time.wait(2000)
+                                # Skip the player's turn
+                                return
+
                             # Check if the computer has won
                             if not computer_cards:
                                 end_game("YOU LOST!")
@@ -430,6 +519,10 @@ def computer_turn():
                             print(
                                 "Computer didn't find a matching card. Your turn."
                             )
+                            display_message("Your turn!", 2000)
+                            pygame.time.wait(
+                                2000
+                            )  # Wait for 2 seconds to show the message
                     except ValueError:
                         print(
                             f"Error: Invalid drawn card format: {drawn_card}"
@@ -524,6 +617,7 @@ def play_game():
 
     # Display player's cards in a linear layout
     for i in range(len(player_cards)):
+        # Use length of player_cards
         x = (
             i * (card_width + CARD_SPACING)
             + (
@@ -534,15 +628,13 @@ def play_game():
         )
         y = SCREEN_HEIGHT - card_height - 20
         if i < len(player_cards):
+            # Ensure index is within range
             card_key = player_cards[i]
             if reveal_cards:
                 if card_key == selected_card:
                     # Move selected card up by 30 pixels
                     y -= 30
-                try:
-                    screen.blit(card_images[card_key], (x, y))
-                except KeyError:
-                    print(f"Card image not found for: {card_key}")
+                screen.blit(card_images[card_key], (x, y))
             else:
                 screen.blit(scaled_card_back_image, (x, y))
 
@@ -554,20 +646,16 @@ def play_game():
         if discard_pile:
             # Top card on discard pile
             top_card_key = discard_pile[0]
-            try:
-                screen.blit(
-                    card_images[top_card_key],
-                    (
-                        SCREEN_WIDTH // 2 - card_width // 2,
-                        SCREEN_HEIGHT // 2 - card_height // 2,
-                    ),
-                )
-            except KeyError:
-                print(f"Card image not found for: {top_card_key}")
+            screen.blit(
+                card_images[top_card_key],
+                (
+                    SCREEN_WIDTH // 2 - card_width // 2,
+                    SCREEN_HEIGHT // 2 - card_height // 2,
+                ),
+            )
         draw_card_button.draw(screen)
 
     pygame.display.flip()
-
 
 
 # Main loop
@@ -588,7 +676,7 @@ while running:
                         selected_card = card_key
                         play_game()
                         pygame.display.flip()
-                        pygame.time.wait(2000)
+                        pygame.time.wait(100)
                         play_card(card_key)
                         selected_card = None
 
@@ -596,26 +684,21 @@ while running:
                 reveal_cards = True
                 reveal_button_clicked = True
 
-            if state == "home":
-                if start_button.is_clicked(event):
-                    state = "game"
-                elif instructions_button.is_clicked(event):
-                    state = "instructions"
-                    show_instructions()
-            elif state == "game":
-                if shuffle_play_button.is_clicked(event):
-                    shuffle_and_deal()
-                    state = "play"
-                else:
-                    screen.blit(game_background_image, (0, 0))
-                    shuffle_play_button.draw(screen)
-            elif state == "play":
-                play_game()
-            elif state == "instructions":
-                if play_button.is_clicked(event):
-                    state = "game"
-                    screen.blit(game_background_image, (0, 0))
-                    shuffle_play_button.draw(screen)
+        if state == "home":
+            if start_button.is_clicked(event):
+                state = "game"
+            else:
+                screen.blit(home_background_image, (0, 0))
+                start_button.draw(screen)
+        elif state == "game":
+            if shuffle_play_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
+            else:
+                screen.blit(game_background_image, (0, 0))
+                shuffle_play_button.draw(screen)
+        elif state == "play":
+            play_game()
 
         pygame.display.flip()
 
