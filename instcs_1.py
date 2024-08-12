@@ -148,9 +148,6 @@ exit_button = Button(
     font,
 )
 
-shuffle_play_button = Button(
-    "Shuffle and Play", (300, 350), (400, 80), COLOR_RED, (255, 255, 255), font
-)
 reveal_button = Button(
     "Reveal Cards",
     (
@@ -225,7 +222,7 @@ def display_instructions():
     screen.blit(instructions_image, (0, 0))
 
     # Draw the Start button on the instructions screen
-    start_button.draw(screen)
+    exit_button.draw(screen)
 
     pygame.display.flip()  # Update the display
 
@@ -238,7 +235,7 @@ def display_instructions():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 waiting = False
-            if start_button.is_clicked(event):
+            if exit_button.is_clicked(event):
                 shuffle_and_deal()
                 state = "play"
                 waiting = False
