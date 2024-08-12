@@ -304,8 +304,28 @@ def play_card(card_key):
             discard_pile.insert(0, card_key)
             print(f"Player played: {card_key}")
 
-            # Handle special cards (like +2, +4, reverse, etc.)
-            # (Existing logic for handling special cards should go here)
+            # Handle special cards
+            if card_value == "+2":
+                # Computer draws 2 cards from the deck
+                for _ in range(2):
+                    if deck:
+                        drawn_card = deck.pop()
+                        computer_cards.append(drawn_card)
+                        print(f"Computer drew: {drawn_card}")
+                display_message("Computer draws 2 cards!", 2000)
+                pygame.time.wait(2000)
+
+            # Additional logic for other special cards (e.g., Reverse, Skip, +4)
+            elif card_value == "rev":
+                direction *= -1
+                display_message("Reverse card played!", 2000)
+                pygame.time.wait(2000)
+            elif card_value == "skip":
+                display_message(
+                    "Skip card played! Skipping computer's turn.", 2000
+                )
+                pygame.time.wait(2000)
+                return
 
             # Check if the player has won
             if not player_cards:
