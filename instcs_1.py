@@ -789,12 +789,9 @@ while running:
                 screen.blit(home_background_image, (0, 0))
                 start_button.draw(screen)
         elif state == "home":
-            if shuffle_play_button.is_clicked(event):
+            if play_button.is_clicked(event):
                 shuffle_and_deal()
                 state = "play"
-            else:
-                screen.blit(game_background_image, (0, 0))
-                shuffle_play_button.draw(screen)
         elif state == "play":
             play_game()
 
