@@ -32,6 +32,7 @@ card_colors = ["blue", "red", "yellow", "green"]
 special_cards = ["+2", "rev", "skip"]
 wild_cards = ["+4"]
 
+
 # Load images and fonts
 home_background_image = pygame.image.load(HOME_BACKGROUND_IMAGE)
 game_background_image = pygame.image.load(GAME_BACKGROUND_IMAGE)
