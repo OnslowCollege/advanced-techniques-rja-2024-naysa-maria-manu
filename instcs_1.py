@@ -222,7 +222,7 @@ def display_instructions():
     screen.blit(instructions_image, (0, 0))
 
     # Draw the Start button on the instructions screen
-    exit_button.draw(screen)
+    start_button.draw(screen)
 
     pygame.display.flip()  # Update the display
 
