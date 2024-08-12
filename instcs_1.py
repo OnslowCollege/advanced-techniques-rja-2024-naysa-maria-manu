@@ -187,6 +187,29 @@ deck = []
 selected_card = None
 direction = 1
 
+def display_instructions():
+    """Display the instructions image."""
+    # Load the instructions image
+    instructions_image = pygame.image.load("instructions.jpg")
+
+    # Resize the image to fit the screen, if necessary
+    instructions_image = pygame.transform.scale(
+        instructions_image, (SCREEN_WIDTH, SCREEN_HEIGHT)
+    )
+
+    # Display the image on the screen
+    screen.blit(instructions_image, (0, 0))
+    pygame.display.flip()
+
+    # Wait for the player to press a key to return to the home screen
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                waiting = False
 
 def draw_card_from_deck():
     """Draw one random card from the deck and add it to the player's hand."""
@@ -599,6 +622,8 @@ def end_game(message):
                 reveal_cards = False
                 reveal_button_clicked = False
                 waiting = False
+            if instructions_button.is_clicked(event):
+                display_instructions()
 
 
 def play_game():
