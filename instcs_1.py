@@ -706,7 +706,6 @@ def play_game():
 
     # Display player's cards in a linear layout
     for i in range(len(player_cards)):
-        # Use length of player_cards
         x = (
             i * (card_width + CARD_SPACING)
             + (
@@ -745,6 +744,7 @@ def play_game():
         draw_card_button.draw(screen)
 
     pygame.display.flip()
+
 
 
 # Main loop
