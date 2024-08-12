@@ -171,7 +171,14 @@ draw_card_button = Button(
     TEXT_COLOR,
     font,
 )
-
+play_button = Button(
+    "PLAY",
+    (SCREEN_WIDTH - 200, SCREEN_HEIGHT - 60),
+    (100, 50),
+    COLOR_RED,
+    (255, 255, 255),
+    font,
+)
 # Game state
 state = "home"
 reveal_cards = False
@@ -222,9 +229,6 @@ def display_instructions():
     screen.blit(instructions_image, (0, 0))
 
     # Draw the Start button on the instructions screen
-    play_button = Button(
-        "PLAY", (400, 475), (180, 80), COLOR_RED, (255, 255, 255), font
-    )
     play_button.draw(screen)
     pygame.display.flip()  # Update the display
 
