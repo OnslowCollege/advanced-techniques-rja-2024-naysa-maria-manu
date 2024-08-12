@@ -222,8 +222,10 @@ def display_instructions():
     screen.blit(instructions_image, (0, 0))
 
     # Draw the Start button on the instructions screen
-    start_button.draw(screen)
-
+    play_button = Button(
+        "PLAY", (400, 475), (180, 80), COLOR_RED, (255, 255, 255), font
+    )
+    play_button.draw(screen)
     pygame.display.flip()  # Update the display
 
     # Wait for player interaction
