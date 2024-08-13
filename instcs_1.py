@@ -274,35 +274,30 @@ def play_card(card_key):
     global discard_pile, player_cards, computer_cards, direction, deck
 
     if card_key in player_cards:
-        try:
+        print(f"Attempting to play card: {card_key}")  # Debugging statement
+        card_color, card_value = card_key.split("_")
+        print(
+            f"Card color: {card_color}, Card value: {card_value}"
+        )  # Debugging statement
+
+        top_card = discard_pile[0] if discard_pile else None
+
+        # Allow the +4 card to be played at any time
+        if card_value != "+4" and top_card:
+            top_color, top_value = top_card.split("_")
             print(
-                f"Attempting to play card: {card_key}"
+                f"Top card on discard pile: {top_card}"
             )  # Debugging statement
-            card_color, card_value = card_key.split("_")
             print(
-                f"Card color: {card_color}, Card value: {card_value}"
+                f"Top card color: {top_color}, Top card value: {top_value}"
             )  # Debugging statement
 
-            top_card = discard_pile[0] if discard_pile else None
-
-            # Allow the +4 card to be played at any time
-            if card_value != "+4" and top_card:
-                top_color, top_value = top_card.split("_")
-                print(
-                    f"Top card on discard pile: {top_card}"
-                )  # Debugging statement
-                print(
-                    f"Top card color: {top_color}, Top card value: {top_value}"
-                )  # Debugging statement
-
-                if card_color != top_color and card_value != top_value:
-                    display_message("Wrong selection! Lost your chance", 2000)
-                    print(
-                        f"Player attempted to play an invalid card: {card_key}"
-                    )
-                    pygame.time.wait(2000)
-                    computer_turn()
-                    return
+            if card_color != top_color and card_value != top_value:
+                display_message("Wrong selection! Lost your chance", 2000)
+                print(f"Player attempted to play an invalid card: {card_key}")
+                pygame.time.wait(2000)
+                computer_turn()
+                return
 
             player_cards.remove(card_key)
             discard_pile.insert(0, card_key)
@@ -354,12 +349,7 @@ def play_card(card_key):
                 end_game("YOU WON!")
 
             computer_turn()
-        except ValueError:
-            display_message("Error: Invalid card format.", 2000)
-            print(f"Error: Invalid card format for card: {card_key}")
-    else:
-        display_message("Error: Card not found in hand.", 2000)
-        print(f"Error: Card {card_key} not found in player's hand.")
+
         
 
 
