@@ -354,6 +354,12 @@ def play_card(card_key):
                 end_game("YOU WON!")
 
             computer_turn()
+        except ValueError:
+            display_message("Error: Invalid card format.", 2000)
+            print(f"Error: Invalid card format for card: {card_key}")
+    else:
+        display_message("Error: Card not found in hand.", 2000)
+        print(f"Error: Card {card_key} not found in player's hand.")
         
 
 
