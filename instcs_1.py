@@ -1,4 +1,5 @@
-"""Created by: Naysa Maria Manu.
+"""
+Created by: Naysa Maria Manu.
 
 UNO Card game.
 """
