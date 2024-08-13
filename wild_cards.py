@@ -321,7 +321,7 @@ def play_card(card_key):
                         drawn_card = random.choice(deck)
                         deck.remove(drawn_card)
                         computer_cards.append(drawn_card)
-                display_message("Computer drew 2 cards!", 2000)
+                display_message("Computer drew 2 cards!", 1000)
                 print("Computer drew 2 cards.")
                 pygame.time.wait(2000)
 
@@ -332,7 +332,7 @@ def play_card(card_key):
                         drawn_card = random.choice(deck)
                         deck.remove(drawn_card)
                         computer_cards.append(drawn_card)
-                display_message("Computer drew 4 cards!", 2000)
+                display_message("Computer drew 4 cards!", 1000)
                 print("Computer drew 4 cards.")
                 pygame.time.wait(2000)
                 display_message("Your turn!", 2000)
