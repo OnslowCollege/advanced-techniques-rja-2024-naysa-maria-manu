@@ -196,7 +196,8 @@ direction = 1
 
 def draw_home_screen():
     """Draw the home screen with all buttons."""
-    screen.blit(home_background_image, (0, 0))  # Draw background first
+    # Draw background first
+    screen.blit(home_background_image, (0, 0))
     start_button.draw(screen)
     instructions_button.draw(screen)
     exit_button.draw(screen)
@@ -232,7 +233,8 @@ def display_instructions():
 
     # Draw the Start button on the instructions screen
     play_button.draw(screen)
-    pygame.display.flip()  # Update the display
+    # Update the display
+    pygame.display.flip()
 
     # Wait for player interaction
     waiting = True
@@ -274,23 +276,19 @@ def play_card(card_key):
     global discard_pile, player_cards, computer_cards, direction, deck
 
     if card_key in player_cards:
-        print(f"Attempting to play card: {card_key}")  # Debugging statement
+        # Debugging statement
+        print(f"Attempting to play card: {card_key}")
         card_color, card_value = card_key.split("_")
-        print(
-            f"Card color: {card_color}, Card value: {card_value}"
-        )  # Debugging statement
+        print(f"Card color: {card_color}, Card value: {card_value}")
 
         top_card = discard_pile[0] if discard_pile else None
 
-        # Allow the +4 card to be played at any time
+        # Allow the +4 card to be played
         if card_value != "+4" and top_card:
             top_color, top_value = top_card.split("_")
-            print(
-                f"Top card on discard pile: {top_card}"
-            )  # Debugging statement
-            print(
-                f"Top card color: {top_color}, Top card value: {top_value}"
-            )  # Debugging statement
+            # Debugging statement
+            print(f"Top card on discard pile: {top_card}")
+            print(f"Top card color: {top_color}, Top card value: {top_value}")
 
             if card_color != top_color and card_value != top_value:
                 display_message("Wrong selection! Lost your chance", 2000)
@@ -330,11 +328,12 @@ def play_card(card_key):
 
 
             elif card_value == "rev":
-                direction *= -1  # Reverse the direction of play
+                # Reverse the direction of play
+                direction *= -1
                 display_message("Reverse card played!", 2000)
                 print("Reverse card played! Direction changed.")
                 pygame.time.wait(2000)
-                return  # Give the turn back to the player
+                return
 
             elif card_value == "skip":
                 # skip the other player's turn
