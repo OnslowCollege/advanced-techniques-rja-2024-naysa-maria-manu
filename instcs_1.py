@@ -218,17 +218,20 @@ def draw_card_from_deck():
         player_cards.append(card)
         print(f"Drawn card: {card}")
 
-        # Check if the drawn card matches the top card on the discard pile
+        # After drawing the card, check if it matches the top card on the discard pile
         if discard_pile:
             top_card = discard_pile[0]
-            top_color, top_value = top_card.split("_")
-            drawn_card_color, drawn_card_value = card.split("_")
-            if drawn_card_color == top_color or drawn_card_value == top_value:
-                # Drawn card matches, player can play it or choose a different action
-                print(f"Drawn card matches the discard pile: {card}")
-            else:
-                # Drawn card doesn't match, computer's turn
+            if not card_matches_top_card(card, top_card):
+                display_message("Card doesn't match! Computer's turn.", 2000)
+                pygame.time.wait(2000)
                 computer_turn()
+
+
+def card_matches_top_card(card, top_card):
+    """Check if the drawn card matches the top card on the discard pile."""
+    card_color, card_value = card.split("_")
+    top_color, top_value = top_card.split("_")
+    return card_color == top_color or card_value == top_value
 
 
 def display_instructions():
@@ -648,7 +651,6 @@ def play_game():
         )
         y = SCREEN_HEIGHT - card_height - 20
         if i < len(player_cards):
-            # Ensure index is within range
             card_key = player_cards[i]
             if reveal_cards:
                 if card_key == selected_card:
@@ -729,6 +731,7 @@ def main():
             end_game("Game Over")
 
         pygame.display.flip()
+
 
 if __name__ == "__main__":
     main()
