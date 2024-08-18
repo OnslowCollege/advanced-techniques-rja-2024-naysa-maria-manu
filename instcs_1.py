@@ -178,9 +178,10 @@ play_button = Button(
     (SCREEN_WIDTH - 200, SCREEN_HEIGHT - 60),
     (100, 50),
     COLOR_RED,
-    (255, 255, 255),
+    TEXT_COLOR,
     font,
 )
+
 # Game state
 state = "home"
 reveal_cards = False
