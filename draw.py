@@ -206,20 +206,38 @@ def draw_home_screen():
 
 
 def draw_card_from_deck():
-    """Draw one random card from the deck and return it."""
-    global deck, player_cards
+    """Draw one random card from the deck and check if it matches the top card on the discard pile."""
+    global deck, player_cards, discard_pile
 
     if deck:
         # Draw a random card from the deck
-        card = random.choice(deck)
+        drawn_card = random.choice(deck)
         # Remove the card from the deck
-        deck.remove(card)
-        # Add it to the player's hand
-        player_cards.append(card)
-        print(f"Drawn card: {card}")
-        return card
-    return None
+        deck.remove(drawn_card)
 
+        # Check if the drawn card matches the top card of the discard pile
+        top_card = discard_pile[0] if discard_pile else None
+
+        if top_card:
+            top_color, top_value = top_card.split("_")
+            drawn_card_color, drawn_card_value = drawn_card.split("_")
+
+            if drawn_card_color == top_color or drawn_card_value == top_value:
+                # If the drawn card matches, add it to the player's hand and play it
+                player_cards.append(drawn_card)
+                print(f"Drawn card matches: {drawn_card}")
+                play_card(drawn_card)
+            else:
+                # If it doesn't match, add it to the player's hand and notify the player
+                player_cards.append(drawn_card)
+                display_message("Not matching card, Computer's turn!", 2000)
+                print(f"Drawn card does not match: {drawn_card}")
+                pygame.time.wait(2000)
+                computer_turn()
+        else:
+            # If there's no top card, just add the drawn card to the player's hand
+            player_cards.append(drawn_card)
+            print(f"Drawn card (no top card to match): {drawn_card}")
 
 
 def display_instructions():
@@ -630,9 +648,7 @@ def end_game(message):
 
 
 def play_game():
-    """Display the game screen with cards."""
-    global selected_card, reveal_cards, discard_pile
-
+    """Display the game screen with cards and handle player actions."""
     screen.blit(game_background_image, (0, 0))
 
     # Display computer's cards in a linear layout
@@ -661,9 +677,11 @@ def play_game():
         )
         y = SCREEN_HEIGHT - card_height - 20
         if i < len(player_cards):
+            # Ensure index is within range
             card_key = player_cards[i]
             if reveal_cards:
                 if card_key == selected_card:
+                    # Move selected card up by 30 pixels
                     y -= 30
                 screen.blit(card_images[card_key], (x, y))
             else:
@@ -675,6 +693,7 @@ def play_game():
     else:
         # Draw discard pile
         if discard_pile:
+            # Top card on discard pile
             top_card_key = discard_pile[0]
             screen.blit(
                 card_images[top_card_key],
@@ -686,26 +705,6 @@ def play_game():
         draw_card_button.draw(screen)
 
     pygame.display.flip()
-
-    # Handle card drawing
-    if draw_card_button.is_clicked(pygame.event.get()):
-        drawn_card = draw_card_from_deck()
-        if drawn_card:
-            top_card = discard_pile[0] if discard_pile else None
-            if top_card:
-                drawn_card_color, drawn_card_value = drawn_card.split("_")
-                top_card_color, top_card_value = top_card.split("_")
-                if (
-                    drawn_card_color != top_card_color
-                    and drawn_card_value != top_card_value
-                ):
-                    display_message(
-                        "Not matching card. Computer's turn!", 2000
-                    )
-                    print(f"Player drew a non-matching card: {drawn_card}")
-                    pygame.time.wait(2000)
-                    computer_turn()
-                    return
 
 
 def main():
@@ -759,7 +758,6 @@ def main():
             end_game("Game Over")
 
         pygame.display.flip()
-
 
 if __name__ == "__main__":
     main()
