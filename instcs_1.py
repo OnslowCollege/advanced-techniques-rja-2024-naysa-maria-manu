@@ -335,6 +335,7 @@ def play_card(card_key):
             pygame.time.wait(1000)
             return
 
+
         card_color, card_value = card_key.split("_")
         top_card = discard_pile[0] if discard_pile else None
 
