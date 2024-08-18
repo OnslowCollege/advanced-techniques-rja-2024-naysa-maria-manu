@@ -193,6 +193,10 @@ deck = []
 # To track the card that has been clicked
 selected_card = None
 
+global direction
+direction = 1
+
+
 def draw_home_screen():
     """Draw the home screen with all buttons."""
     # Draw background first
@@ -292,7 +296,6 @@ def get_card_at_position(x, y):
             return player_cards[i]
     return None
 
-direction = 1
 
 def play_card(card_key):
     global discard_pile, player_cards, computer_cards, deck
