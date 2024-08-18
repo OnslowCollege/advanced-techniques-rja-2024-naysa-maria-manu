@@ -353,10 +353,10 @@ def play_card(card_key):
                     drawn_card = random.choice(deck)
                     deck.remove(drawn_card)
                     computer_cards.append(drawn_card)
-            display_message("Computer drew 4 cards!", 2000)
-            pygame.time.wait(2000)
-            display_message("Your turn!", 2000)
-            pygame.time.wait(2000)
+            display_message("Computer drew 4 cards!", 1000)
+            pygame.time.wait(1000)
+            display_message("Your turn!", 1000)
+            pygame.time.wait(1000)
             return
 
         if not player_cards:
