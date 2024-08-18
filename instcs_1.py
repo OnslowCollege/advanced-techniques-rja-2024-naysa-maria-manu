@@ -267,6 +267,30 @@ def display_instructions():
                 waiting = False
 
 
+def draw_player_cards():
+    """Draw the player's cards on the screen."""
+    card_width, card_height = scaled_card_back_image.get_size()
+    for i, card in enumerate(player_cards):
+        # Determine the card's position
+        card_x = (
+            i * (card_width + CARD_SPACING)
+            + (
+                SCREEN_WIDTH
+                - ((card_width + CARD_SPACING) * len(player_cards))
+            )
+            // 2
+        )
+        card_y = SCREEN_HEIGHT - card_height - 20
+
+        # If the card is selected, move it up
+        if card == selected_card:
+            card_y -= 20  # Move the card up by 20 pixels
+
+        # Draw the card
+        card_image = card_images[card]
+        screen.blit(card_image, (card_x, card_y))
+
+
 def get_card_at_position(x, y):
     """Check if the mouse position is over a card and return the card key."""
     card_width, card_height = scaled_card_back_image.get_size()
@@ -280,6 +304,11 @@ def get_card_at_position(x, y):
             // 2
         )
         card_y = SCREEN_HEIGHT - card_height - 20
+
+        # If the card is selected, move it up
+        if player_cards[i] == selected_card:
+            card_y -= 20  # Adjust the y position for the selected card
+
         if (
             card_x <= x <= card_x + card_width
             and card_y <= y <= card_y + card_height
