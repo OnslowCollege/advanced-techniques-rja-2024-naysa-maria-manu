@@ -425,7 +425,7 @@ def shuffle_and_deal():
 
 def computer_turn():
     """Handle the computer's turn with a delay after the user plays a card."""
-    global computer_cards, discard_pile, deck, direction
+    global computer_cards, discard_pile, deck, direction, player_cards
 
     pygame.time.wait(
         2000
@@ -478,18 +478,27 @@ def computer_turn():
                     pygame.time.wait(2000)
                     return
 
+                if playable_card == "+2":
+                    for _ in range(2):
+                        if deck:
+                            drawn_card = random.choice(deck)
+                            deck.remove(drawn_card)
+                            player_cards.append(drawn_card)
+                    display_message(
+                        "Computer played +2 card! You drew 2 cards!", 2000
+                    )
+                    pygame.time.wait(2000)
+                    return
+
                 if "rev" in playable_card:
                     direction *= -1
                     display_message("Computer played Reverse card!", 2000)
                     pygame.time.wait(2000)
-                    computer_turn()
                     return
 
                 if "skip" in playable_card:
-                    direction *= -1
                     display_message("Computer played Skip card!", 2000)
                     pygame.time.wait(2000)
-                    computer_turn()
                     return
 
                 if not computer_cards:
@@ -534,7 +543,6 @@ def computer_turn():
                                 return
 
                             if "skip" in drawn_card:
-                                direction *= -1
                                 display_message(
                                     "Computer played Skip card!", 2000
                                 )
@@ -556,6 +564,7 @@ def computer_turn():
             print("Error: No top card on discard pile.")
     else:
         print("Error: No cards in computer's hand.")
+
 
 
 
