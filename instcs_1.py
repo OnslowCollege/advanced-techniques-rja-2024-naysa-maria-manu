@@ -520,7 +520,8 @@ def computer_turn():
                         if deck:
                             drawn_card = random.choice(deck)
                             deck.remove(drawn_card)
-                            computer_cards.append(drawn_card)
+                            player_cards.append(drawn_card)
+                            computer_turn()
                     display_message("Computer played +4 card!", 1000)
                     pygame.time.wait(1000)
                     return
