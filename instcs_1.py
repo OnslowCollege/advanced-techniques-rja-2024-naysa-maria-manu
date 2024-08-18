@@ -331,6 +331,7 @@ def play_card(card_key):
             display_message("Computer drew 2 cards!", 2000)
             pygame.time.wait(2000)
 
+
         elif card_value == "rev":
             direction *= -1
             display_message("Reverse card played!", 2000)
