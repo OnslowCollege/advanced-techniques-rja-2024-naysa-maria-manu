@@ -295,7 +295,7 @@ def get_card_at_position(x, y):
 
 
 def play_card(card_key):
-    global discard_pile, player_cards, computer_cards, direction, deck
+    global discard_pile, player_cards, computer_cards, deck
 
     if card_key in player_cards:
         print(f"Attempting to play card: {card_key}")
