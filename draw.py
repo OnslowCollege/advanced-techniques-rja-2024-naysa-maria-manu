@@ -193,9 +193,6 @@ deck = []
 # To track the card that has been clicked
 selected_card = None
 
-global direction
-direction = 1
-
 
 def draw_home_screen():
     """Draw the home screen with all buttons."""
@@ -347,6 +344,7 @@ def play_card(card_key):
             return
 
         elif card_value == "rev":
+            global direction
             direction *= -1
             display_message("Reverse card played!", 2000)
             print("Reverse card played! Direction changed.")
@@ -355,6 +353,7 @@ def play_card(card_key):
             return
 
         elif card_value == "skip":
+            global direction
             direction *= -1
             display_message("Skip card played!", 2000)
             print("Skip card played!")
@@ -684,7 +683,7 @@ def main():
                     reveal_button_clicked = True
 
             elif state == "end":
-                end_game("Game Over")  # Or your specific end game condition
+                end_game("Game Over")
 
         if state == "home":
             draw_home_screen()
