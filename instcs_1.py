@@ -218,81 +218,17 @@ def draw_card_from_deck():
         player_cards.append(card)
         print(f"Drawn card: {card}")
 
-    # After drawing a card, display a message and move to the computer's turn
-    display_message("Computer's turn!", 2000)
-    computer_turn()
-
-
-def play_card(card_key):
-    global discard_pile, player_cards, computer_cards, direction, deck
-
-    if card_key in player_cards:
-        print(f"Attempting to play card: {card_key}")
-        card_color, card_value = card_key.split("_")
-        print(f"Card color: {card_color}, Card value: {card_value}")
-
+        # Return True if the drawn card is playable, otherwise False
         top_card = discard_pile[0] if discard_pile else None
-
-        if card_value != "+4" and top_card:
-            top_color, top_value = top_card.split("_")
-            print(f"Top card on discard pile: {top_card}")
-            print(f"Top card color: {top_color}, Top card value: {top_value}")
-
-            if card_color != top_color and card_value != top_value:
-                display_message("Wrong selection! Lost your chance", 2000)
-                print(f"Player attempted to play an invalid card: {card_key}")
-                pygame.time.wait(2000)
-                computer_turn()
-                return
-
-        player_cards.remove(card_key)
-        discard_pile.insert(0, card_key)
-        print(f"Player played: {card_key}")
-
-        if card_value == "+2":
-            for _ in range(2):
-                if deck:
-                    drawn_card = random.choice(deck)
-                    deck.remove(drawn_card)
-                    computer_cards.append(drawn_card)
-            display_message("Computer drew 2 cards!", 2000)
-            print("Computer drew 2 cards.")
-            pygame.time.wait(2000)
-
-        elif card_value == "+4":
-            for _ in range(4):
-                if deck:
-                    drawn_card = random.choice(deck)
-                    deck.remove(drawn_card)
-                    computer_cards.append(drawn_card)
-            display_message("Computer drew 4 cards!", 2000)
-            print("Computer drew 4 cards.")
-            pygame.time.wait(2000)
-            display_message("Your turn!", 2000)
-            pygame.time.wait(2000)
-            return
-
-        elif card_value == "rev":
-            direction *= -1
-            display_message("Reverse card played!", 2000)
-            print("Reverse card played! Direction changed.")
-            pygame.time.wait(2000)
-            return
-
-        elif card_value == "skip":
-            direction *= -1
-            display_message("Skip card played!", 2000)
-            print("Skip card played!")
-            pygame.time.wait(2000)
-            return
-
-        if not player_cards:
-            print("Player has no more cards. Player won the game!")
-            end_game("YOU WON!")
-
-        # After the player's turn, it's the computer's turn
-        display_message("Computer's turn!", 2000)
-        computer_turn()
+        if top_card:
+            try:
+                card_color, card_value = card.split("_")
+                top_color, top_value = top_card.split("_")
+                if card_color == top_color or card_value == top_value:
+                    return True
+            except ValueError:
+                pass
+        return False
 
 
 def display_instructions():
@@ -424,7 +360,11 @@ def play_card(card_key):
                 print("Player has no more cards. Player won the game!")
                 end_game("YOU WON!")
 
-            computer_turn()
+            # Draw a card if the player played a card with no matching color or number
+            if not draw_card_from_deck():
+                display_message("Computer's turn!", 2000)
+                pygame.time.wait(2000)
+                computer_turn()
 
 
 def draw_card_for_computer():
@@ -760,7 +700,6 @@ def play_game():
         draw_card_button.draw(screen)
 
     pygame.display.flip()
-
 
 def main():
     """Main game loop."""
