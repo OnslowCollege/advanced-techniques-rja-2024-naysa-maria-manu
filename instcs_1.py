@@ -232,7 +232,7 @@ def display_instructions():
     # Display the image on the screen
     screen.blit(instructions_image, (0, 0))
 
-    # Draw the Start button on the instructions screen
+    # Draw the Start and Play buttons on the instructions screen
     play_button.draw(screen)
     # Update the display
     pygame.display.flip()
@@ -246,10 +246,11 @@ def display_instructions():
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 waiting = False
-            if exit_button.is_clicked(event):
+            if start_button.is_clicked(event) or play_button.is_clicked(event):
                 shuffle_and_deal()
                 state = "play"
                 waiting = False
+
 
 
 def get_card_at_position(x, y):
