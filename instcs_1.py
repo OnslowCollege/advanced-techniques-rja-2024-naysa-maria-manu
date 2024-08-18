@@ -467,19 +467,19 @@ def computer_turn():
                         "Computer played +2 card! You drew 2 cards.", 1000
                     )
 
-                elif "rev" in playable_card:
+                if "rev" in playable_card:
                     direction *= -1
                     display_message("Computer played Reverse card!", 1000)
                     computer_turn()
                     return
 
-                elif "skip" in playable_card:
+                if "skip" in playable_card:
                     direction *= -1
                     display_message("Computer played Skip card!", 1000)
                     computer_turn()
                     return
 
-                elif "+4" in playable_card:
+                if "+4" in playable_card:
                     for _ in range(4):
                         if deck:
                             drawn_card = random.choice(deck)
@@ -524,11 +524,15 @@ def computer_turn():
                                 display_message(
                                     "Computer played Reverse card!", 2000
                                 )
+                                computer_turn()
+                                return ()
 
                             elif "skip" in drawn_card:
                                 display_message(
                                     "Computer played Skip card!", 2000
                                 )
+                                computer_turn()
+                                return
 
                             if not computer_cards:
                                 end_game("YOU LOST!")
