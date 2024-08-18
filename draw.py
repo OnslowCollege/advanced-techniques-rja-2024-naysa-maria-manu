@@ -193,7 +193,6 @@ deck = []
 # To track the card that has been clicked
 selected_card = None
 
-
 def draw_home_screen():
     """Draw the home screen with all buttons."""
     # Draw background first
@@ -293,6 +292,7 @@ def get_card_at_position(x, y):
             return player_cards[i]
     return None
 
+direction = 1
 
 def play_card(card_key):
     global discard_pile, player_cards, computer_cards, deck
@@ -344,7 +344,6 @@ def play_card(card_key):
             return
 
         elif card_value == "rev":
-            global direction
             direction *= -1
             display_message("Reverse card played!", 2000)
             print("Reverse card played! Direction changed.")
@@ -353,7 +352,6 @@ def play_card(card_key):
             return
 
         elif card_value == "skip":
-            global direction
             direction *= -1
             display_message("Skip card played!", 2000)
             print("Skip card played!")
