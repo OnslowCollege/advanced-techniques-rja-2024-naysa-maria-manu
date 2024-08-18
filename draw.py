@@ -697,4 +697,47 @@ def main():
 
 if __name__ == "__main__":
     main()
+# Main loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = event.pos
+            if state == "play":
+                if draw_card_button.rect.collidepoint(x, y):
+                    draw_card_from_deck()
+                else:
+                    card_key = get_card_at_position(x, y)
+                    if card_key and reveal_cards:
+                        selected_card = card_key
+                        play_game()
+                        pygame.display.flip()
+                        pygame.time.wait(100)
+                        play_card(card_key)
+                        selected_card = None
+
+            if reveal_button.is_clicked(event):
+                reveal_cards = True
+                reveal_button_clicked = True
+
+        if state == "home":
+            if start_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
+            else:
+                screen.blit(home_background_image, (0, 0))
+                start_button.draw(screen)
+        elif state == "home":
+            if play_button.is_clicked(event):
+                shuffle_and_deal()
+                state = "play"
+        elif state == "play":
+            play_game()
+
+        pygame.display.flip()
+
+pygame.quit()
+sys.exit()
