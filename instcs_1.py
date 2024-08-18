@@ -350,7 +350,7 @@ def play_card(card_key):
 
         computer_turn()
 
-    global discard_pile, player_cards, computer_cards, direction, deck
+
 
     if card_key in player_cards:
         print(f"Attempting to play card: {card_key}")
