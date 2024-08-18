@@ -218,18 +218,6 @@ def draw_card_from_deck():
         player_cards.append(card)
         print(f"Drawn card: {card}")
 
-        # Return True if the drawn card is playable, otherwise False
-        top_card = discard_pile[0] if discard_pile else None
-        if top_card:
-            try:
-                card_color, card_value = card.split("_")
-                top_color, top_value = top_card.split("_")
-                if card_color == top_color or card_value == top_value:
-                    return True
-            except ValueError:
-                pass
-        return False
-
 
 def display_instructions():
     """Display the instructions image with the 'Shuffle and Play' button."""
@@ -339,6 +327,7 @@ def play_card(card_key):
                 display_message("Your turn!", 2000)
                 pygame.time.wait(2000)
                 return
+
 
             elif card_value == "rev":
                 # Reverse the direction of play
