@@ -432,7 +432,7 @@ def shuffle_and_deal():
     print("Computer Cards:", computer_cards)
     print("Discard Pile:", discard_pile)
 
-direction = 1
+
 
 def computer_turn():
     global discard_pile, computer_cards, deck, direction
