@@ -192,7 +192,6 @@ discard_pile = []
 deck = []
 # To track the card that has been clicked
 selected_card = None
-direction = 1
 
 
 def draw_home_screen():
@@ -368,7 +367,6 @@ def play_card(card_key):
         computer_turn()
 
 
-
 def draw_card_for_computer():
     """Draw a card for the computer from the deck."""
     global deck, computer_cards
@@ -496,6 +494,7 @@ def computer_turn():
             pygame.time.wait(2000)
 
         elif card_value == "rev":
+            global direction
             direction *= -1
             display_message("Reverse card played!", 2000)
             print("Reverse card played! Direction changed.")
@@ -504,6 +503,7 @@ def computer_turn():
             return
 
         elif card_value == "skip":
+            global direction
             direction *= -1
             display_message("Skip card played!", 2000)
             print("Skip card played!")
