@@ -484,7 +484,6 @@ def computer_turn():
         card_to_play = playable_cards[0]
         computer_cards.remove(card_to_play)
         discard_pile.insert(0, card_to_play)
-        display_message(f"Computer played: {card_to_play}", 2000)
         print(f"Computer played: {card_to_play}")
 
         card_color, card_value = card_to_play.split("_")
