@@ -527,17 +527,15 @@ def computer_turn():
                     pygame.time.wait(2000)
                     return
 
-                if playable_card == "+2":
+                if card_value == "+2":
+                    # Add 2 cards to the computer's hand
                     for _ in range(2):
                         if deck:
                             drawn_card = random.choice(deck)
                             deck.remove(drawn_card)
-                            player_cards.append(drawn_card)
-                    display_message(
-                        "Computer played +2 card! You drew 2 cards!", 2000
-                    )
+                            computer_cards.append(drawn_card)
+                    display_message("Computer drew 2 cards!", 2000)
                     pygame.time.wait(2000)
-                    return
 
                 if "rev" in playable_card:
                     direction *= -1
