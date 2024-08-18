@@ -335,13 +335,11 @@ def play_card(card_key):
             direction *= -1
             display_message("Reverse card played!", 2000)
             pygame.time.wait(2000)
-            computer_turn()
             return
 
         elif card_value == "skip":
             display_message("Skip card played!", 2000)
             pygame.time.wait(2000)
-            computer_turn()
             return
 
         if not player_cards:
