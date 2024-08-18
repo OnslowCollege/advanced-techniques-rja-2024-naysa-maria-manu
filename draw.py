@@ -443,22 +443,29 @@ def shuffle_and_deal():
 
 
 def computer_turn():
-    global discard_pile, computer_cards, deck, direction
+    global discard_pile, computer_cards, deck
 
     if not computer_cards:
         print("Computer has no more cards. Computer won the game!")
         end_game("COMPUTER WON!")
 
-    # Select the top card from the discard pile
-    top_card = discard_pile[0]
+    # Select a card to play
+    top_card = discard_pile[0] if discard_pile else None
+    if not top_card:
+        print("Discard pile is empty.")
+        return
+
     top_color, top_value = top_card.split("_")
 
     # Find a matching card
-    playable_cards = [
-        card
-        for card in computer_cards
-        if card.split("_")[0] == top_color or card.split("_")[1] == top_value
-    ]
+    playable_cards = []
+    for card in computer_cards:
+        try:
+            card_color, card_value = card.split("_")
+            if card_color == top_color or card_value == top_value:
+                playable_cards.append(card)
+        except ValueError:
+            print(f"Malformed card in computer's hand: {card}")
 
     if not playable_cards:
         # Draw a card if no matching cards
@@ -466,71 +473,11 @@ def computer_turn():
             drawn_card = random.choice(deck)
             deck.remove(drawn_card)
             computer_cards.append(drawn_card)
+            display_message("Computer drew a card!", 2000)
             print(f"Computer drew a card: {drawn_card}")
 
-            # Check if the drawn card matches the top card of the discard pile
-            drawn_card_color, drawn_card_value = drawn_card.split("_")
-            if drawn_card_color == top_color or drawn_card_value == top_value:
-                # Play the drawn card
-                computer_cards.remove(drawn_card)
-                discard_pile.insert(0, drawn_card)
-                display_message(f"Computer played: {drawn_card}", 2000)
-                print(f"Computer played: {drawn_card}")
-
-                # Handle special cards
-                if drawn_card_value == "+2":
-                    # Player draws 2 cards
-                    for _ in range(2):
-                        if deck:
-                            drawn_card = random.choice(deck)
-                            deck.remove(drawn_card)
-                            player_cards.append(drawn_card)
-                    display_message("Player drew 2 cards!", 2000)
-                    print("Player drew 2 cards.")
-                    pygame.time.wait(2000)
-
-                elif drawn_card_value == "+4":
-                    # Player draws 4 cards
-                    for _ in range(4):
-                        if deck:
-                            drawn_card = random.choice(deck)
-                            deck.remove(drawn_card)
-                            player_cards.append(drawn_card)
-                    display_message("Player drew 4 cards!", 2000)
-                    print("Player drew 4 cards.")
-                    pygame.time.wait(2000)
-
-                elif drawn_card_value == "rev":
-                    # Reverse the direction of play and give computer another turn
-                    direction *= -1
-                    display_message("Reverse card played!", 2000)
-                    print("Reverse card played! Direction changed.")
-                    pygame.time.wait(2000)
-                    # Computer will play another card in this turn
-                    computer_turn()
-                    return
-
-                elif drawn_card_value == "skip":
-                    # Skip the player's turn
-                    display_message("Skip card played!", 2000)
-                    print("Skip card played!")
-                    pygame.time.wait(2000)
-
-            else:
-                # The drawn card does not match, give turn back to the player
-                display_message(
-                    "Computer didn't find a matching card, your turn!", 2000
-                )
-                print(f"Computer drew a non-matching card: {drawn_card}")
-                pygame.time.wait(2000)
-
-        else:
-            # If no cards are left in the deck, just notify the player
-            display_message("Deck is empty, no card to draw!", 2000)
-
-        # No need to retry the turn
-        return
-
+        pygame.time.wait(2000)  # Give time to display the message
+        computer_turn()  # Retry the turn after drawing a card
     else:
         # Play the first matching card
         card_to_play = playable_cards[0]
