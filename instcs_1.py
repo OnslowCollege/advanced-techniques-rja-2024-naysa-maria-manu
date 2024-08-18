@@ -233,6 +233,7 @@ def display_instructions():
     screen.blit(instructions_image, (0, 0))
 
     # Draw the Start and Play buttons on the instructions screen
+
     play_button.draw(screen)
     # Update the display
     pygame.display.flip()
@@ -250,7 +251,6 @@ def display_instructions():
                 shuffle_and_deal()
                 state = "play"
                 waiting = False
-
 
 
 def get_card_at_position(x, y):
@@ -328,7 +328,6 @@ def play_card(card_key):
                 pygame.time.wait(2000)
                 return
 
-
             elif card_value == "rev":
                 # Reverse the direction of play
                 direction *= -1
@@ -350,8 +349,6 @@ def play_card(card_key):
                 end_game("YOU WON!")
 
             computer_turn()
-
-        
 
 
 def draw_card_for_computer():
@@ -378,46 +375,37 @@ def display_message(message, duration):
 
 
 def shuffle_and_deal():
-    """Shuffle the deck and deal only number cards to the player and computer."""
+    """Shuffle the deck and deal cards to the player and computer."""
     global deck, player_cards, computer_cards, discard_pile
 
     # Define all possible cards
     deck = []
 
-    # Create number cards (only these will be dealt)
+    # Create number cards
     for color in card_colors:
         for number in range(10):
             deck.append(f"{color}_{number}")
 
-    # Create special cards (but don't deal these initially)
-    special_deck = []
+    # Create special cards
     for color in card_colors:
         for special in special_cards:
-            special_deck.append(f"{color}_{special}")
+            deck.append(f"{color}_{special}")
 
-    # Create wild cards (but don't deal these initially)
-    wild_deck = []
+    # Create wild cards
     for wild in wild_cards:
-        wild_deck.append(wild)
+        deck.append(wild)
 
-    # Shuffle both decks
+    # Shuffle the deck
     random.shuffle(deck)
-    random.shuffle(special_deck)
-    random.shuffle(wild_deck)
 
-    # Deal 7 cards to the player and computer (only number cards)
+    # Deal 7 cards to the player and computer
     player_cards = [deck.pop() for _ in range(NUM_CARDS)]
     computer_cards = [deck.pop() for _ in range(NUM_CARDS)]
 
-    # Add the special and wild cards back into the deck
-    deck.extend(special_deck)
-    deck.extend(wild_deck)
-    random.shuffle(deck)
-
-    # Set the initial discard pile card (ensure it's a number card)
+    # Set the initial discard pile card
     while True:
         discard_pile = [deck.pop()]
-        if discard_pile[0] not in wild_cards + special_cards:
+        if discard_pile[0] not in wild_cards:
             break
 
     # Print the initial state for debugging
@@ -425,7 +413,6 @@ def shuffle_and_deal():
     print("Player Cards:", player_cards)
     print("Computer Cards:", computer_cards)
     print("Discard Pile:", discard_pile)
-
 
 
 def computer_turn():
