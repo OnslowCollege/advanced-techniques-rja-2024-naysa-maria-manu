@@ -218,6 +218,18 @@ def draw_card_from_deck():
         player_cards.append(card)
         print(f"Drawn card: {card}")
 
+        # Check if the drawn card matches the top card on the discard pile
+        if discard_pile:
+            top_card = discard_pile[0]
+            top_color, top_value = top_card.split("_")
+            drawn_card_color, drawn_card_value = card.split("_")
+            if drawn_card_color == top_color or drawn_card_value == top_value:
+                # Drawn card matches, player can play it or choose a different action
+                print(f"Drawn card matches the discard pile: {card}")
+            else:
+                # Drawn card doesn't match, computer's turn
+                computer_turn()
+
 
 def display_instructions():
     """Display the instructions image with the 'Shuffle and Play' button."""
