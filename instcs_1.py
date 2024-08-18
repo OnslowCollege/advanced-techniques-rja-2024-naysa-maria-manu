@@ -292,12 +292,9 @@ def play_card(card_key):
     global discard_pile, player_cards, computer_cards, direction, deck
 
     if card_key in player_cards:
-        # Debugging statement
         print(f"Attempting to play card: {card_key}")
 
-        # Handle +4 wild card separately
         if card_key == "+4":
-            # Special handling for +4 card
             for _ in range(4):
                 if deck:
                     drawn_card = random.choice(deck)
@@ -309,13 +306,11 @@ def play_card(card_key):
             pygame.time.wait(2000)
             return
 
-        # Normal card handling
         card_color, card_value = card_key.split("_")
         top_card = discard_pile[0] if discard_pile else None
 
         if top_card:
             top_color, top_value = top_card.split("_")
-
             if card_color != top_color and card_value != top_value:
                 display_message("Wrong selection! Lost your chance", 2000)
                 pygame.time.wait(2000)
@@ -327,17 +322,16 @@ def play_card(card_key):
         print(f"Player played: {card_key}")
 
         if card_value == "+2":
-            # Add 2 cards to the player's hand
+            # Add 2 cards to the computer's hand
             for _ in range(2):
                 if deck:
                     drawn_card = random.choice(deck)
                     deck.remove(drawn_card)
-                    player_cards.append(drawn_card)
-            display_message("You drew 2 cards!", 2000)
+                    computer_cards.append(drawn_card)
+            display_message("Computer drew 2 cards!", 2000)
             pygame.time.wait(2000)
 
         elif card_value == "rev":
-            # Reverse the direction of play
             direction *= -1
             display_message("Reverse card played!", 2000)
             pygame.time.wait(2000)
@@ -345,7 +339,6 @@ def play_card(card_key):
             return
 
         elif card_value == "skip":
-            # Skip the other player's turn
             display_message("Skip card played!", 2000)
             pygame.time.wait(2000)
             computer_turn()
@@ -357,6 +350,66 @@ def play_card(card_key):
 
         computer_turn()
 
+    global discard_pile, player_cards, computer_cards, direction, deck
+
+    if card_key in player_cards:
+        print(f"Attempting to play card: {card_key}")
+
+        if card_key == "+4":
+            for _ in range(4):
+                if deck:
+                    drawn_card = random.choice(deck)
+                    deck.remove(drawn_card)
+                    computer_cards.append(drawn_card)
+            display_message("Computer drew 4 cards!", 2000)
+            pygame.time.wait(2000)
+            display_message("Your turn!", 2000)
+            pygame.time.wait(2000)
+            return
+
+        card_color, card_value = card_key.split("_")
+        top_card = discard_pile[0] if discard_pile else None
+
+        if top_card:
+            top_color, top_value = top_card.split("_")
+            if card_color != top_color and card_value != top_value:
+                display_message("Wrong selection! Lost your chance", 2000)
+                pygame.time.wait(2000)
+                computer_turn()
+                return
+
+        player_cards.remove(card_key)
+        discard_pile.insert(0, card_key)
+        print(f"Player played: {card_key}")
+
+        if card_value == "+2":
+            # Add 2 cards to the computer's hand
+            for _ in range(2):
+                if deck:
+                    drawn_card = random.choice(deck)
+                    deck.remove(drawn_card)
+                    computer_cards.append(drawn_card)
+            display_message("Computer drew 2 cards!", 2000)
+            pygame.time.wait(2000)
+
+        elif card_value == "rev":
+            direction *= -1
+            display_message("Reverse card played!", 2000)
+            pygame.time.wait(2000)
+            computer_turn()
+            return
+
+        elif card_value == "skip":
+            display_message("Skip card played!", 2000)
+            pygame.time.wait(2000)
+            computer_turn()
+            return
+
+        if not player_cards:
+            print("Player has no more cards. Player won the game!")
+            end_game("YOU WON!")
+
+        computer_turn()
 
 
 def draw_card_for_computer():
@@ -424,19 +477,15 @@ def shuffle_and_deal():
 
 
 def computer_turn():
-    """Handle the computer's turn with a delay after the user plays a card."""
     global computer_cards, discard_pile, deck, direction, player_cards
 
-    pygame.time.wait(
-        2000
-    )  # Wait for 2 seconds before the computer plays its card
+    pygame.time.wait(2000)
 
     if computer_cards:
         top_card = discard_pile[0] if discard_pile else None
 
         if top_card:
             if top_card == "+4":
-                # Skip the computer's turn if the top card is +4
                 print("Computer skipped its turn due to +4 card")
                 display_message("Your turn!", 2000)
                 return
@@ -494,13 +543,11 @@ def computer_turn():
                     direction *= -1
                     display_message("Computer played Reverse card!", 2000)
                     pygame.time.wait(2000)
-                    computer_turn()
                     return
 
                 if "skip" in playable_card:
                     display_message("Computer played Skip card!", 2000)
                     pygame.time.wait(2000)
-                    computer_turn()
                     return
 
                 if not computer_cards:
@@ -566,8 +613,6 @@ def computer_turn():
             print("Error: No top card on discard pile.")
     else:
         print("Error: No cards in computer's hand.")
-
-
 
 
 def end_game(message):
