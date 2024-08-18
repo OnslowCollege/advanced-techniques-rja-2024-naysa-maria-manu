@@ -378,37 +378,46 @@ def display_message(message, duration):
 
 
 def shuffle_and_deal():
-    """Shuffle the deck and deal cards to the player and computer."""
+    """Shuffle the deck and deal only number cards to the player and computer."""
     global deck, player_cards, computer_cards, discard_pile
 
     # Define all possible cards
     deck = []
 
-    # Create number cards
+    # Create number cards (only these will be dealt)
     for color in card_colors:
         for number in range(10):
             deck.append(f"{color}_{number}")
 
-    # Create special cards
+    # Create special cards (but don't deal these initially)
+    special_deck = []
     for color in card_colors:
         for special in special_cards:
-            deck.append(f"{color}_{special}")
+            special_deck.append(f"{color}_{special}")
 
-    # Create wild cards
+    # Create wild cards (but don't deal these initially)
+    wild_deck = []
     for wild in wild_cards:
-        deck.append(wild)
+        wild_deck.append(wild)
 
-    # Shuffle the deck
+    # Shuffle both decks
     random.shuffle(deck)
+    random.shuffle(special_deck)
+    random.shuffle(wild_deck)
 
-    # Deal 7 cards to the player and computer
+    # Deal 7 cards to the player and computer (only number cards)
     player_cards = [deck.pop() for _ in range(NUM_CARDS)]
     computer_cards = [deck.pop() for _ in range(NUM_CARDS)]
 
-    # Set the initial discard pile card
+    # Add the special and wild cards back into the deck
+    deck.extend(special_deck)
+    deck.extend(wild_deck)
+    random.shuffle(deck)
+
+    # Set the initial discard pile card (ensure it's a number card)
     while True:
         discard_pile = [deck.pop()]
-        if discard_pile[0] not in wild_cards:
+        if discard_pile[0] not in wild_cards + special_cards:
             break
 
     # Print the initial state for debugging
@@ -416,6 +425,7 @@ def shuffle_and_deal():
     print("Player Cards:", player_cards)
     print("Computer Cards:", computer_cards)
     print("Discard Pile:", discard_pile)
+
 
 
 def computer_turn():
