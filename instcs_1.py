@@ -446,9 +446,12 @@ def draw_card_for_computer():
 
     if deck:
         drawn_card = random.choice(deck)
+        while drawn_card == "+4":
+            drawn_card = random.choice(deck)
         deck.remove(drawn_card)
         computer_cards.append(drawn_card)
         print(f"Computer drew a card: {drawn_card}")
+
 
 
 def display_message(message, duration):
