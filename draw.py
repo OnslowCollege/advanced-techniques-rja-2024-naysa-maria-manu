@@ -356,6 +356,7 @@ def play_card(card_key):
             display_message("Skip card played!", 2000)
             print("Skip card played!")
             pygame.time.wait(2000)
+            computer_turn()
             return
 
         if not player_cards:
