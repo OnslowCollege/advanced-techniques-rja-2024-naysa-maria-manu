@@ -332,17 +332,20 @@ def play_card(card_key):
                     drawn_card = random.choice(deck)
                     deck.remove(drawn_card)
                     computer_cards.append(drawn_card)
-            display_message("Computer drew 2 cards!", 2000)
+            display_message("Computer drew 2 cards!", 1000)
             pygame.time.wait(2000)
 
         elif card_value == "rev":
             direction *= -1
-            display_message("Reverse card played!", 2000)
+            display_message("Reverse card played!", 1000)
             pygame.time.wait(2000)
+            return
 
         elif card_value == "skip":
-            display_message("Skip card played!", 2000)
+            direction *= -1
+            display_message("Skip card played!", 1000)
             pygame.time.wait(2000)
+            return
 
         elif card_value == "+4":
             for _ in range(4):
