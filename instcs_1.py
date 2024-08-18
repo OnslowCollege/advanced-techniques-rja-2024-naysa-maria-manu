@@ -298,7 +298,6 @@ def play_card(card_key):
         # Handle +4 wild card separately
         if card_key == "+4":
             # Special handling for +4 card
-            # Implement the logic for drawing 4 cards and changing the color
             for _ in range(4):
                 if deck:
                     drawn_card = random.choice(deck)
@@ -328,13 +327,13 @@ def play_card(card_key):
         print(f"Player played: {card_key}")
 
         if card_value == "+2":
-            # Computer draws 2 cards
+            # Add 2 cards to the player's hand
             for _ in range(2):
                 if deck:
                     drawn_card = random.choice(deck)
                     deck.remove(drawn_card)
-                    computer_cards.append(drawn_card)
-            display_message("Computer drew 2 cards!", 2000)
+                    player_cards.append(drawn_card)
+            display_message("You drew 2 cards!", 2000)
             pygame.time.wait(2000)
 
         elif card_value == "rev":
@@ -357,6 +356,7 @@ def play_card(card_key):
             end_game("YOU WON!")
 
         computer_turn()
+
 
 
 def draw_card_for_computer():
