@@ -360,11 +360,7 @@ def play_card(card_key):
                 print("Player has no more cards. Player won the game!")
                 end_game("YOU WON!")
 
-            # Draw a card if the player played a card with no matching color or number
-            if not draw_card_from_deck():
-                display_message("Computer's turn!", 2000)
-                pygame.time.wait(2000)
-                computer_turn()
+            computer_turn()
 
 
 def draw_card_for_computer():
@@ -700,6 +696,7 @@ def play_game():
         draw_card_button.draw(screen)
 
     pygame.display.flip()
+
 
 def main():
     """Main game loop."""
