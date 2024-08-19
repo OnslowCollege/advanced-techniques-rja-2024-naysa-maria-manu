@@ -525,7 +525,7 @@ def computer_turn():
                                     "Computer played Reverse card!", 2000
                                 )
                                 computer_turn()
-                                return ()
+                                return
 
                             elif "skip" in drawn_card:
                                 display_message(
@@ -537,9 +537,7 @@ def computer_turn():
                             if not computer_cards:
                                 end_game("YOU LOST!")
                         else:
-                            print(
-                                "Computer didn't find a matching card. Your turn."
-                            )
+                            print("Computer didn't find a matching card.")
                             display_message("Your turn!", 1000)
                     except ValueError:
                         print(
@@ -549,6 +547,7 @@ def computer_turn():
             print("Error: No top card on discard pile.")
     else:
         print("Error: No cards in computer's hand.")
+
 
 
 def end_game(message):
