@@ -334,9 +334,6 @@ def play_card(card_key):
         draw_player_cards()
         pygame.display.flip()
 
-        # Wait a bit before the computer serves
-        pygame.time.wait(1000)
-
         # Remove the card from player's hand and add it to the discard pile
         player_cards.remove(card_key)
         discard_pile.insert(0, card_key)
@@ -351,7 +348,6 @@ def play_card(card_key):
                     deck.remove(drawn_card)
                     computer_cards.append(drawn_card)
             display_message("Computer drew 2 cards!", 1000)
-            pygame.time.wait(2000)
 
         elif card_value == "rev":
             direction *= -1
@@ -370,9 +366,7 @@ def play_card(card_key):
                     deck.remove(drawn_card)
                     computer_cards.append(drawn_card)
             display_message("Computer drew 4 cards!", 1000)
-            pygame.time.wait(1000)
             display_message("Your turn!", 1000)
-            pygame.time.wait(1000)
 
         # Check if the player has won
         if not player_cards:
