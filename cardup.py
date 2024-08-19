@@ -360,15 +360,11 @@ def handle_special_card(card_value):
     elif card_value == "rev":
         direction *= -1
         display_message("Reverse card played!", 1000)
-        pygame.time.wait(2000)
-        player_turn()
         return
 
     elif card_value == "skip":
         direction *= -1
         display_message("Skip card played!", 1000)
-        pygame.time.wait(2000)
-        player_turn()
         return
 
     elif card_value == "+4":
@@ -382,11 +378,6 @@ def handle_special_card(card_value):
         display_message("Your turn!", 1000)
         pygame.time.wait(1000)
 
-def player_turn():
-    """Switches the turn to the player after a Reverse or Skip card is played."""
-    draw_player_cards()
-    pygame.display.flip()
-    display_message("Your turn!", 1000)
 
 def draw_card_for_computer():
     """Draw a card for the computer from the deck."""
