@@ -363,11 +363,13 @@ def handle_special_card(card_value):
         direction *= -1
         display_message("Reverse card played!", 1000)
         pygame.time.wait(2000)
+        return
 
     elif card_value == "skip":
         direction *= -1
         display_message("Skip card played!", 1000)
         pygame.time.wait(2000)
+        return
 
     elif card_value == "+4":
         for _ in range(4):
