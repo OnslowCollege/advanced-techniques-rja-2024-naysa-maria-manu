@@ -306,7 +306,13 @@ def get_card_at_position(x, y):
 
 
 def play_card(card_key):
-    global discard_pile, player_cards, computer_cards, direction, deck
+    global \
+        discard_pile, \
+        player_cards, \
+        computer_cards, \
+        direction, \
+        deck, \
+        selected_card
 
     if card_key in player_cards:
         print(f"Attempting to play card: {card_key}")
@@ -322,8 +328,16 @@ def play_card(card_key):
                 computer_turn()
                 return
 
+        # Animate the card moving up
+        for _ in range(10):  # Adjust the range for smoother animation
+            draw_player_cards()
+            pygame.display.flip()
+            pygame.time.wait(50)
+
+        # Remove the card from player's hand and add to discard pile
         player_cards.remove(card_key)
         discard_pile.insert(0, card_key)
+        selected_card = None  # Deselect the card after it's played
         print(f"Player played: {card_key}")
 
         if card_value == "+2":
