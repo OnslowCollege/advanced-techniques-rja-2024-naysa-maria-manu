@@ -272,7 +272,7 @@ def draw_player_cards():
 
         # If the card is selected, move it up
         if card == selected_card:
-            card_y -= 20  # Move the card up by 20 pixels
+            card_y -= 20
 
         # Draw the card
         card_image = card_images[card]
@@ -327,8 +327,6 @@ def play_card(card_key):
         draw_player_cards()
         pygame.display.flip()
 
-        # Wait a bit before the computer serves
-        pygame.time.wait(1000)
 
         # Remove the card from player's hand and add it to the discard pile
         player_cards.remove(card_key)
