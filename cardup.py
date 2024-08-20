@@ -284,6 +284,7 @@ def draw_player_cards():
     pygame.display.flip()  # Update the display to show the new positions
 
 
+
 def get_card_at_position(x, y):
     """Check if the mouse position is over a card and return the card key."""
     card_width, card_height = scaled_card_back_image.get_size()
