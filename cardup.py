@@ -257,6 +257,9 @@ def display_instructions():
 
 def draw_player_cards():
     """Draw the player's cards on the screen."""
+    global screen, game_background_image
+    screen.blit(game_background_image, (0, 0))  # Clear the background
+
     card_width, card_height = scaled_card_back_image.get_size()
     for i, card in enumerate(player_cards):
         # Determine the card's position
@@ -277,6 +280,8 @@ def draw_player_cards():
         # Draw the card
         card_image = card_images[card]
         screen.blit(card_image, (card_x, card_y))
+
+    pygame.display.flip()  # Update the display to show the new positions
 
 
 def get_card_at_position(x, y):
