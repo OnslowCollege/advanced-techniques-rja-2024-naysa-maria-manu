@@ -543,6 +543,7 @@ def computer_turn():
                                 return
 
                             elif "skip" in drawn_card:
+                                direction *= -1
                                 display_message(
                                     "Computer played Skip card!", 2000
                                 )
@@ -562,6 +563,7 @@ def computer_turn():
             print("Error: No top card on discard pile.")
     else:
         print("Error: No cards in computer's hand.")
+
 
 
 def end_game(message):
